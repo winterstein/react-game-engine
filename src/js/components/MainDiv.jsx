@@ -14,8 +14,7 @@ import MessageBar from '../base/components/MessageBar';
 import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
-import MyPage from './MyPage';
-import CampaignPage from './CampaignPage';
+import GamePage from './GamePage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
@@ -27,13 +26,11 @@ C.setupDataStore();
 
 const PAGES = {
 	account: BasicAccountPage,
-	my: MyPage,
-	campaign: CampaignPage,
+	game: GamePage,
 	test: TestPage,
-
 };
 
-const DEFAULT_PAGE = 'my';
+const DEFAULT_PAGE = 'game';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 
