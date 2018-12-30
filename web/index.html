@@ -7,12 +7,11 @@
 		<!-- Explicit Content-Security-Policy is required for the GoodLoop app -->
 		<meta http-equiv="Content-Security-Policy" content="default-src * gap://ready file:; style-src 'self' 'unsafe-inline' *; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; media-src * 'self' data: https: http:; img-src * data: 'unsafe-inline'; connect-src * 'unsafe-inline'; frame-src * 'unsafe-inline' 'unsafe-eval';">  
 
-		<title>My Good-Loop</title>
+		<title>Game On!</title>
 		<link rel="shortcut icon" href="/favicon-32.png" />
 
 		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" />
 		<link href='https://fonts.googleapis.com/css?family=Actor' rel='stylesheet'>
-		<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.4.1/css/all.css" integrity="sha384-5sAR7xN1Nv6T6+dT2mhtzEpVJvfS3NScPQTrOxhwjIuvcA67KV2R5Jz6kr4abQsz" crossorigin="anonymous"> -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> 
 		<link rel="stylesheet" type="text/css" href="style/main.css">
 		<link rel="stylesheet" type="text/css" href="style/print.css" media="print">		
@@ -31,24 +30,6 @@
 			mixpanel.init(token);
 		</script>
 		<!-- end Mixpanel -->
-		<!-- Start HotJar -->
-		<!-- <script>
-			(function(h,o,t,j,a,r){
-				var href = window.location.href;
-				var token = 1100105;
-				
-				// Switch to production token
-				if( href.match(/https:\/\/my.good-loop.com/) ) token = 1101511;
-
-				h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-				h._hjSettings={hjid:token,hjsv:6};
-				a=o.getElementsByTagName('head')[0];
-				r=o.createElement('script');r.async=1;
-				r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-				a.appendChild(r);
-			})(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
-		</script> -->
-		<!-- End HotJar -->
 	</head>
 	<body>
 		
@@ -82,33 +63,6 @@
 					fjs.parentNode.insertBefore(js, fjs);
 				}(document, 'script', 'facebook-jssdk'));
 			</script>
-
-		<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-		<script>
-			/*!
-			* IE10 viewport hack for Surface/desktop Windows 8 bug
-			* Copyright 2014-2015 Twitter, Inc.
-			* Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
-			*/
-
-			// See the Getting Started docs for more information:
-			// http://getbootstrap.com/getting-started/#support-ie10-width
-
-			(function () {
-			'use strict';
-
-			if (navigator.userAgent.match(/IEMobile\/10\.0/)) {
-				var msViewportStyle = document.createElement('style')
-				msViewportStyle.appendChild(
-				document.createTextNode(
-					'@-ms-viewport{width:auto!important}'
-				)
-				)
-				document.querySelector('head').appendChild(msViewportStyle)
-			}
-
-			})();
-		</script>
 		</footer>
 	</body>
 </html>
