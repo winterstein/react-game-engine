@@ -9,3 +9,7 @@ Stage.make = (base) => {
 	let sp = Object.assign({sprites:[]}, base);
 	return sp;
 };
+
+Stage.addSprite = (stage, sprite) => {
+	stage.sprites.push(sprite);
+};

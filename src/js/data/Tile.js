@@ -4,7 +4,7 @@ import Sprite from './Sprite';
 /**
  * A Tile is a Sprite without movement
  */
-const Tile = defineType(Tile, Sprite);
+const Tile = defineType('Tile', Sprite);
 const This = Tile;
 export default Tile;
 
