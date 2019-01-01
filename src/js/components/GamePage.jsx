@@ -16,11 +16,38 @@ import Stage from '../data/Stage';
 import Tile from '../data/Tile';
 import VStage from './VStage';
 
-const GamePage = () => {
-	let path = ['widget', 'TestPage'];
-	let widget = DataStore.getValue(path) || {};
+let onKeyDown = e => {
+	console.warn('e', e, e.key, e.code, e.keyCode);
+	let player = DataStore.getValue('data','Sprite','player');
+	if ( ! player) return;
+	if (e.key==='ArrowLeft') {
+		player.dx = -5;
+		player.animate.frames = [2,1,2];
+	}
+	if (e.key==='ArrowRight') {
+		player.dx = 5;
+		player.animate.frames = [6,7,6];
+	}
+	if (e.key==='ArrowUp') {
+		player.dy = -5;
+		player.animate.frames = [3,4,5];
+	}
+	if (e.key==='ArrowDown') {
+		player.dy = 5;
+		player.animate.frames = [0];
+	}
+};
 
-	let stage = DataStore.getValue('data','stage');
+const onKeyUp = e => {
+	let player = DataStore.getValue('data','Sprite','player');
+	if ( ! player) return;
+	player.dx = 0; player.dy = 0;
+	player.animate.frames = [0,1,2,3,4,5,6,7];
+};
+
+const GamePage = () => {
+	
+	let stage = DataStore.getValue('data','Stage','main');
 	if ( ! stage) {
 		let player = Player.make({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
 			height:127, width:70,
@@ -28,13 +55,18 @@ const GamePage = () => {
 				'-360px -4px', '-456px -4px', '-550px -4px', '-637px -4px'],
 			animate: {frames:[0,1,2,3,4,5,6,7], dt:200}
 		});
+		DataStore.setValue(['data', 'Sprite', 'player'], player);
 
 		stage = Stage.make();
 		Stage.addSprite(stage, player);
-		DataStore.setValue(['data', 'stage'], stage);
+		DataStore.setValue(['data', 'Stage', 'main'], stage);
 	}
-
-	return (<div className='GamePage' onClick={e => DataStore.update()}>
+	// NB tabIndex needed for onKeyDown to work
+	return (<div tabIndex="1" className='GamePage'
+		onLoad={() => this.refs.item.focus()}
+		onClick={e => DataStore.update()} onKeyDown={onKeyDown}
+		onKeyUp={onKeyUp} 
+	>
 		<VStage stage={stage} />
 	</div>);
 

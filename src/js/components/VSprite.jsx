@@ -9,12 +9,17 @@ const VSprite = ({sprite, tick}) => {
 	let width = sprite.width+'px';
 	let height= sprite.height+'px';
 	let zIndex = 100 + 1; // TODO layers
-	// TODO frames
+	
+	// animate 
 	if (sprite.animate) {
 		let tocks = Math.floor(tick / sprite.animate.dt);
 		const i = tocks % sprite.animate.frames.length;
 		sprite.frame = sprite.animate.frames[i];
-	}
+		// TODO update in game loop
+		if (sprite.dx) sprite.x += sprite.dx;
+		if (sprite.dy) sprite.y += sprite.dy;
+	}	
+
 	let frameOffset = sprite.frame && sprite.frames? sprite.frames[sprite.frame] : 0+' '+0;
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,
