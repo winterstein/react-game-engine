@@ -6,7 +6,6 @@ import Sprite from './data/Sprite';
 
 const Game = {};
 
-
 Game.testCollision = (a, b) => {
 	if (a===b) return false;
 	// FIXME 
@@ -39,6 +38,10 @@ Game.init = () => {
 	Game.initFlag = true;
 	// update loop
 	let updater = setInterval(() => { Game.update(); }, 20); // target 1 tick
+};
+
+Game.getStage = () => {
+	return DataStore.getValue('data', 'Stage', 'main');
 };
 
 export default Game;

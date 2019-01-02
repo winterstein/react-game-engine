@@ -30,7 +30,7 @@ let onKeyDown = e => {
 	}
 	if (e.key==='ArrowUp') {
 		player.dy = -5;
-		player.animate.frames = [3,4,5];
+		player.animate.frames = [4,3,4,5];
 	}
 	if (e.key==='ArrowDown') {
 		player.dy = 5;
@@ -42,7 +42,7 @@ const onKeyUp = e => {
 	let player = DataStore.getValue('data','Sprite','player');
 	if ( ! player) return;
 	player.dx = 0; player.dy = 0;
-	player.animate.frames = [0,1,2,3,4,5,6,7];
+	player.animate.frames = [player.animate.frames[0]]; // stop animating [0,1,2,3,4,5,6,7];
 };
 
 
@@ -74,9 +74,17 @@ const GamePage = () => {
 		Stage.addSprite(stage, tree2);
 		let grass = Sprite.make(tree);
 		grass.id = 'grass';
+		grass.height = 150;
+		grass.dropzone = true;
 		grass.zIndex = -1;
 		grass.frame = 2; grass.x = 300;
 		Stage.addSprite(stage, grass);
+		
+		let grass2 = Sprite.make(grass);
+		grass2.id = 'grass2';
+		grass2.frame = 4; grass2.x = 400; grass2.y += 100;
+		Stage.addSprite(stage, grass2);		
+
 		DataStore.setValue(['data', 'Stage', 'main'], stage);
 	}
 

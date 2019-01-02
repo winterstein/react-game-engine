@@ -2,11 +2,10 @@
 import React from 'react';
 import { assert, assMatch } from 'sjtest';
 import Sprite from '../data/Sprite';
+import GameControls from '../GameControls';
+import {DropZone} from '../base/components/DragDrop';
 
 const VSprite = ({sprite, tick}) => {
-	let onClick = e => {
-		sprite.selected = true;
-	};
 	let top = (sprite.y)+'px';
 	let left = (sprite.x)+'px'; // isometric mix x-y??
 	let width = sprite.width+'px';
@@ -25,7 +24,11 @@ const VSprite = ({sprite, tick}) => {
 		border: sprite.selected? 'solid 2px yellow' : null // TODO add an isometric selected base with lower z-index
 	};	
 	// TODO clip from sprite sheet
-	return <div style={style} onClick={onClick}></div>;
+	let S = <div style={style} onClick={e => GameControls.select({sprite})}></div>;
+	if (sprite.dropzone) {
+		return <DropZone id={sprite.id}>{S}</DropZone>;
+	}
+	return S;
 };
 
 export default VSprite;
