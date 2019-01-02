@@ -9,6 +9,7 @@ import SJTest, {assert} from 'sjtest';
 import Login from 'you-again';
 import DataStore from '../base/plumbing/DataStore';
 import C from '../C';
+import Game from '../Game';
 import Misc from '../base/components/Misc';
 import Player from '../data/Player';
 import Sprite from '../data/Sprite';
@@ -17,7 +18,6 @@ import Tile from '../data/Tile';
 import VStage from './VStage';
 
 let onKeyDown = e => {
-	console.warn('e', e, e.key, e.code, e.keyCode);
 	let player = DataStore.getValue('data','Sprite','player');
 	if ( ! player) return;
 	if (e.key==='ArrowLeft') {
@@ -45,22 +45,41 @@ const onKeyUp = e => {
 	player.animate.frames = [0,1,2,3,4,5,6,7];
 };
 
+
 const GamePage = () => {
 	
 	let stage = DataStore.getValue('data','Stage','main');
 	if ( ! stage) {
+		Game.init();
 		let player = Player.make({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
 			height:127, width:70,
 			frames:['-3px -4px', '-94px -4px', '-186px -4px', '-273px -4px', 
 				'-360px -4px', '-456px -4px', '-550px -4px', '-637px -4px'],
-			animate: {frames:[0,1,2,3,4,5,6,7], dt:200}
+			animate: {frames:[0,1,2,3,4,5,6,7], dt:4}
 		});
 		DataStore.setValue(['data', 'Sprite', 'player'], player);
+		let tree = Sprite.make({x:100, y:100, src:'/img/tiles/green.png',
+			height:300, width:200,
+			frames:['0px -12px', '-235px -15px', '-486px -15px', '-716px -35px', '-943px -11px', '-1180px -11px'],
+			frame: 0,
+		});
+		DataStore.setValue(['data', 'Sprite', 'tree'], tree);
 
 		stage = Stage.make();
 		Stage.addSprite(stage, player);
+		Stage.addSprite(stage, tree);
+		let tree2 = Sprite.make(tree);
+		tree2.id = 'tree2';
+		tree2.frame = 3; tree2.x = 500;
+		Stage.addSprite(stage, tree2);
+		let grass = Sprite.make(tree);
+		grass.id = 'grass';
+		grass.zIndex = -1;
+		grass.frame = 2; grass.x = 300;
+		Stage.addSprite(stage, grass);
 		DataStore.setValue(['data', 'Stage', 'main'], stage);
 	}
+
 	// NB tabIndex needed for onKeyDown to work
 	return (<div tabIndex="1" className='GamePage'
 		onLoad={() => this.refs.item.focus()}
