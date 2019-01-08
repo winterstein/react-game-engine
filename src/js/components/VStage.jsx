@@ -15,6 +15,7 @@ const VStage = ({stage}) => {
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} tick={tick} />)}
+			<canvas />
 		</div>
 		<Cards />
 </div>);

@@ -22,17 +22,21 @@ let onKeyDown = e => {
 	if ( ! player) return;
 	if (e.key==='ArrowLeft') {
 		player.dx = -5;
+		player.dy = -5;
 		player.animate.frames = [2,1,2];
 	}
 	if (e.key==='ArrowRight') {
 		player.dx = 5;
+		player.dy = 5;
 		player.animate.frames = [6,7,6];
 	}
 	if (e.key==='ArrowUp') {
+		player.dx = 5;
 		player.dy = -5;
 		player.animate.frames = [4,3,4,5];
 	}
 	if (e.key==='ArrowDown') {
+		player.dx = -5;
 		player.dy = 5;
 		player.animate.frames = [0];
 	}
@@ -58,6 +62,8 @@ const GamePage = () => {
 			animate: {frames:[0,1,2,3,4,5,6,7], dt:4}
 		});
 		DataStore.setValue(['data', 'Sprite', 'player'], player);
+
+		// some tiles
 		let tree = Sprite.make({x:100, y:100, src:'/img/tiles/green.png',
 			height:300, width:200,
 			frames:['0px -12px', '-235px -15px', '-486px -15px', '-716px -35px', '-943px -11px', '-1180px -11px'],
@@ -72,6 +78,7 @@ const GamePage = () => {
 		tree2.id = 'tree2';
 		tree2.frame = 3; tree2.x = 500;
 		Stage.addSprite(stage, tree2);
+
 		let grass = Sprite.make(tree);
 		grass.id = 'grass';
 		grass.height = 150;
