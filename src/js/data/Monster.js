@@ -7,10 +7,10 @@ const This = Monster;
 const Super = Sprite;
 export default Monster;
 
-Monster.update = (sprite, tick) => {
+Monster.update = (sprite, game) => {
 	// TODO adjust
 	sprite.dx = 1; 
-	sprite.dy=1;
+	sprite.dy = 1;
 
-	Super.update(sprite, tick);	
+	Super.update(sprite, game);	
 };

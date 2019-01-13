@@ -36,13 +36,23 @@ Sprite.screenRect = (sp) => {
 	return Rect.make({x,y,width,height});
 };
 
-Sprite.update = (sprite, tick) => {
+Sprite.update = (sprite, game) => {
+	const tick = game.tick;
+	const dt = game.dt;
 	// animate 
 	if (sprite.animate) {
 		let tocks = Math.floor(tick / sprite.animate.dt);
 		const i = tocks % sprite.animate.frames.length;
 		sprite.frame = sprite.animate.frames[i];
 	}
-	if (sprite.dx) sprite.x += sprite.dx;
-	if (sprite.dy) sprite.y += sprite.dy;
+	if (sprite.dx && dt) {
+		sprite.x += sprite.dx * dt;
+	}
+	if (sprite.dy && dt) {
+		sprite.y += sprite.dy * dt;
+	}
+	// off-stage?
+	let stage = game.stage;
+	// TODO get stage rect, test for collision, call onExit if no collision
+	// Game.
 };

@@ -5,18 +5,32 @@ import Stage from './data/Stage';
 import Sprite from './data/Sprite';
 import Player from './data/Player';
 import Monster from './data/Monster';
+import Card from './data/Card';
 import Game from './Game';
+import Snake from './data/Snake';
 
 let initFlag = false;
 
 let init = () => {
 	if (initFlag) return;
+	const game = Game.get();
+	let stage = Stage.make();
+	game.stage = stage;
+
+	// one snake
+	let snake = Snake.make({x:100, y:100, length:100, width:200, height:100});
+	Stage.addSprite(stage, snake);
+	if (true) {
+		Game.init();
+		return;
+	}
+
 	// make sprites
 	let player = Player.make({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
 		height:127, width:70,
 		frames:['-3px -4px', '-94px -4px', '-186px -4px', '-273px -4px', 
 			'-360px -4px', '-456px -4px', '-550px -4px', '-637px -4px'],
-		animate: {frames:[0,1,2,3,4,5,6,7], dt:4}
+		animate: {frames:[0,1,2,3,4,5,6,7], dt:400}
 	});
 	DataStore.setValue(['data', 'Sprite', 'player'], player);
 
@@ -26,7 +40,7 @@ let init = () => {
 		width:37, height:36,
 		frames:['-290px -61px', '-338px -61px', '-386px -60px', 
 			'-296px -109px', '-344px -108px', '-391px -109px'],
-		animate: {frames:[3,4,5], dt:10}
+		animate: {frames:[3,4,5], dt:400}
 	});
 
 	// some tiles
@@ -37,7 +51,6 @@ let init = () => {
 	});
 	DataStore.setValue(['data', 'Sprite', 'tree'], tree);
 
-	let stage = Stage.make();
 	Stage.addSprite(stage, player);
 	Stage.addSprite(stage, goat);
 	Stage.addSprite(stage, tree);
@@ -59,7 +72,13 @@ let init = () => {
 	grass2.frame = 4; grass2.x = 400; grass2.y += 100;
 	Stage.addSprite(stage, grass2);		
 
-	DataStore.setValue(['data', 'Stage', 'main'], stage);
+	// cards
+	let wall = Sprite.make({src:''});
+	let seed = Sprite.make({src:'/img/FruitTreeSeed.png'});
+	game.cards = [
+		Card.make({id:'wall', sprite:wall}),
+		Card.make({id:'seed', sprite:seed})
+	];
 
 	Game.init();
 };

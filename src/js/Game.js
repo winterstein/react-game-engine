@@ -1,34 +1,40 @@
 
 import DataStore from './base/plumbing/DataStore';
-import {getDataClass} from './base/data/DataClass';
+import {getDataClass, defineType} from './base/data/DataClass';
 import Stage from './data/Stage';
-import Sprite from './data/Sprite';
 
-const Game = {};
+const Game = defineType('Game');
 
+/**
+ * a {Rect} x, y, width, height
+ * b {Rect}
+ */
 Game.testCollision = (a, b) => {
 	if (a===b) return false;
-	// FIXME 
-	const x = Math.min(a.x, b.x);
-	const y = Math.min(a.y, b.y);
-	const w = 64; const h=64;
-	return x+w > a.x && y+h > a.y 
-		&& x+w > b.x && y+h > b.y;
+	// ref https://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
+	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+         (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
 };
 
 
 Game.update = () => {
 	// tick
-	const lastTick = Game.tick;
-	Game.tick = Math.floor(new Date().getTime() / 50);
-	if (lastTick===Game.tick) return;
+	const game = Game.get();
+	const lastTick = game.tick;
+	let newTick = new Date().getTime(); // TODO pause logic
+	if (newTick - lastTick < 50) {
+		return; // target 20 fps
+	}
+	game.tick = newTick;
+	// in seconds
+	game.dt = (newTick - lastTick) / 1000;
 	// update stage and sprites
-	const stage = DataStore.getValue(['data','Stage','main']);	
+	const stage = Game.getStage();
 	if ( ! stage) return;
 	Stage.assIsa(stage);
 	let typ = getDataClass(stage);
-	typ.update(stage, Game.tick);
-	stage.sprites.forEach(s => getDataClass(s).update(s, Game.tick));
+	typ.update(stage, game);
+	stage.sprites.forEach(s => getDataClass(s).update(s, game));
 
 	DataStore.update();
 };
@@ -38,10 +44,21 @@ Game.init = () => {
 	Game.initFlag = true;
 	// update loop
 	let updater = setInterval(() => { Game.update(); }, 20); // target 1 tick
+	// game object, if not already made
+	const game = Game.get();
+	// tick
+	game.tick = new Date().getTime();
+};
+
+/**
+ * @return game object -- never null even pre-init. Will create if unset.
+ */
+Game.get = () => {
+	return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], Game.make());
 };
 
 Game.getStage = () => {
-	return DataStore.getValue('data', 'Stage', 'main');
+	return Game.get().stage;
 };
 
 export default Game;

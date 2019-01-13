@@ -53,7 +53,7 @@ const onKeyUp = e => {
 
 const GamePage = () => {
 	
-	let stage = DataStore.getValue('data','Stage','main');
+	let stage = Game.getStage();
 	if ( ! stage) {
 		MyGame.init();
 		return <Misc.Loading />

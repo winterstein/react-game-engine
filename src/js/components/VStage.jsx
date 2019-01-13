@@ -10,11 +10,11 @@ import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 
 const VStage = ({stage}) => {
-	let tick = Game.tick;
+	console.log("draw VStage");
 	// dropzone on tiles
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
-			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} tick={tick} />)}
+			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 			<canvas />
 		</div>
 		<Cards />
@@ -22,14 +22,16 @@ const VStage = ({stage}) => {
 };
 
 const Cards = () => {
-	let cards = [Card.make({id:'wall'}), Card.make({id:'fly-swatter'})];
+	let cards = DataStore.getValue('data', 'Game', 'cards') || [];
 	return (<div className='VCards row'>
-		{cards.map(c => <div className='col-sm' key={c.id}><VCard card={c} /></div>)}
+		{cards.map(c => <div className='col-sm-2' key={c.id}><VCard card={c} /></div>)}
 	</div>);
 };
 
 const VCard = ({card}) => {
-	return <Draggable id={card.id}><div className='card'>{JSON.stringify(card)}</div></Draggable>;
+	return <Draggable id={card.id}><div className='well card'>
+		{card.sprite? <VSprite sprite={card.sprite} /> : null}
+		{JSON.stringify(card)}</div></Draggable>;
 };
 
 export default VStage;
