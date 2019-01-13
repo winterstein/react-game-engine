@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { assert, assMatch } from 'sjtest';
+import {getType} from '../base/data/DataClass';
 import Sprite from '../data/Sprite';
 import GameControls from '../GameControls';
 import {DropZone} from '../base/components/DragDrop';
@@ -22,7 +23,7 @@ const VSprite = ({sprite, tick}) => {
 	// under-foot floor tiles
 	if (sprite.zIndex < 0) zIndex -= 1000;
 
-	let frameOffset = sprite.frame && sprite.frames? sprite.frames[sprite.frame] : 0+' '+0;
+	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : 0+' '+0;
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,
 		backgroundImage: "url('"+sprite.src+"')",
@@ -31,7 +32,7 @@ const VSprite = ({sprite, tick}) => {
 		border: sprite.selected? 'solid 2px yellow' : 'solid 2px black' // TODO add an isometric selected base with lower z-index
 	};
 	// debug {Math.round(sprite.x)} {Math.round(sprite.y)}
-	let S = <div style={style} onClick={e => GameControls.select({sprite})}></div>;
+	let S = <div title={getType(sprite)+' '+sprite.id} style={style} onClick={e => GameControls.select({sprite})}></div>;
 	if (sprite.dropzone) {
 		return <DropZone id={sprite.id}>{S}</DropZone>;
 	}
