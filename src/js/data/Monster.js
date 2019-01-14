@@ -9,8 +9,8 @@ export default Monster;
 
 Monster.update = (sprite, game) => {
 	// TODO adjust
-	sprite.dx = 1; 
-	sprite.dy = 1;
+	// sprite.dx = 1; 
+	// sprite.dy = 1;
 
 	Super.update(sprite, game);	
 };

@@ -29,18 +29,35 @@ const VSprite = ({sprite, tick}) => {
 	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : 0+' '+0;
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,
-		backgroundImage: "url('"+sprite.src+"')",
-		backgroundPosition: frameOffset,
-		backgroundRepeat: 'no-repeat',
 		border: sprite.selected? 'solid 2px yellow' : 'solid 2px black' // TODO add an isometric selected base with lower z-index
 	};
-	let S = <div title={getType(sprite)+' '+sprite.id} style={style} onClick={e => GameControls.select({sprite})}></div>;
 	// canvas
+	let img;
 	if (sprite.canvas) {
-		S = <div title={getType(sprite)+' '+sprite.id} style={style} onClick={e => GameControls.select({sprite})}>
-			<CanvasComponent width={rect.width} height={rect.height} render={ctx => Snake.render(sprite, ctx)} />
-		</div>;
+		img = <CanvasComponent width={rect.width} height={rect.height} render={ctx => Snake.render(sprite, ctx)} />;
+	} else {
+		let offLeft = 0, offTop = 0; // rect.x, top = rect.y;
+		if (frameOffset) {
+			offLeft = frameOffset[0];
+			offTop = frameOffset[1];
+			// let r = frameOffset[2] || l+rect.width, b = frameOffset[3] || t+rect.height;
+			// imgStyle.clip = "rect(" + [t, r, b, l].join(',') +")";
+		}
+		let imgStyle = {
+			position:'absolute', overflow:'hidden',
+  			// width: rect.width+'px', 
+			// maxHeight: rect.height+'px',
+			transform: `translate(-${offLeft}px, -${offTop}px)`,
+      		imageRendering: 'crisp-edges',
+		};
+		// style.transform = `scale(${this.props.scale || this.context.scale})`;
+      	// transformOrigin: 'top left',
+		// clip is rect(top, right, bottom left)!		
+		img = <img src={sprite.src} style={imgStyle} />
 	}
+	let S = <div title={getType(sprite)+' '+sprite.id} 
+		style={style} onClick={e => GameControls.select({sprite})}
+		>{img}</div>;
 	// debug {Math.round(sprite.x)} {Math.round(sprite.y)}
 	
 	if (sprite.dropzone) {

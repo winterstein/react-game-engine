@@ -10,7 +10,7 @@ import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 
 const VStage = ({stage}) => {
-	console.log("draw VStage");
+	// console.log("draw VStage");
 	// dropzone on tiles
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>

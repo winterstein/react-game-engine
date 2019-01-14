@@ -59,9 +59,10 @@ const GamePage = () => {
 		return <Misc.Loading />
 	}
 
+		// onLoad={() => this.refs.item.focus()}
+
 	// NB tabIndex needed for onKeyDown to work
 	return (<div tabIndex="1" className='GamePage'
-		onLoad={() => this.refs.item.focus()}
 		onClick={e => DataStore.update()} onKeyDown={onKeyDown}
 		onKeyUp={onKeyUp} 
 	>
