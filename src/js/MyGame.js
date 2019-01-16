@@ -18,8 +18,13 @@ let init = () => {
 	game.stage = stage;
 
 	// one snake
-	// let snake = Snake.make({x:100, y:100, length:100, width:200, height:50});
-	// Stage.addSprite(stage, snake);
+	let snake = Snake.make({x:100, y:100, length:100, width:200, height:50});
+	Stage.addSprite(stage, snake);
+
+	if (false) {
+		Game.init();
+		return;
+	}
 
 	// make sprites
 	let player = Player.make({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
@@ -37,7 +42,7 @@ let init = () => {
 		tileSize: [37,36],
 		frames:[[290,61], [338,61], [386,60], 
 			[296,109], [344,108], [391,109]],
-		// animate: {frames:[3,4,5], dt:400}
+		animate: {frames:[3,4,5], dt:400}
 	});
 
 	// some tiles
@@ -48,39 +53,37 @@ let init = () => {
 	});
 	DataStore.setValue(['data', 'Sprite', 'tree'], tree);
 
-	// Stage.addSprite(stage, player);
+	Stage.addSprite(stage, player);
 
 	Stage.addSprite(stage, goat);
 
-	if (true) {
-		Game.init();
-		return;
-	}
-
 	Stage.addSprite(stage, tree);
+
 	let tree2 = Sprite.make(tree);
 	tree2.id = 'tree2';
-	tree2.frame = 3; tree2.x = 500;
-	Stage.addSprite(stage, tree2);
+	tree2.frame = 3; 
+	tree2.x = 50; tree.y=50;
+	// Stage.addSprite(stage, tree2);
 
 	let grass = Sprite.make(tree);
 	grass.id = 'grass';
 	grass.height = 150;
 	grass.dropzone = true;
 	grass.zIndex = -1;
-	grass.frame = 2; grass.x = 300;
+	grass.frame = 2; 
+	grass.y = 150; grass.x = 150;
 	Stage.addSprite(stage, grass);
 	
 	let grass2 = Sprite.make(grass);
 	grass2.id = 'grass2';
-	grass2.frame = 4; grass2.x = 400; grass2.y += 100;
+	grass2.frame = 4; grass2.x += 0; grass2.y += 75;
 	Stage.addSprite(stage, grass2);		
 
 	// cards
-	let wall = Sprite.make({src:''});
+	// let wall = Sprite.make({src:''});
 	let seed = Sprite.make({src:'/img/FruitTreeSeed.png'});
 	game.cards = [
-		Card.make({id:'wall', sprite:wall}),
+		// Card.make({id:'wall', sprite:wall}),
 		Card.make({id:'seed', sprite:seed})
 	];
 

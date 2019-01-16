@@ -26,10 +26,11 @@ const VSprite = ({sprite, tick}) => {
 	// under-foot floor tiles
 	if (sprite.zIndex < 0) zIndex -= 1000;
 
-	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : 0+' '+0;
+	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : [0,0];
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,
-		border: sprite.selected? 'solid 2px yellow' : 'solid 2px black' // TODO add an isometric selected base with lower z-index
+		border: sprite.selected? 'solid 2px yellow' : null 
+		// TODO add an isometric selected base with lower z-index
 	};
 	// canvas
 	let img;
@@ -42,15 +43,26 @@ const VSprite = ({sprite, tick}) => {
 			offTop = frameOffset[1];
 			// let r = frameOffset[2] || l+rect.width, b = frameOffset[3] || t+rect.height;
 			// imgStyle.clip = "rect(" + [t, r, b, l].join(',') +")";
-		}
-		let imgStyle = {
+		}		
+		let imgStyle = {			
 			position:'absolute', overflow:'hidden',
   			// width: rect.width+'px', 
 			// maxHeight: rect.height+'px',
 			transform: `translate(-${offLeft}px, -${offTop}px)`,
+			transformOrigin: "0 0",
       		imageRendering: 'crisp-edges',
 		};
-		// style.transform = `scale(${this.props.scale || this.context.scale})`;
+		if (sprite.tileSize) {
+			let scale = rect.width / sprite.tileSize[0];
+			if (scale) imgStyle.transform = "scale("+scale+") "+imgStyle.transform;
+		} else if ( ! sprite.frames) {
+			// set tileSize = the whole image, so we can do scaling
+			let _img = new Image();
+			_img.onload = () => {
+				sprite.tileSize = [_img.naturalWidth, _img.naturalHeight];
+			};
+			_img.src = sprite.src;			
+		}
       	// transformOrigin: 'top left',
 		// clip is rect(top, right, bottom left)!		
 		img = <img src={sprite.src} style={imgStyle} />
