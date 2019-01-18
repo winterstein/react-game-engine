@@ -17,6 +17,7 @@ const RT2 = Math.sqrt(2);
  * x: right-left
  * y: right-down
  * z: up (height)
+ * @return [x,y]
  */
 Grid.screenFromGame = (x,y,z=0) => {
 	return [(x+y)*RT2, (y-x)*RT2 - z];
