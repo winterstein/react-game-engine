@@ -11,7 +11,7 @@ import CanvasComponent from './CanvasComponent';
 import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 
-const VStage = ({stage}) => {
+const VStage = ({stage, width=500, height=500}) => {
 	// console.log("draw VStage");
 	// dropzone on tiles
 	let tw = Grid.tileWidth; let th= Grid.tileHeight;
@@ -28,6 +28,7 @@ const VStage = ({stage}) => {
 
 		// stage.width and 
 		ctx.strokeStyle = "#333";
+		ctx.fillStyle = '#ccffcc';
 		// (stage.width/tx)
 		for(let tx=0; tx<5; tx++) {
 			for(let ty=0; ty<5; ty++) {
@@ -44,17 +45,19 @@ const VStage = ({stage}) => {
 				ctx.lineTo(s3.x, s3.y);
 				ctx.lineTo(s1.x, s1.y);
 				ctx.closePath();
+				ctx.fill();
 				ctx.stroke();
-				console.log(tx, ty, s1,s4);
+				// console.log(tx, ty, s1,s4);
 			}
 		}
 	};
 
-// {stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
+// 
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
-			<CanvasComponent width={500} height={500} 
+			<CanvasComponent width={width} height={height} 
 				render={ctx => drawGrid(ctx)} />
+			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
 		<Cards />
 </div>);

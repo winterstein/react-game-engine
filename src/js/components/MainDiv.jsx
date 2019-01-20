@@ -15,6 +15,7 @@ import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
 import GamePage from './GamePage';
+import MultiplayerPage from './MultiplayerPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
@@ -27,6 +28,7 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	game: GamePage,
+	multiplayer: MultiplayerPage,
 	test: TestPage,
 };
 
@@ -77,6 +79,13 @@ class MainDiv extends Component {
 	}
 
 	render() {
+		if ( ! DataStore.getValue('env', 'width')) {
+			DataStore.setValue(['env', 'width'], window.innerWidth, false);
+			DataStore.setValue(['env', 'height'], window.innerHeight, false);
+			setTimeout(DataStore.update, 1);
+			return null;
+		}
+
 		let path = DataStore.getValue('location', 'path');	
 		let page = (path && path[0]);
 		if ( ! page) {

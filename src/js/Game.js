@@ -54,11 +54,12 @@ Game.init = () => {
  * @return game object -- never null even pre-init. Will create if unset.
  */
 Game.get = () => {
-	return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], Game.make());
+	return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], Game.make(), false);
 };
 
 Game.getStage = () => {
 	return Game.get().stage;
 };
 
+window.Game = Game; //debug
 export default Game;

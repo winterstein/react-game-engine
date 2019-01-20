@@ -10,9 +10,11 @@ const Super = Object.assign({}, This);
 export default Sprite;
 
 /**
+ * src: {url}
  * x: game-x
  * y: game-y (NOT height)
- * 
+ * frames: [[x,y]]
+ * tiles: ?[rows, columns] in the image
  */
 Sprite.make = (base) => {
 	base = Super.make(base);
@@ -23,6 +25,20 @@ Sprite.make = (base) => {
 		frame:0
 	}, base);
 	if ( ! sp.id) sp.id = nonce();
+	// split into tiles?
+	if (sp.tileSize && sp.tiles && ! sp.frames) {
+		sp.frames = [];
+		let mx = sp.tileMargin.right || 0;
+		let my = sp.tileMargin.top || 0;
+		for(let r=0; r<sp.tiles[0]; r++) {
+			for(let c=0; c<sp.tiles[1]; c++) {
+				let fx = c*sp.tileSize + c*mx;
+				let fy = r*sp.tileSize + r*my;
+				let frame = [fx, fy];
+				sp.frames.push(frame);
+			}
+		}
+	}
 	return sp;
 };
 
