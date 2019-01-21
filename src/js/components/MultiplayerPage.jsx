@@ -16,6 +16,7 @@ import Sprite from '../data/Sprite';
 import Stage from '../data/Stage';
 import Tile from '../data/Tile';
 import VStage from './VStage';
+import VSprite from './VSprite';
 import MultiplayerGame from '../MultiplayerGame';
 
 const MultiplayerPage = () => {
@@ -43,6 +44,9 @@ const doThrow = ({player}) => {
 	let sprite = game.sprites.duck;
 	// spawn - ie copy and add
 	sprite = {...sprite};
+	sprite.x = 150; sprite.y=200;
+	sprite.dy = -1;
+	if (sprite.animation) sprite.animate = sprite.animation['walk-left'];
 	Stage.addSprite(stage, sprite);
 };
 
@@ -52,10 +56,17 @@ const Controls = ({player}) => {
 		top:player.top, left:player.left, right:player.right, bottom:player.bottom,
 		border:'solid 1px '+player.color
 	};
+	let item = player.item;
+	if ( ! item) {
+		setTimeout(() => {
+			nextItem({player});
+		}, 1);
+		item = game.sprites.loading;
+	}
 	return (
 		<div style={style}>
-			<div>heart</div>
-			<button>Next</button>
+			<VSprite sprite={item} />
+			<button onClick={e => nextItem({player})}>Next</button>
 			<button className='btn-big-round' onClick={e => doThrow({player})}>Throw</button>
 		</div>
 	);

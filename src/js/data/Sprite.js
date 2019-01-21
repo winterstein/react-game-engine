@@ -1,13 +1,13 @@
 
-import {isa, defineType, getType, nonce} from '../base/data/DataClass';
+import {isa, defineType, getType, nonce, DataClass} from '../base/data/DataClass';
 
 import Rect from './Rect';
 import Grid from './Grid';
 
-const Sprite = defineType('Sprite');
-const This = Sprite;
+const S = defineType('Sprite');
+const This = S;
 const Super = Object.assign({}, This);
-export default Sprite;
+
 
 /**
  * src: {url}
@@ -16,35 +16,51 @@ export default Sprite;
  * frames: [[x,y]]
  * tiles: ?[rows, columns] in the image
  */
-Sprite.make = (base) => {
-	base = Super.make(base);
-	let sp = Object.assign({
-		src:'/img/dummy-sprite.png', 
-		offsetx:0, offsety:0, 
-		width:100, height:100, 
-		frame:0
-	}, base);
-	if ( ! sp.id) sp.id = nonce();
-	// split into tiles?
-	if (sp.tileSize && sp.tiles && ! sp.frames) {
-		sp.frames = [];
-		let mx = sp.tileMargin.right || 0;
-		let my = sp.tileMargin.top || 0;
-		for(let r=0; r<sp.tiles[0]; r++) {
-			for(let c=0; c<sp.tiles[1]; c++) {
-				let fx = c*sp.tileSize + c*mx;
-				let fy = r*sp.tileSize + r*my;
-				let frame = [fx, fy];
-				sp.frames.push(frame);
+class Sprite extends DataClass {
+
+	src;
+	x;
+	y;
+	offsetx = 0;
+	offsety = 0;
+	width;
+	height;
+	frame = 0;
+	frames;
+
+	tiles;
+	tileSize;
+	tileMargin;
+	
+	animations = {};
+	animate;
+
+	constructor(base) {
+		super(base);
+		const sp = this;
+		Object.assign(this, {
+			src:'/img/dummy-sprite.png', 
+			width:100, height:100, 
+		}, base);
+		if ( ! sp.id) sp.id = nonce();
+		// split into tiles?
+		if (sp.tileSize && sp.tiles && ! sp.frames) {
+			sp.frames = [];		
+			let mx = (sp.tileMargin && sp.tileMargin.right) || 0;
+			let my = (sp.tileMargin && sp.tileMargin.top) || 0;
+			for(let r=0; r<sp.tiles[0]; r++) {
+				for(let c=0; c<sp.tiles[1]; c++) {
+					let fx = c*sp.tileSize[0] + c*mx;
+					let fy = r*sp.tileSize[1] + r*my + my;
+					let frame = [fx, fy];
+					sp.frames.push(frame);
+				}
 			}
 		}
-	}
-	return sp;
-};
+	} // ./ constructor
+}
 
-// Sprite.gameRect = (sp) => {
-// 	return Rect.make({sp.x, sp.y, sp.width, sp.height});
-// };
+export default Sprite;
 
 Sprite.screenRect = (sp) => {
 	let s = Grid.screenFromGame(sp.x, sp.y, sp.z);

@@ -3,7 +3,23 @@ import DataStore from './base/plumbing/DataStore';
 import {getDataClass, defineType} from './base/data/DataClass';
 import Stage from './data/Stage';
 
-const Game = defineType('Game');
+const G = defineType('Game');
+
+class Game {
+	sprites = [];
+	tick;
+	/** {Number} */
+	dt;
+	/** {Stage} */
+	stage;
+
+	constructor(base) {
+		base = G.make(base);
+		Object.assign(this, base);
+	}
+}
+
+// const Game = defineType('Game');
 
 /**
  * a {Rect} x, y, width, height
