@@ -13,8 +13,6 @@ class Game extends DataClass {
 
 	constructor(base) {
 		super(base);
-		base = G.make(base);
-		Object.assign(this, base);
 	}
 }
 

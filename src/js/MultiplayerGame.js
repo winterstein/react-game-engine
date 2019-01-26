@@ -14,12 +14,12 @@ let initFlag = false;
 let init = () => {
 	if (initFlag) return;
 	const game = Game.get();
-	let stage = Stage.make();
+	let stage = new Stage();
 	game.stage = stage;	
 
 	// make sprites
 	// Monsters
-	let goat = Monster.make({x:50, y:50,
+	let goat = new Monster({x:50, y:50,
 		src:'/img/animals/goats.png',
 		width:64, height:64,
 		tileSize: [37,36],
@@ -27,7 +27,7 @@ let init = () => {
 			[296,109], [344,108], [391,109]],
 		animate: {frames:[3,4,5], dt:400}
 	});
-	let duck = Monster.make({x:50, y:50,
+	let duck = new Monster({x:50, y:50,
 		src:'/img/animals/ducks.png',
 		width:48, height:48,
 		tileSize: [38,38],
