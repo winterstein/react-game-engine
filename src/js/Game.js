@@ -1,11 +1,9 @@
 
 import DataStore from './base/plumbing/DataStore';
-import {getDataClass, defineType} from './base/data/DataClass';
+import DataClass, {getDataClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 
-const G = defineType('Game');
-
-class Game {
+class Game extends DataClass {
 	sprites = [];
 	tick;
 	/** {Number} */
@@ -14,12 +12,11 @@ class Game {
 	stage;
 
 	constructor(base) {
+		super(base);
 		base = G.make(base);
 		Object.assign(this, base);
 	}
 }
-
-// const Game = defineType('Game');
 
 /**
  * a {Rect} x, y, width, height
@@ -70,7 +67,7 @@ Game.init = () => {
  * @return game object -- never null even pre-init. Will create if unset.
  */
 Game.get = () => {
-	return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], Game.make(), false);
+	return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], new Game(), false);
 };
 
 Game.getStage = () => {

@@ -1,8 +1,10 @@
 
-import {isa, defineType, getType} from '../base/data/DataClass';
+import DataClass, {getType} from '../base/data/DataClass';
 import Sprite from './Sprite';
 
-const Snake = defineType('Snake', Sprite);
+class Snake extends Sprite {
+	
+}
 const This = Snake;
 const Super = Sprite;
 export default Snake;

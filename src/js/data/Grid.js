@@ -1,10 +1,11 @@
 
 
-import {isa, defineType, getType} from '../base/data/DataClass';
+import DataClass, {getType} from '../base/data/DataClass';
 import Rect from './Rect';
 
-const Grid = {};
-defineType('Grid');
+class Grid extends DataClass {
+
+}
 const This = Grid;
 export default Grid;
 

@@ -1,7 +1,7 @@
 
-import {isa, defineType, getType} from '../base/data/DataClass';
+import DataClass, {getType} from '../base/data/DataClass';
 
-const Stage = defineType('Stage');
+class Stage extends DataClass {}
 const This = Stage;
 export default Stage;
 

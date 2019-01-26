@@ -1,7 +1,7 @@
 
-import {isa, defineType, getType, nonce} from '../base/data/DataClass';
+import DataClass, {getType, nonce} from '../base/data/DataClass';
 
-const Card = defineType('Card');
+class Card extends DataClass {}
 const This = Card;
 
 export default Card;

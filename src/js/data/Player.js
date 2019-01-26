@@ -1,8 +1,10 @@
 
-import {isa, defineType, getType} from '../base/data/DataClass';
+import DataClass, {getType} from '../base/data/DataClass';
 import Sprite from './Sprite';
 
-const Player = defineType('Player', Sprite);
-const This = Player;
+class Player extends Sprite {
+
+}
+DataClass.register(Player);
 export default Player;
 

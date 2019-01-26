@@ -1,11 +1,18 @@
 
-import {isa, defineType, getType, nonce} from '../base/data/DataClass';
+import DataClass, {getType, nonce} from '../base/data/DataClass';
 
-const Rect = defineType('Rect');
+class Rect extends DataClass {
+	x;
+	y;
+	z=0;
+	width;
+	height;
+	depth=0;
+	constructor(base) {
+		super(base);
+	}
+}
+
 const This = Rect;
 const Super = Object.assign({}, This);
 export default Rect;
-
-Rect.make = ({x,y,z=0,width,height,depth=0}) => {
-	return {x,y,z,width,height,depth};
-};

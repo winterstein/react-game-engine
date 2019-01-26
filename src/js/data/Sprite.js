@@ -1,12 +1,8 @@
 
-import {isa, defineType, getType, nonce, DataClass} from '../base/data/DataClass';
+import DataClass, {getType, nonce} from '../base/data/DataClass';
 
 import Rect from './Rect';
 import Grid from './Grid';
-
-const S = defineType('Sprite');
-const This = S;
-const Super = Object.assign({}, This);
 
 
 /**
@@ -59,6 +55,7 @@ class Sprite extends DataClass {
 		}
 	} // ./ constructor
 }
+DataClass.register(Sprite);
 
 export default Sprite;
 
