@@ -50,6 +50,13 @@ const doThrow = ({player}) => {
 	Stage.addSprite(stage, sprite);
 };
 
+const Button = ({className, onClick, children}) => {
+	return <button className={'btn '+className} 
+		onClick={onClick} onTouchStart={onClick} 
+		onTouchEnd={e => console.log(e)} onMouseDown={e => console.log(e)}
+		>{children}</button>
+};
+
 const Controls = ({player}) => {
 	let style = {
 		position:'absolute', 
@@ -67,7 +74,7 @@ const Controls = ({player}) => {
 		<div style={style}>
 			<VSprite sprite={item} />
 			<button onClick={e => nextItem({player})}>Next</button>
-			<button className='btn-big-round' onClick={e => doThrow({player})}>Throw</button>
+			<Button onClick={e => player.input = {bigButton:'foo'}} >{player.input && player.input.bigButton}</Button>
 		</div>
 	);
 };
