@@ -14,7 +14,12 @@ import CanvasComponent from './CanvasComponent';
     //   transformOrigin: 'top left',
     //   imageRendering: 'pixelated',
 
+/**
+ * @param {object} obj
+ * @param {!Sprite} obj.sprite
+ */
 const VSprite = ({sprite}) => {
+	Sprite.assIsa(sprite);
 	let rect = Sprite.screenRect(sprite);
 	let top = rect.y+'px';
 	let left = rect.x+'px';

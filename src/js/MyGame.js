@@ -14,11 +14,11 @@ let initFlag = false;
 let init = () => {
 	if (initFlag) return;
 	const game = Game.get();
-	let stage = Stage.make();
+	let stage = new Stage();
 	game.stage = stage;
 
 	// one snake
-	let snake = Snake.make({x:100, y:100, length:100, width:200, height:50});
+	let snake = new Snake({x:100, y:100, length:100, width:200, height:50});
 	Stage.addSprite(stage, snake);
 
 	if (false) {
@@ -27,7 +27,7 @@ let init = () => {
 	}
 
 	// make sprites
-	let player = Player.make({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
+	let player = new Player({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
 		height:127, width:70,
 		frames:[[3,4], [94, 4], [186,4], [273,4], 
 			[360,4], [456,4], [550,4], [637,4]],
@@ -36,7 +36,7 @@ let init = () => {
 	DataStore.setValue(['data', 'Sprite', 'player'], player);
 
 	// Monsters
-	let goat = Monster.make({x:50, y:50,
+	let goat = new Monster({x:50, y:50,
 		src:'/img/animals/goats.png',
 		width:64, height:64,
 		tileSize: [37,36],
@@ -46,7 +46,7 @@ let init = () => {
 	});
 
 	// some tiles
-	let tree = Sprite.make({x:100, y:100, src:'/img/tiles/green.png',
+	let tree = new Sprite({x:100, y:100, src:'/img/tiles/green.png',
 		height:300, width:200,
 		frames:[[0, 12], [235,15], [486,15], [716,35], [943,11], [1180,11]],
 		frame: 0,
@@ -59,13 +59,13 @@ let init = () => {
 
 	Stage.addSprite(stage, tree);
 
-	let tree2 = Sprite.make(tree);
+	let tree2 = new Sprite(tree);
 	tree2.id = 'tree2';
 	tree2.frame = 3; 
 	tree2.x = 50; tree.y=50;
 	// Stage.addSprite(stage, tree2);
 
-	let grass = Sprite.make(tree);
+	let grass = new Sprite(tree);
 	grass.id = 'grass';
 	grass.height = 150;
 	grass.dropzone = true;
@@ -74,17 +74,17 @@ let init = () => {
 	grass.y = 150; grass.x = 150;
 	Stage.addSprite(stage, grass);
 	
-	let grass2 = Sprite.make(grass);
+	let grass2 = new Sprite(grass);
 	grass2.id = 'grass2';
 	grass2.frame = 4; grass2.x += 0; grass2.y += 75;
 	Stage.addSprite(stage, grass2);		
 
 	// cards
-	// let wall = Sprite.make({src:''});
-	let seed = Sprite.make({src:'/img/FruitTreeSeed.png'});
+	// let wall = new Sprite({src:''});
+	let seed = new Sprite({src:'/img/FruitTreeSeed.png'});
 	game.cards = [
-		// Card.make({id:'wall', sprite:wall}),
-		Card.make({id:'seed', sprite:seed})
+		// new Card({id:'wall', sprite:wall}),
+		new Card({id:'seed', sprite:seed})
 	];
 
 	Game.init();

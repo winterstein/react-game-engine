@@ -32,5 +32,5 @@ Grid.tileFromGame = (x,y) => {
 };
 
 Grid.rectForTile = (x,y) => {
-	return Rect.make({x:x*Grid.tileWidth, y:y*Grid.tileHeight, width:Grid.tileWidth, height:Grid.tileHeight});
+	return new Rect({x:x*Grid.tileWidth, y:y*Grid.tileHeight, width:Grid.tileWidth, height:Grid.tileHeight});
 };

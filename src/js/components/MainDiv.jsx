@@ -82,7 +82,8 @@ class MainDiv extends Component {
 		if ( ! DataStore.getValue('env', 'width')) {
 			DataStore.setValue(['env', 'width'], window.innerWidth, false);
 			DataStore.setValue(['env', 'height'], window.innerHeight, false);
-			setTimeout(DataStore.update, 1);
+			// NB: wrapper function to get the right this in update
+			setTimeout(() => DataStore.update(), 1);
 			return null;
 		}
 

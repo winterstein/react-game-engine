@@ -57,7 +57,7 @@ const VStage = ({stage, width=500, height=500}) => {
 		<div className='VWorld'>
 			<CanvasComponent width={width} height={height} 
 				render={ctx => drawGrid(ctx)} />
-			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
+			{stage.sprites.map(s => Sprite.assIsa(s) && <VSprite key={s.id} sprite={s} />)}
 		</div>
 		<Cards />
 </div>);

@@ -4,6 +4,11 @@ import DataClass, {getType, nonce} from '../base/data/DataClass';
 import Rect from './Rect';
 import Grid from './Grid';
 
+/** 
+ * @typedef {Object} Animate
+ * @prop {Number[]} frames - indexes into Sprite.frames 
+ * @prop {Number} dt
+*/
 
 /**
  * src: {url}
@@ -13,7 +18,9 @@ import Grid from './Grid';
  * tiles: ?[rows, columns] in the image
  */
 class Sprite extends DataClass {
-
+	/**
+	 * @type {UrlString}
+	 */
 	src;
 	x;
 	y;
@@ -23,12 +30,20 @@ class Sprite extends DataClass {
 	height;
 	frame = 0;
 	frames;
-
+	/**
+	 * 
+	 */
 	tiles;
+	/**
+	 * @type {Number[]}
+	 */
 	tileSize;
 	tileMargin;
 	
 	animations = {};
+	/**
+	 * @type {Animate}
+	 */
 	animate;
 
 	constructor(base) {
@@ -59,14 +74,18 @@ DataClass.register(Sprite);
 
 export default Sprite;
 
+/**
+ * @param {Sprite} sp
+ */
 Sprite.screenRect = (sp) => {
+	Sprite.assIsa(sp);
 	let s = Grid.screenFromGame(sp.x, sp.y, sp.z);
 	// offset the sprite
 	let x = s[0] - sp.width*sp.offsetx;
 	let y = s[1] - sp.height*sp.offsety;
 	let width = sp.width;
 	let height = sp.height;
-	return Rect.make({x,y,width,height});
+	return new Rect({x,y,width,height});
 };
 
 Sprite.update = (sprite, game) => {

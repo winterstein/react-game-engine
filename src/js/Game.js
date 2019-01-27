@@ -2,9 +2,18 @@
 import DataStore from './base/plumbing/DataStore';
 import DataClass, {getDataClass} from './base/data/DataClass';
 import Stage from './data/Stage';
+import Sprite from './data/Sprite';
+
+import {assert} from 'sjtest';
 
 class Game extends DataClass {
-	sprites = [];
+	/**
+	 * String to Sprite
+	 */
+	sprites = {
+		loading: new Sprite()
+	};
+	/** {TimeNumber} */
 	tick;
 	/** {Number} */
 	dt;
@@ -14,7 +23,15 @@ class Game extends DataClass {
 	constructor(base) {
 		super(base);
 	}
-}
+
+	/**
+	 * @return {Game} game object -- never null even pre-init. Will create if unset.
+	 */
+	static get() {
+		return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], new Game(), false);
+	};
+
+} // ./Game
 
 /**
  * a {Rect} x, y, width, height
@@ -45,7 +62,11 @@ Game.update = () => {
 	Stage.assIsa(stage);
 	let typ = getDataClass(stage);
 	typ.update(stage, game);
-	stage.sprites.forEach(s => getDataClass(s).update(s, game));
+	stage.sprites.forEach(s => {
+		const dc = getDataClass(s);
+		assert(dc, "Game.js - no class - use DataClass.register with the class definition", s)
+		dc.update(s, game);
+	});
 
 	DataStore.update();
 };
@@ -59,13 +80,6 @@ Game.init = () => {
 	const game = Game.get();
 	// tick
 	game.tick = new Date().getTime();
-};
-
-/**
- * @return game object -- never null even pre-init. Will create if unset.
- */
-Game.get = () => {
-	return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], new Game(), false);
 };
 
 Game.getStage = () => {
