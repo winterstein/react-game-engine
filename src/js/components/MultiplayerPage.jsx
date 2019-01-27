@@ -82,7 +82,9 @@ const Controls = ({player}) => {
 		<div style={style}>
 			{item? <VSprite sprite={item} /> : null}
 			<button onClick={e => nextItem({player})}>Next</button>
-			<Button onClick={e => player.input = {bigButton:'foo'}} >{player.input && player.input.bigButton}</Button>
+			<Button className='btn-primary btn-big-round' onClick={e => player.input = {bigButton:'foo'}} >
+				{(player.input && player.input.bigButton) || 'x'}
+			</Button>
 		</div>
 	);
 };
