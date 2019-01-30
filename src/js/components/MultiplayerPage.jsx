@@ -53,7 +53,8 @@ const doThrow = ({player}) => {
 const Button = ({className, onClick, children}) => {
 	return <button className={'btn '+className} 
 		onClick={onClick} onTouchStart={onClick} 
-		onTouchEnd={e => console.log(e)} onMouseDown={e => console.log(e)}
+		onTouchEnd={e => console.log('onTouchEnd', e)} 
+		onMouseDown={e => console.log('onMouseDown', e)}
 		>{children}</button>
 };
 
