@@ -18,7 +18,9 @@ let init = () => {
 	game.stage = stage;
 
 	// one snake
-	let snake = new Snake({x:100, y:100, length:100, width:200, height:50});
+	let snake = new Snake({x:100, y:100, width:200, height:50});
+	Sprite.assIsa(snake);
+
 	Stage.addSprite(stage, snake);
 
 	if (false) {
@@ -33,7 +35,7 @@ let init = () => {
 			[360,4], [456,4], [550,4], [637,4]],
 		animate: {frames:[0,1,2,3,4,5,6,7], dt:400}
 	});
-	DataStore.setValue(['data', 'Sprite', 'player'], player);
+	DataStore.setValue(['data', 'Sprite', 'player'], player, false);
 
 	// Monsters
 	let goat = new Monster({x:50, y:50,
@@ -51,7 +53,7 @@ let init = () => {
 		frames:[[0, 12], [235,15], [486,15], [716,35], [943,11], [1180,11]],
 		frame: 0,
 	});
-	DataStore.setValue(['data', 'Sprite', 'tree'], tree);
+	DataStore.setValue(['data', 'Sprite', 'tree'], tree, false);
 
 	Stage.addSprite(stage, player);
 

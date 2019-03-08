@@ -12,6 +12,7 @@ class Rect extends DataClass {
 		super(base);
 	}
 }
+DataClass.register(Rect, 'Rect');
 
 const This = Rect;
 const Super = Object.assign({}, This);

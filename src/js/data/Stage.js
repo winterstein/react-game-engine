@@ -6,7 +6,7 @@ class Stage extends DataClass {
 	width = 1000;
 	height = 1000;
 }
-DataClass.register(Stage);
+DataClass.register(Stage,'Stage');
 export default Stage;
 
 Stage.addSprite = (stage, sprite) => {

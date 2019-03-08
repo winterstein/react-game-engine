@@ -22,6 +22,7 @@ class Game extends DataClass {
 
 	constructor(base) {
 		super(base);
+		Object.assign(this, base);
 	}
 
 	/**
@@ -32,6 +33,7 @@ class Game extends DataClass {
 	};
 
 } // ./Game
+DataClass.register(Game, 'Game');
 
 /**
  * a {Rect} x, y, width, height

@@ -5,6 +5,7 @@ import Sprite from './Sprite';
  * A Tile is a Sprite without movement
  */
 class Tile extends Sprite {}
+DataClass.register(Tile, 'Tile');
 const This = Tile;
 export default Tile;
 

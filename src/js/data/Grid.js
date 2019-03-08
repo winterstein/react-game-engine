@@ -6,6 +6,7 @@ import Rect from './Rect';
 class Grid extends DataClass {
 
 }
+DataClass.register(Grid, 'Grid');
 const This = Grid;
 export default Grid;
 

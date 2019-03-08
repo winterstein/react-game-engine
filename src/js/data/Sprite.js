@@ -70,7 +70,7 @@ class Sprite extends DataClass {
 		}
 	} // ./ constructor
 }
-DataClass.register(Sprite);
+DataClass.register(Sprite,'Sprite');
 
 export default Sprite;
 

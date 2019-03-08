@@ -5,6 +5,7 @@ import Sprite from './Sprite';
 class Snake extends Sprite {
 	
 }
+DataClass.register(Snake, 'Snake');
 const This = Snake;
 const Super = Sprite;
 export default Snake;

@@ -3,7 +3,7 @@ import DataClass, {getType} from '../base/data/DataClass';
 import Sprite from './Sprite';
 
 class Monster extends Sprite {}
-DataClass.register(Monster);
+DataClass.register(Monster,'Monster');
 
 const This = Monster;
 const Super = Sprite;
