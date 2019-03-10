@@ -52,7 +52,7 @@ Game.update = () => {
 	const game = Game.get();
 	const lastTick = game.tick;
 	let newTick = new Date().getTime(); // TODO pause logic
-	if (newTick - lastTick < 50) {
+	if (newTick - lastTick < 500) {
 		return; // target 20 fps
 	}
 	game.tick = newTick;

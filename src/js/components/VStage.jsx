@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { assert, assMatch } from 'sjtest';
+import {getType} from '../base/data/DataClass';
 import Sprite from '../data/Sprite';
 import Stage from '../data/Stage';
 import Card from '../data/Card';
@@ -11,33 +12,18 @@ import CanvasComponent from './CanvasComponent';
 import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 
-const VStage = ({stage, width=500, height=500}) => {
+const VStage = ({stage, width=800, height=500}) => {
 	// console.log("draw VStage");
 	// dropzone on tiles
-	let tw = Grid.tileWidth; let th= Grid.tileHeight;
 	let drawGrid = ctx => {
-
-		ctx.beginPath();
-		ctx.moveTo(10, 10);
-		ctx.lineTo(10, 20);
-		ctx.lineTo(20, 20);
-		ctx.lineTo(20, 10);
-		ctx.closePath();
-		ctx.fillStyle='#ff0000';
-		ctx.fill();
-
-		// stage.width and 
+		const grid = stage.grid;
 		ctx.strokeStyle = "#333";
-		ctx.fillStyle = '#ccffcc';
-		// (stage.width/tx)
-		for(let tx=0; tx<5; tx++) {
-			for(let ty=0; ty<5; ty++) {
-				let gx = tx*tw, gy = ty*th;
-				let gx2 = gx+tw, gy2 = gy+th;
-				let s1 = Grid.screenFromGame(gx, gy, 0);
-				let s2 = Grid.screenFromGame(gx2, gy, 0);
-				let s3 = Grid.screenFromGame(gx, gy2, 0);
-				let s4 = Grid.screenFromGame(gx2, gy2, 0);
+		for(let tx=0; tx<10; tx++) {
+			for(let ty=0; ty<10; ty++) {
+				let s1 = Grid.screenFromGame({x:tx, y:ty});
+				let s2 = Grid.screenFromGame({x:tx+1, y:ty});
+				let s3 = Grid.screenFromGame({x:tx, y:ty+1});
+				let s4 = Grid.screenFromGame({x:tx+1, y:ty+1});
 				ctx.beginPath();
 				ctx.moveTo(s1.x, s1.y);
 				ctx.lineTo(s2.x, s2.y);
@@ -45,21 +31,21 @@ const VStage = ({stage, width=500, height=500}) => {
 				ctx.lineTo(s3.x, s3.y);
 				ctx.lineTo(s1.x, s1.y);
 				ctx.closePath();
-				ctx.fill();
 				ctx.stroke();
-				// console.log(tx, ty, s1,s4);
 			}
 		}
 	};
 
-// 
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
 			<CanvasComponent width={width} height={height} 
 				render={ctx => drawGrid(ctx)} />
-			{stage.sprites.map(s => Sprite.assIsa(s) && <VSprite key={s.id} sprite={s} />)}
+			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
 		<Cards />
+		<div className='debug'>
+			Sprites: {stage.sprites.map(s => s.id+" "+getType(s)).join(", ")}
+		</div>
 </div>);
 };
 

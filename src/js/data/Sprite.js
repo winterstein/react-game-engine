@@ -22,11 +22,23 @@ class Sprite extends DataClass {
 	 * @type {UrlString}
 	 */
 	src;
+	/**
+	 * @type {Number} game tile x
+	 */
 	x;
+	/**
+	 * @type {Number} game tile y
+	 */
 	y;
 	offsetx = 0;
 	offsety = 0;
+	/**
+	 * screen pixel width
+	 */
 	width;
+	/**
+	 * screen pixel height
+	 */
 	height;
 	frame = 0;
 	frames;
@@ -79,10 +91,10 @@ export default Sprite;
  */
 Sprite.screenRect = (sp) => {
 	Sprite.assIsa(sp);
-	let s = Grid.screenFromGame(sp.x, sp.y, sp.z);
+	let sxy = Grid.screenFromGame(sp);
 	// offset the sprite
-	let x = s[0] - sp.width*sp.offsetx;
-	let y = s[1] - sp.height*sp.offsety;
+	let x = sxy.x - sp.width*sp.offsetx;
+	let y = sxy.y - sp.height*sp.offsety;
 	let width = sp.width;
 	let height = sp.height;
 	return new Rect({x,y,width,height});

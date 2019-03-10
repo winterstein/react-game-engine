@@ -90,7 +90,7 @@ class MainDiv extends Component {
 		let path = DataStore.getValue('location', 'path');	
 		let page = (path && path[0]);
 		if ( ! page) {
-			modifyHash([DEFAULT_PAGE]);
+			_.defer(() =>modifyHash([DEFAULT_PAGE]));
 			return null;
 		}
 		assert(page);

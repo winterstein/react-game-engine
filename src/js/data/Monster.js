@@ -10,8 +10,6 @@ const Super = Sprite;
 export default Monster;
 
 Monster.update = (sprite, game) => {
-	// TODO adjust
-	// sprite.dx = 1; 
-	// sprite.dy = 1;
+	// TODO adjust dx, dy
 	Super.update(sprite, game);	
 };

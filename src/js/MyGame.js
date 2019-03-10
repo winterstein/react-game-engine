@@ -2,6 +2,7 @@
 import DataStore from './base/plumbing/DataStore';
 import {getDataClass} from './base/data/DataClass';
 import Stage from './data/Stage';
+import Grid from './data/Grid';
 import Sprite from './data/Sprite';
 import Player from './data/Player';
 import Monster from './data/Monster';
@@ -13,12 +14,17 @@ let initFlag = false;
 
 let init = () => {
 	if (initFlag) return;
+	console.log("MyGame.js - init");
 	const game = Game.get();
 	let stage = new Stage();
-	game.stage = stage;
+	game.stage = stage;	
+
+	// How big is the Stage?
+	const grid = new Grid({width:10, height:10});
+	Stage.setGrid(stage, grid);
 
 	// one snake
-	let snake = new Snake({x:100, y:100, width:200, height:50});
+	let snake = new Snake({x:1, y:1, width:200, height:50});
 	Sprite.assIsa(snake);
 
 	Stage.addSprite(stage, snake);
@@ -29,7 +35,7 @@ let init = () => {
 	}
 
 	// make sprites
-	let player = new Player({name:"Dan", x:10, y:10, src:'/img/obi-wan-kenobi.png',
+	let player = new Player({name:"Dan", x:5, y:5, src:'/img/obi-wan-kenobi.png',
 		height:127, width:70,
 		frames:[[3,4], [94, 4], [186,4], [273,4], 
 			[360,4], [456,4], [550,4], [637,4]],
@@ -38,7 +44,7 @@ let init = () => {
 	DataStore.setValue(['data', 'Sprite', 'player'], player, false);
 
 	// Monsters
-	let goat = new Monster({x:50, y:50,
+	let goat = new Monster({x:2, y:1,
 		src:'/img/animals/goats.png',
 		width:64, height:64,
 		tileSize: [37,36],
@@ -48,7 +54,7 @@ let init = () => {
 	});
 
 	// some tiles
-	let tree = new Sprite({x:100, y:100, src:'/img/tiles/green.png',
+	let tree = new Sprite({x:3, y:3, src:'/img/tiles/green.png',
 		height:300, width:200,
 		frames:[[0, 12], [235,15], [486,15], [716,35], [943,11], [1180,11]],
 		frame: 0,
