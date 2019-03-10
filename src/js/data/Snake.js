@@ -21,9 +21,11 @@ Snake.render = (sprite, ctx) => {
 	let w = 2;
 	let h2 = (sprite.height - 6*w) / 2; // NB: subtract extra w for head width space
 
+	let sxy = Grid.screenFromGame(sprite);
+
 	for(let i=0; i<sections; i++) {
 		let x = i*sw;
-		let r = (x + sprite.x+sprite.y) * Math.PI * 4 / sprite.width;		
+		let r = (x + sxy.x+sxy.y) * Math.PI * 4 / sprite.width;		
 		let y = 2*w + h2*(1+Math.sin(r));	// extra w for the head space
 		let nx = - Math.cos(r);
 		let ny = 1;
