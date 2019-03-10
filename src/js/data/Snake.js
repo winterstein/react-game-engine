@@ -1,6 +1,7 @@
 
 import DataClass, {getType} from '../base/data/DataClass';
 import Sprite from './Sprite';
+import Grid from './Grid';
 
 class Snake extends Sprite {
 	
@@ -10,6 +11,9 @@ const This = Snake;
 const Super = Sprite;
 export default Snake;
 
+/**
+ * renders into a positioned mini-canvas
+ */
 Snake.render = (sprite, ctx) => {
 	let sections = 20;
 	let ptopx, ptopy, pbotx, pboty;
@@ -59,8 +63,8 @@ Snake.render = (sprite, ctx) => {
 Snake.update = (sprite, game) => {
 	sprite.canvas = true;
 	// TODO adjust
-	sprite.dx = 10; 
-	sprite.dy = 10;
+	sprite.dx = 0.1; 
+	sprite.dy = 0.1;
 
 	Super.update(sprite, game);	
 };
