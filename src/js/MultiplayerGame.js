@@ -1,6 +1,6 @@
 
 import DataStore from './base/plumbing/DataStore';
-import {getDataClass} from './base/data/DataClass';
+import {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Sprite from './data/Sprite';
 import Player from './data/Player';

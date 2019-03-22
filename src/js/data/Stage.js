@@ -9,7 +9,7 @@ class Stage extends DataClass {
 	/**
 	 * @type {!Grid}
 	 */
-	grid = new Grid();
+	grid = Grid.get();
 
 	constructor(base) {
 		super(base);

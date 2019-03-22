@@ -1,5 +1,5 @@
 
-import DataClass, {getType, nonce} from '../base/data/DataClass';
+import DataClass, {getClass, getType, nonce} from '../base/data/DataClass';
 
 import Rect from './Rect';
 import Grid from './Grid';
@@ -9,6 +9,12 @@ import Grid from './Grid';
  * @prop {Number[]} frames - indexes into Sprite.frames 
  * @prop {Number} dt
 */
+
+
+/** 
+ * @typedef {Number[]} IntXY
+*/
+
 
 /**
  * src: {url}
@@ -40,14 +46,26 @@ class Sprite extends DataClass {
 	 * screen pixel height
 	 */
 	height;
+	/**
+	 * index into frames for the current frame
+	 */
 	frame = 0;
+	/**
+	 * [[x,y]]
+	 */
 	frames;
 	/**
-	 * 
+	 * @typedef {Command}
+	 */
+	commands = [];
+
+	/**
+	 * Use with tileSize and tileMargin to populate frames from a sprite-sheet
+	 * @type {?IntXY} [rows, columns] in the image
 	 */
 	tiles;
 	/**
-	 * @type {Number[]}
+	 * @type {Number[]} width, height
 	 */
 	tileSize;
 	tileMargin;
@@ -68,6 +86,7 @@ class Sprite extends DataClass {
 		if ( ! sp.id) sp.id = nonce();
 		// split into tiles?
 		if (sp.tileSize && sp.tiles && ! sp.frames) {
+			assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
 			sp.frames = [];		
 			let mx = (sp.tileMargin && sp.tileMargin.right) || 0;
 			let my = (sp.tileMargin && sp.tileMargin.top) || 0;
@@ -87,6 +106,15 @@ DataClass.register(Sprite,'Sprite');
 export default Sprite;
 
 /**
+ * @param sprite {!Sprite}
+ * @param cmd {!Command}
+ */
+Sprite.addCommand = (sprite, cmd) => {
+	if ( ! sprite.commands) sprite.commands = [];
+	sprite.commands.push(cmd);
+};
+
+/**
  * @param {Sprite} sp
  */
 Sprite.screenRect = (sp) => {
@@ -103,6 +131,16 @@ Sprite.screenRect = (sp) => {
 Sprite.update = (sprite, game) => {
 	const tick = game.tick;
 	const dt = game.dt;
+	// command?
+	if (sprite.commands && sprite.commands[0]) {
+		const cmd = sprite.commands[0];
+		const typ = getClass(sprite);
+		typ.doCommand(sprite, cmd);
+		// remove if done
+		if (cmd.done) {
+			sprite.commands.splice(0,1);
+		}
+	}
 	// animate 
 	if (sprite.animate) {
 		let tocks = Math.floor(tick / sprite.animate.dt);
@@ -119,4 +157,8 @@ Sprite.update = (sprite, game) => {
 	let stage = game.stage;
 	// TODO get stage rect, test for collision, call onExit if no collision
 	// Game.
+}; // ./update()
+
+Sprite.doCommand = (sprite, cmd) => {
+	console.warn(cmd, sprite);
 };

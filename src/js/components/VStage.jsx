@@ -11,6 +11,8 @@ import DataStore from '../base/plumbing/DataStore';
 import CanvasComponent from './CanvasComponent';
 import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
+import ChunkyButton from './ChunkyButton';
+
 
 const VStage = ({stage, width=800, height=500}) => {
 	// console.log("draw VStage");
@@ -38,15 +40,24 @@ const VStage = ({stage, width=800, height=500}) => {
 
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
-			<CanvasComponent width={width} height={height} 
+			<CanvasComponent width={width} height={height}
 				render={ctx => drawGrid(ctx)} />
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
 		<Cards />
+		<UI stage={stage} />
 		<div className='debug'>
-			Sprites: {stage.sprites.map(s => s.id+" "+getType(s)).join(", ")}
+			Sprites: {stage.sprites.map(s => s.id+" "+getType(s)+" frame: "+s.frame+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
 		</div>
 </div>);
+};
+
+const UI = ({stage}) => {
+	let players = Game.get().players;
+	return (<div className='VUI'>
+		{players.map(plyr => <ChunkyButton key={plyr.id} player={plyr} 
+			onClick={ e => Sprite.addCommand(plyr, {name:'fire'}) } />)}
+	</div>);
 };
 
 const Cards = () => {

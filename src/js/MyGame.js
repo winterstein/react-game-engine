@@ -1,6 +1,6 @@
 
 import DataStore from './base/plumbing/DataStore';
-import {getDataClass} from './base/data/DataClass';
+import {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Grid from './data/Grid';
 import Sprite from './data/Sprite';
@@ -20,7 +20,9 @@ let init = () => {
 	game.stage = stage;	
 
 	// How big is the Stage?
-	const grid = new Grid({width:10, height:10});
+	const grid = Grid.get();
+	grid.width = 10; grid.height = 10;
+	grid.display = '2d';
 	Stage.setGrid(stage, grid);
 
 	// one snake
@@ -35,13 +37,22 @@ let init = () => {
 	}
 
 	// make sprites
-	let player = new Player({name:"Dan", x:5, y:5, src:'/img/obi-wan-kenobi.png',
-		height:127, width:70,
-		frames:[[3,4], [94, 4], [186,4], [273,4], 
-			[360,4], [456,4], [550,4], [637,4]],
-		animate: {frames:[0,1,2,3,4,5,6,7], dt:400}
+	// let player = new Player({name:"Dan", x:5, y:5, src:'/img/obi-wan-kenobi.png',
+	// 	height:127, width:70,
+	// 	frames:[[3,4], [94, 4], [186,4], [273,4], 
+	// 		[360,4], [456,4], [550,4], [637,4]],
+	// 	animate: {frames:[0,1,2,3,4,5,6,7], dt:400}
+	// });
+
+	let player = new Player({name:"Dan", x:5, y:5, src:'/img/animals/chicken_large.png',
+		height:48, width:48,
+		tileSize: [48,48],
+		tileMargin: {top:0, right:0},
+		tiles: [8,12],
+		animate: {frames:[24,25,26], dt:200}
 	});
 	DataStore.setValue(['data', 'Sprite', 'player'], player, false);
+	Game.setPlayers(game, [player]);
 
 	// Monsters
 	let goat = new Monster({x:2, y:1,
@@ -50,7 +61,9 @@ let init = () => {
 		tileSize: [37,36],
 		frames:[[290,61], [338,61], [386,60], 
 			[296,109], [344,108], [391,109]],
-		animate: {frames:[3,4,5], dt:400}
+		animate: {frames:[3,4,5], dt:400},
+		dx:0.1, 
+		dy:0.1,
 	});
 
 	// some tiles
@@ -86,6 +99,8 @@ let init = () => {
 	grass2.id = 'grass2';
 	grass2.frame = 4; grass2.x += 0; grass2.y += 75;
 	Stage.addSprite(stage, grass2);		
+
+	// UI??
 
 	// cards
 	// let wall = new Sprite({src:''});

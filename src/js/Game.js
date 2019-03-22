@@ -1,6 +1,6 @@
 
 import DataStore from './base/plumbing/DataStore';
-import DataClass, {getDataClass} from './base/data/DataClass';
+import DataClass, {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Sprite from './data/Sprite';
 
@@ -13,6 +13,10 @@ class Game extends DataClass {
 	sprites = {
 		loading: new Sprite()
 	};
+	/**
+	 * @typedef {Player[]}
+	 */
+	players = [];
 	/** {TimeNumber} */
 	tick;
 	/** {Number} */
@@ -62,10 +66,10 @@ Game.update = () => {
 	const stage = Game.getStage();
 	if ( ! stage) return;
 	Stage.assIsa(stage);
-	let typ = getDataClass(stage);
+	let typ = getClass(stage);
 	typ.update(stage, game);
 	stage.sprites.forEach(s => {
-		const dc = getDataClass(s);
+		const dc = getClass(s);
 		assert(dc, "Game.js - no class - use DataClass.register with the class definition", s)
 		dc.update(s, game);
 	});
@@ -86,6 +90,13 @@ Game.init = () => {
 
 Game.getStage = () => {
 	return Game.get().stage;
+};
+/**
+ * @param game {!Game}
+ * @param players {!Player[]}
+ */
+Game.setPlayers = (game, players) => {
+	game.players = players;
 };
 
 window.Game = Game; //debug
