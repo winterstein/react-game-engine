@@ -13,8 +13,13 @@ import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 import ChunkyButton from './ChunkyButton';
 
+let lastRender = new Date();
 
 const VStage = ({stage, width=800, height=500}) => {
+	const now = new Date();
+	const dt = now.getTime() - lastRender.getTime();
+	let fps = 1000/dt;
+	lastRender = now;
 	// console.log("draw VStage");
 	// dropzone on tiles
 	let drawGrid = ctx => {
@@ -47,6 +52,7 @@ const VStage = ({stage, width=800, height=500}) => {
 		<Cards />
 		<UI stage={stage} />
 		<div className='debug'>
+			fps: {Math.round(fps*10)/10} <br/>
 			Sprites: {stage.sprites.map(s => s.id+" "+getType(s)+" frame: "+s.frame+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
 		</div>
 </div>);

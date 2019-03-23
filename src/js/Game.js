@@ -3,6 +3,7 @@ import DataStore from './base/plumbing/DataStore';
 import DataClass, {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Sprite from './data/Sprite';
+import Rect from './data/Rect';
 
 import {assert} from 'sjtest';
 
@@ -45,18 +46,21 @@ DataClass.register(Game, 'Game');
  */
 Game.testCollision = (a, b) => {
 	if (a===b) return false;
+	Rect.assIsa(a);
+	Rect.assIsa(b);
 	// ref https://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
 	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
          (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
 };
 
+const tickLength = 1000 / 20;
 
 Game.update = () => {
 	// tick
 	const game = Game.get();
 	const lastTick = game.tick;
 	let newTick = new Date().getTime(); // TODO pause logic
-	if (newTick - lastTick < 500) {
+	if (newTick - lastTick < tickLength) {
 		return; // target 20 fps
 	}
 	game.tick = newTick;
@@ -81,7 +85,7 @@ Game.init = () => {
 	if (Game.initFlag) return;
 	Game.initFlag = true;
 	// update loop
-	let updater = setInterval(() => { Game.update(); }, 20); // target 1 tick
+	let updater = setInterval(() => { Game.update(); }, tickLength/4); // target 1 tick
 	// game object, if not already made
 	const game = Game.get();
 	// tick
