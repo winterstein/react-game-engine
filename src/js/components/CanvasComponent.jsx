@@ -14,9 +14,15 @@ class CanvasComponent extends React.Component {
 		this.props.render(ctx);
     }
     render() {
-		if (this.refs.canvas) this.updateCanvas();
+		if (this.refs.canvas) {
+			this.updateCanvas();
+		}
+		const style = {
+			width: this.props.width || '100%',
+			height: this.props.height || '100%'
+		};
         return (
-			<canvas ref="canvas" width={this.props.width} height={this.props.height}/>
+			<canvas ref="canvas" style={style} />
         );
     }
 }

@@ -24,6 +24,10 @@ DataClass.register(Stage,'Stage');
 export default Stage;
 
 Stage.addSprite = (stage, sprite) => {
+	if (stage.sprites.filter(sp => sp.id===sprite.id).length) {
+		console.warn("Stage.js - Skip double add of sprite", sprite);
+		return;
+	}
 	stage.sprites.push(sprite);
 };
 

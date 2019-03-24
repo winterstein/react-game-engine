@@ -15,7 +15,7 @@ import ChunkyButton from './ChunkyButton';
 
 let lastRender = new Date();
 
-const VStage = ({stage, width=800, height=500}) => {
+const VStage = ({stage}) => {
 	const now = new Date();
 	const dt = now.getTime() - lastRender.getTime();
 	let fps = 1000/dt;
@@ -47,7 +47,7 @@ const VStage = ({stage, width=800, height=500}) => {
 
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
-			<CanvasComponent width={width} height={height}
+			<CanvasComponent width={'100%'} height={'100%'}
 				render={ctx => drawGrid(ctx)} />
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
