@@ -4,12 +4,13 @@ import Sprite from './Sprite';
 /**
  * A Tile is a Sprite without movement
  */
-class Tile extends Sprite {}
+class Tile extends Sprite {
+
+
+} // ./Tile
 DataClass.register(Tile, 'Tile');
 const This = Tile;
 export default Tile;
 
-Tile.make = (base) => {
-	let sp = Object.assign({}, base);	
-	return sp;
-};
+// no-op
+Tile.update = () => {};

@@ -4,6 +4,7 @@ import {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Grid from './data/Grid';
 import Sprite from './data/Sprite';
+import Tile from './data/Tile';
 import Player from './data/Player';
 import Monster from './data/Monster';
 import Card from './data/Card';
@@ -53,6 +54,16 @@ let init = () => {
 	});
 	DataStore.setValue(['data', 'Sprite', 'player'], player, false);
 	Game.setPlayers(game, [player]);
+
+	let wall = new Tile({
+		src:'/img/bricksx64.png',
+		width:48, height:48,
+	});
+	for(let wi=4; wi<10; wi++) {
+		let walli = new Tile(wall);
+		walli.x = wi; walli.y = 8;
+		Stage.addSprite(stage, walli);
+	}
 
 	// Monsters
 	let goat = new Monster({x:2, y:1,
@@ -113,6 +124,9 @@ let init = () => {
 	Game.init();
 };
 
+/**
+ * on start: go forward
+ */
 Stage.start = function(stage, game) {
 	if (stage.flag && stage.flag.start) return;
 	game.players.forEach(p => p.dx = 1);
