@@ -4,6 +4,10 @@ import Grid from './Grid';
 
 class Stage extends DataClass {
 	sprites = [];
+	/**
+	 * {String: Boolean}
+	 */
+	flag = {};
 	width = 1000;
 	height = 1000;
 	/**

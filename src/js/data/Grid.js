@@ -23,6 +23,9 @@ class Grid extends DataClass {
 	 * @type {GXY}
 	 */
 	focus;
+
+	screenWidth;
+	screenHeight;
 	
 	/**
 	 * screen pixels
@@ -80,10 +83,18 @@ Grid.screenFromGame = gxy => {
 	const grid = Grid.get();
 	const tw = grid.tileWidth;
 	const th = grid.tileHeight;
-	const {x, y, z=0} = gxy;
+	let {x, y, z=0} = gxy;
 	assert(x !== undefined && y !== undefined, "Grid.js screenFromGame", gxy);
 
-	// TODO where is the center?
+	// where is the center?
+	if (grid.focus) {
+		if (grid.focus.x) {
+			x = x - grid.focus.x + 5;
+		}
+		if (grid.focus.y) {
+			x = y - grid.focus.y + 5; // TODO 5 = screenHeight/2*tileHeight	
+		}
+	}
 
 	if (grid.display === '2d') {
 		return {

@@ -34,7 +34,8 @@ const VSprite = ({sprite}) => {
 	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : [0,0];
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,
-		border: sprite.selected? 'solid 2px yellow' : null 
+		border: sprite.selected? 'solid 2px yellow' : null,
+		// transform: 'scaleY(-1)' flip upside down?
 		// TODO add an isometric selected base with lower z-index
 	};
 	// canvas

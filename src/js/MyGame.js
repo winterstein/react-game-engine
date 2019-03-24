@@ -21,7 +21,7 @@ let init = () => {
 
 	// How big is the Stage?
 	const grid = Grid.get();
-	grid.width = 10; grid.height = 10;
+	grid.width = 20; grid.height = 8;
 	grid.display = '2d';
 	Stage.setGrid(stage, grid);
 
@@ -111,6 +111,13 @@ let init = () => {
 	];
 
 	Game.init();
+};
+
+Stage.start = function(stage, game) {
+	if (stage.flag && stage.flag.start) return;
+	game.players.forEach(p => p.dx = 1);
+	if ( ! stage.flag) stage.flag = {};
+	stage.flag.start = true;
 };
 
 const MyGame = {init};

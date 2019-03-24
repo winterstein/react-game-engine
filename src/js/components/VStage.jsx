@@ -25,8 +25,9 @@ const VStage = ({stage, width=800, height=500}) => {
 	let drawGrid = ctx => {
 		const grid = stage.grid;
 		ctx.strokeStyle = "#333";
-		for(let tx=0; tx<10; tx++) {
-			for(let ty=0; ty<10; ty++) {
+		ctx.font = "10px Arial";
+		for(let tx=0; tx<grid.width; tx++) {
+			for(let ty=0; ty<grid.height; ty++) {
 				let s1 = Grid.screenFromGame({x:tx, y:ty});
 				let s2 = Grid.screenFromGame({x:tx+1, y:ty});
 				let s3 = Grid.screenFromGame({x:tx, y:ty+1});
@@ -38,7 +39,8 @@ const VStage = ({stage, width=800, height=500}) => {
 				ctx.lineTo(s3.x, s3.y);
 				ctx.lineTo(s1.x, s1.y);
 				ctx.closePath();
-				ctx.stroke();
+				ctx.stroke();				
+				ctx.fillText(tx+", "+ty, s1.x+1, s1.y+12);
 			}
 		}
 	};

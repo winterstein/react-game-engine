@@ -78,6 +78,11 @@ Game.update = () => {
 		dc.update(s, game);
 	});
 
+	// focus on front player
+	let mx = Math.max(game.players.map(p => p.x));
+	const grid = Grid.get();
+	grid.focus = {x:mx};
+
 	DataStore.update();
 };
 

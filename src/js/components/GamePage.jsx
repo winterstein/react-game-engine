@@ -23,9 +23,10 @@ const GamePage = () => {
 	
 	let stage = Game.getStage();
 	if ( ! stage) {
-		MyGame.init();
+		MyGame.init();		
 		return <Misc.Loading />
 	}
+	Stage.start(stage, Game.get());
 
 		// onLoad={() => this.refs.item.focus()}
 
