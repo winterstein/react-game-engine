@@ -40,3 +40,9 @@ Stage.setGrid = (stage, grid) => {
 Stage.update = (stage, game) => {
 	// no-op
 };
+
+/**
+ * No-op - replace to do something
+ */
+Stage.testCollisions = stage => {};
+

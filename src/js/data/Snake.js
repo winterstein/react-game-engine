@@ -17,15 +17,17 @@ export default Snake;
 Snake.render = (sprite, ctx) => {
 	let sections = 20;
 	let ptopx, ptopy, pbotx, pboty;
-	let sw = sprite.width / sections;
+	const width = sprite.width * 50;
+	const height = sprite.height * 50;
+	let sw = width / sections;
 	let w = 2;
-	let h2 = (sprite.height - 6*w) / 2; // NB: subtract extra w for head width space
+	let h2 = (height - 6*w) / 2; // NB: subtract extra w for head width space
 
 	let sxy = Grid.screenFromGame(sprite);
 
 	for(let i=0; i<sections; i++) {
 		let x = i*sw;
-		let r = (x + sxy.x+sxy.y) * Math.PI * 4 / sprite.width;		
+		let r = (x + sxy.x+sxy.y) * Math.PI * 4 / width;		
 		let y = 2*w + h2*(1+Math.sin(r));	// extra w for the head space
 		let nx = - Math.cos(r);
 		let ny = 1;

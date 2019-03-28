@@ -40,19 +40,6 @@ class Game extends DataClass {
 } // ./Game
 DataClass.register(Game, 'Game');
 
-/**
- * a {Rect} x, y, width, height
- * b {Rect}
- */
-Game.testCollision = (a, b) => {
-	if (a===b) return false;
-	Rect.assIsa(a);
-	Rect.assIsa(b);
-	// ref https://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
-	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
-         (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
-};
-
 const tickLength = 1000 / 20;
 
 Game.update = () => {
@@ -77,6 +64,9 @@ Game.update = () => {
 		assert(dc, "Game.js - no class - use DataClass.register with the class definition", s)
 		dc.update(s, game);
 	});
+
+	// collisions?
+	Stage.testCollisions(stage);
 
 	// focus on front player
 	let mx = Math.max(game.players.map(p => p.x));

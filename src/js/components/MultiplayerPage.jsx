@@ -17,7 +17,6 @@ import Stage from '../data/Stage';
 import Tile from '../data/Tile';
 import VStage from './VStage';
 import VSprite from './VSprite';
-import MultiplayerGame from '../MultiplayerGame';
 
 const MultiplayerPage = () => {
 	let stage = Game.getStage();

@@ -20,7 +20,22 @@ DataClass.register(Rect, 'Rect');
 Rect.isa = r => {
 	if ( ! r) return false;
 	if (getType(r)==='Rect') return true;
-	return r.x !== undefined && r.y !== undefined && r.width !== undefined && r.height !== undefined;
+	const yes = r.x !== undefined && r.y !== undefined && r.width !== undefined && r.height !== undefined;
+	return yes;
+};
+
+/**
+ * a {Rect} x, y, width, height
+ * b {Rect}
+ * @returns true if a overlaps b (though false if a===b)
+ */
+Rect.intersects = (a, b) => {
+	if (a===b) return false;
+	Rect.assIsa(a);
+	Rect.assIsa(b);
+	// ref https://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
+	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+         (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
 };
 
 const This = Rect;

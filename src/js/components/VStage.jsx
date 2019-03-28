@@ -24,6 +24,7 @@ const VStage = ({stage}) => {
 	// dropzone on tiles
 	let drawGrid = ctx => {
 		const grid = stage.grid;
+		ctx.clearRect(0,0,grid.screenWidth,grid.screenHeight);
 		ctx.strokeStyle = "#333";
 		ctx.font = "10px Arial";
 		for(let tx=0; tx<grid.width; tx++) {
@@ -47,7 +48,7 @@ const VStage = ({stage}) => {
 
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
-			<CanvasComponent width={'100%'} height={'100%'}
+			<CanvasComponent id='VStage' width={1000} height={600}
 				render={ctx => drawGrid(ctx)} />
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
@@ -55,6 +56,7 @@ const VStage = ({stage}) => {
 		<UI stage={stage} />
 		<div className='debug'>
 			fps: {Math.round(fps*10)/10} <br/>
+			Grid: {JSON.stringify(stage.grid)}<br/>
 			Sprites: {stage.sprites.map(s => s.id+" "+getType(s)+" frame: "+s.frame+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
 		</div>
 </div>);
@@ -62,7 +64,7 @@ const VStage = ({stage}) => {
 
 const UI = ({stage}) => {
 	let players = Game.get().players;
-	return (<div className='VUI'>
+	return (<div className='VUI' >
 		{players.map(plyr => <ChunkyButton key={plyr.id} player={plyr} 
 			onClick={ e => Sprite.addCommand(plyr, {name:'fire'}) } />)}
 	</div>);

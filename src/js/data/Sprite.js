@@ -39,13 +39,22 @@ class Sprite extends DataClass {
 	offsetx = 0;
 	offsety = 0;
 	/**
+	 * tile width
+	 */
+	width = 1;
+	/**
+	 * tile height
+	 */
+	height = 1;
+
+	/**
 	 * screen pixel width
 	 */
-	width;
+	screenWidth;
 	/**
 	 * screen pixel height
 	 */
-	height;
+	screenHeight;
 	/**
 	 * index into frames for the current frame
 	 */
@@ -80,9 +89,9 @@ class Sprite extends DataClass {
 		super(base);
 		const sp = this;
 		Object.assign(this, {
-			src:'/img/dummy-sprite.png', 
-			width:100, height:100, 
+			src:'/img/dummy-sprite.png' 
 		}, base);
+		
 		if ( ! sp.id) sp.id = nonce();
 		// split into tiles?
 		if (sp.tileSize && sp.tiles && ! sp.frames) {
@@ -115,16 +124,18 @@ Sprite.addCommand = (sprite, cmd) => {
 };
 
 /**
+ * TODO move into Grid
  * @param {Sprite} sp
  */
 Sprite.screenRect = (sp) => {
 	Sprite.assIsa(sp);
+	const grid = Grid.get();
 	let sxy = Grid.screenFromGame(sp);
 	// offset the sprite
 	let x = sxy.x - sp.width*sp.offsetx;
 	let y = sxy.y - sp.height*sp.offsety;
-	let width = sp.width;
-	let height = sp.height;
+	let width = sp.width * grid.tileWidth;
+	let height = sp.height * grid.tileHeight;
 	return new Rect({x,y,width,height});
 };
 
@@ -148,9 +159,11 @@ Sprite.update = (sprite, game) => {
 		sprite.frame = sprite.animate.frames[i];
 	}
 	if (sprite.dx && dt) {
+		sprite.oldX = sprite.x; // NB: record old x,y so we can step-back onCollision
 		sprite.x += sprite.dx * dt;
 	}
 	if (sprite.dy && dt) {
+		sprite.oldY = sprite.y;
 		sprite.y += sprite.dy * dt;
 	}
 	// off-stage?
