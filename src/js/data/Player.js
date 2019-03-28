@@ -10,6 +10,15 @@ export default Player;
 
 
 Player.doCommand = (player, cmd) => {
-	player.dy = - player.dy || 1;
-	cmd.done = true;
+	if (cmd.name==='fire') {
+		// change direction
+		player.dy = - player.dy || 1;
+		cmd.done = true;
+	}
+	if (cmd.name==='die') {
+		// TODO death animation
+		player.hidden = true;
+		player.dx = 0; player.dy = 0;
+		cmd.done = true;
+	}
 };

@@ -85,6 +85,11 @@ class Sprite extends DataClass {
 	 */
 	animate;
 
+	/**
+	 * @type {Boolean}
+	 */
+	hidden = false;
+
 	constructor(base) {
 		super(base);
 		const sp = this;
@@ -174,4 +179,8 @@ Sprite.update = (sprite, game) => {
 
 Sprite.doCommand = (sprite, cmd) => {
 	console.warn(cmd, sprite);
+};
+
+Sprite.onOffScreen = sp => {
+	sp.hidden = true;
 };

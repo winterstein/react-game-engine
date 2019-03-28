@@ -34,8 +34,24 @@ Rect.intersects = (a, b) => {
 	Rect.assIsa(a);
 	Rect.assIsa(b);
 	// ref https://gamedev.stackexchange.com/questions/586/what-is-the-fastest-way-to-work-out-2d-bounding-box-intersection
-	return (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
-         (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
+	// NO - this fails for e.g. a = 1x1 box at (10,10), b = 15x15 box at (0,0)
+	// const yes = (Math.abs(a.x - b.x) * 2 < (a.width + b.width)) &&
+    //      (Math.abs(a.y - b.y) * 2 < (a.height + b.height));
+
+	// x
+	if (a.x < b.x) {
+		if (a.x + a.width < b.x) return false;
+	} else {
+		if (b.x + b.width < a.x) return false;
+	}
+	// y
+	if (a.y < b.y) {
+		if (a.y + a.height < b.y) return false;
+	} else {
+		if (b.y + b.height < a.y) return false;
+	}
+
+	return true;
 };
 
 const This = Rect;

@@ -67,10 +67,21 @@ Game.update = () => {
 
 	// collisions?
 	Stage.testCollisions(stage);
+	// off screen?
+	const grid = stage.grid;
+	stage.sprites.forEach(sp => {
+		if (sp.hidden) return;		
+		if (Rect.intersects(sp, grid)) return;
+		// rightwards or up/down?
+		const dy = sp.y+sp.height < 0? -1 : sp.y > grid.height? 1 : 0;
+		const dx = sp.x+sp.width < 0? -1 : sp.x > grid.width? 1 : 0;		
+		console.log("OFF", dx, dy, "x y", sp.x, sp.y, "vs", grid.width, grid.height, "with", sp.width, sp.height);
+		Rect.intersects(sp, grid);
+		getClass(sp).onOffScreen(sp, {dx, dy});
+	});
 
 	// focus on front player
 	let mx = Math.max(game.players.map(p => p.x));
-	const grid = Grid.get();
 	grid.focus = {x:mx};
 
 	DataStore.update();

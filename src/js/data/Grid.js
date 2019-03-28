@@ -4,6 +4,9 @@ import DataClass, {getType} from '../base/data/DataClass';
 import Rect from './Rect';
 
 class Grid extends DataClass {
+	/** Set x,y = 0 to implement Rect */
+	x=0;
+	y=0;
 	/**
 	 * @type {Number} the in-game width in tiles
 	 */

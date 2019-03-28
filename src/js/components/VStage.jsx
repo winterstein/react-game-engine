@@ -22,8 +22,8 @@ const VStage = ({stage}) => {
 	lastRender = now;
 	// console.log("draw VStage");
 	// dropzone on tiles
-	let drawGrid = ctx => {
-		const grid = stage.grid;
+	const grid = stage.grid;
+	let drawGrid = ctx => {		
 		ctx.clearRect(0,0,grid.screenWidth,grid.screenHeight);
 		ctx.strokeStyle = "#333";
 		ctx.font = "10px Arial";
@@ -46,9 +46,11 @@ const VStage = ({stage}) => {
 		}
 	};
 
+	const height = grid.height*grid.tileHeight;
+
 	return (<div className='VStage container-fluid'>
 		<div className='VWorld'>
-			<CanvasComponent id='VStage' width={1000} height={600}
+			<CanvasComponent id='VStage' width={1000} height={height}
 				render={ctx => drawGrid(ctx)} />
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
@@ -56,10 +58,10 @@ const VStage = ({stage}) => {
 		<UI stage={stage} />
 		<div className='debug'>
 			fps: {Math.round(fps*10)/10} <br/>
-			Grid: {JSON.stringify(stage.grid)}<br/>
-			Sprites: {stage.sprites.map(s => s.id+" "+getType(s)+" frame: "+s.frame+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
 		</div>
 </div>);
+			// Grid: {JSON.stringify(stage.grid)}<br/>
+			// Sprites: {stage.sprites.map(s => s.id+" "+getType(s)+" frame: "+s.frame+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
 };
 
 const UI = ({stage}) => {

@@ -7,7 +7,10 @@ const ChunkyButton = ({player, onClick}) => {
 	let pi = players.indexOf(player);
 	let style = {
 		position: 'fixed',
-		zIndex:10000
+		zIndex:10000,
+		width: '5vw',
+		height: '5vw',
+		borderRadius: '2.5vw',
 	};
 	if (pi) {
 		style.bottom = '10px';
