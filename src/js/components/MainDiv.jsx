@@ -32,7 +32,7 @@ const PAGES = {
 	test: TestPage,
 };
 
-const DEFAULT_PAGE = 'game';
+const DEFAULT_PAGE = 'multiplayer';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 

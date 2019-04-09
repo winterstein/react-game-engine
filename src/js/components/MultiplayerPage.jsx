@@ -19,73 +19,11 @@ import VStage from './VStage';
 import VSprite from './VSprite';
 
 const MultiplayerPage = () => {
-	let stage = Game.getStage();
-	if ( ! stage) {
-		MultiplayerGame.init();
-		return <Misc.Loading />
-	}
-
-	let players = [{name:"A", color:'red', top:0, left:0}, {name:"B", color:'blue', bottom:0, right:0}];
-
-	// NB tabIndex needed for onKeyDown to work
-	let w = DataStore.getValue('env','width');
-	let h = DataStore.getValue('env','height');
-	return (<div style={{width:'100%', height:'100%'}}>
-		<VStage stage={stage} width={w} height={h} />
-		{players.map(p => <Controls key={p.id || p.name} player={p} />)}
+	let game = Game.get();
+	return (<div>
+		<h2>Number of Players</h2>
+		{game.players}
 	</div>);
 };
 
-const doThrow = ({player}) => {
-	// TODO do we have anything to throw?
-	let stage = Game.getStage();
-	let game = Game.get();
-	let sprite = game.sprites.duck;
-	// spawn - ie copy and add
-	sprite = {...sprite};
-	sprite.x = 150; sprite.y=200;
-	sprite.dy = -1;
-	if (sprite.animation) sprite.animate = sprite.animation['walk-left'];
-	Stage.addSprite(stage, sprite);
-};
-
-const Button = ({className, onClick, children}) => {
-	return <button className={'btn '+className} 
-		onClick={onClick} onTouchStart={onClick} 
-		onTouchEnd={e => console.log('onTouchEnd', e)} 
-		onMouseDown={e => console.log('onMouseDown', e)}
-		>{children}</button>
-};
-
-const nextItem = () => {
-	// TODO
-}
-/**
- * @param {Object} obj
- * @param {Player} obj.player
- */
-const Controls = ({player}) => {
-	let style = {
-		position:'absolute', 
-		top:player.top, left:player.left, right:player.right, bottom:player.bottom,
-		border:'solid 1px '+player.color
-	};
-	let item = player.item;
-	if ( ! item) {
-		setTimeout(() => {
-			nextItem({player});
-		}, 1);
-		let game = Game.get();
-		item = game.sprites.loading;
-	}
-	return (
-		<div style={style}>
-			{item? <VSprite sprite={item} /> : null}
-			<button onClick={e => nextItem({player})}>Next</button>
-			<Button className='btn-primary btn-big-round' onClick={e => player.input = {bigButton:'foo'}} >
-				{(player.input && player.input.bigButton) || 'x'}
-			</Button>
-		</div>
-	);
-};
 export default MultiplayerPage;
