@@ -107,6 +107,7 @@ Game.getStage = () => {
  */
 Game.setPlayers = (game, players) => {
 	game.players = players;
+	DataStore.update();
 };
 
 window.Game = Game; //debug
