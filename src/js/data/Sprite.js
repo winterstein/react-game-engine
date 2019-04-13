@@ -99,25 +99,29 @@ class Sprite extends DataClass {
 		
 		if ( ! sp.id) sp.id = nonce();
 		// split into tiles?
-		if (sp.tileSize && sp.tiles && ! sp.frames) {
-			assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
-			sp.frames = [];		
-			let mx = (sp.tileMargin && sp.tileMargin.right) || 0;
-			let my = (sp.tileMargin && sp.tileMargin.top) || 0;
-			for(let r=0; r<sp.tiles[0]; r++) {
-				for(let c=0; c<sp.tiles[1]; c++) {
-					let fx = c*sp.tileSize[0] + c*mx;
-					let fy = r*sp.tileSize[1] + r*my + my;
-					let frame = [fx, fy];
-					sp.frames.push(frame);
-				}
-			}
-		}
+		Sprite.initFrames(this);
 	} // ./ constructor
 }
 DataClass.register(Sprite,'Sprite');
 
 export default Sprite;
+
+Sprite.initFrames = sp => {
+	if (sp.tileSize && sp.tiles && ! sp.frames) {
+		assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
+		sp.frames = [];		
+		let mx = (sp.tileMargin && sp.tileMargin.right) || 0;
+		let my = (sp.tileMargin && sp.tileMargin.top) || 0;
+		for(let r=0; r<sp.tiles[0]; r++) {
+			for(let c=0; c<sp.tiles[1]; c++) {
+				let fx = c*sp.tileSize[0] + c*mx;
+				let fy = r*sp.tileSize[1] + r*my + my;
+				let frame = [fx, fy];
+				sp.frames.push(frame);
+			}
+		}
+	}
+};
 
 /**
  * @param sprite {!Sprite}

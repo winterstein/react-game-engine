@@ -18,7 +18,9 @@ let init = () => {
 	if (initFlag) return;
 	const game = Game.get();
 	let stage = new Stage();
-	game.stage = stage;	
+	Game.setStage(game, stage);	
+	stage.init = true;
+	initFlag = true;
 
 	// How big is the Stage?
 	const grid = Grid.get();
@@ -30,16 +32,22 @@ let init = () => {
 	let snake = new Snake({x:1, y:1, width:4, height:1});
 	Stage.addSprite(stage, snake);
 
-	// one player
-	let player = new Player({name:"Dan", x:5, y:5, src:'/img/animals/chicken_large.png',
-		screenHeight:48, screenWidth:48,
-		tileSize: [48,48],
-		tileMargin: {top:0, right:0},
-		tiles: [8,12],
-		animate: {frames:[24,25,26], dt:200}
+	// players
+	if ( ! game.players || game.players.length===0) {
+		Game.setPlayers(game, [new Player({name:"Player 1"})]);	
+	}
+	// ...positions etc
+	game.players.forEach((player, i) => {
+		Object.assign(player, {x:5, y:5 + i*2, src:'/img/animals/chicken_large.png',
+			screenHeight:48, screenWidth:48,
+			tileSize: [48,48],
+			tileMargin: {top:0, right:0},
+			tiles: [8,12],
+			animate: {frames:[24+i*6,25+i*6,26+i*6], dt:200}
+		});
+		Sprite.initFrames(player);
+		Stage.addSprite(stage, player);
 	});
-	Game.setPlayers(game, [player]);
-	Stage.addSprite(stage, player);
 
 	// Monsters
 	let goat = new Monster({x:2, y:1,
@@ -119,6 +127,7 @@ Player.onCollision = (p, s) => {
  */
 Stage.start = function(stage, game) {
 	if (stage.flag && stage.flag.start) return;
+	console.warn("Sstage start", stage);
 	game.players.forEach(p => {
 		p.dx = 2;
 		p.dy = 2;

@@ -31,7 +31,10 @@ const VSprite = ({sprite}) => {
 	// under-foot floor tiles
 	if (sprite.zIndex < 0) zIndex -= 1000;
 
+	// animation frame
+	if (sprite.frame) assert(sprite.frames, "VSrpite.jsx frame without frames - Sprite not initFrames?");
 	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : [0,0];
+
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,
 		border: sprite.selected? 'solid 2px yellow' : null,

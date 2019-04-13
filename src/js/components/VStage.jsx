@@ -69,8 +69,13 @@ const UI = ({stage}) => {
 	return (<div className='VUI' >
 		{players.map(plyr => <ChunkyButton key={plyr.id} player={plyr} 
 			onClick={ e => Sprite.addCommand(plyr, {name:'fire'}) } />)}
+		<PauseButton />
 	</div>);
 };
+
+const PauseButton = () => {
+	return null; // TODO
+}
 
 const Cards = () => {
 	if (true) return null;

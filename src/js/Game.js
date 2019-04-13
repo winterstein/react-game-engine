@@ -81,7 +81,8 @@ Game.update = () => {
 	});
 
 	// focus on front player
-	let mx = Math.max(game.players.map(p => p.x));
+	const xs = game.players.map(p => p.x);
+	let mx = Math.max(...xs);
 	grid.focus = {x:mx};
 
 	DataStore.update();
@@ -98,16 +99,20 @@ Game.init = () => {
 	game.tick = new Date().getTime();
 };
 
-Game.getStage = () => {
-	return Game.get().stage;
+Game.getStage = (game) => {
+	return (game || Game.get()).stage;
 };
+Game.setStage = (game, stage) => {
+	game.stage = stage;
+};
+
 /**
  * @param game {!Game}
  * @param players {!Player[]}
  */
 Game.setPlayers = (game, players) => {
 	game.players = players;
-	DataStore.update();
+	_.defer(() => DataStore.update());
 };
 
 window.Game = Game; //debug

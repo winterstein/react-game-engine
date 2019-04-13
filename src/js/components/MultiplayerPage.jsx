@@ -26,6 +26,7 @@ const MultiplayerPage = () => {
 		);
 		return null;
 	}
+	const stage = Game.getStage(game);
 	return (<div>
 		<h2>Number of Players</h2>
 		{game.players.map(p => <div key={p.id}>{p.id} {p.name}</div>)}
@@ -37,7 +38,10 @@ const MultiplayerPage = () => {
 			} >
 			Add Player
 		</button>
-		<div><a className='btn btn-primary' href='#game'>GO!</a></div>
+		<div><a className='btn btn-primary' onClick={e => {
+			stage.done=true;
+			DataStore.update();
+		} }>GO!</a></div>
 	</div>);
 };
 

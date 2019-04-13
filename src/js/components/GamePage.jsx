@@ -18,15 +18,26 @@ import Tile from '../data/Tile';
 import VStage from './VStage';
 import MyGame from '../MyGame';
 import GameControls from '../GameControls';
+import MultiplayerPage from './MultiplayerPage';
 
 const GamePage = () => {
-	
-	let stage = Game.getStage();
+	const game = Game.get();
+
+	let stage = Game.getStage(game);
 	if ( ! stage) {
-		MyGame.init();		
-		return <Misc.Loading />
+		stage = new Stage({id:'PickPlayers'});
+		Game.setStage(game, stage);		
 	}
-	Stage.start(stage, Game.get());
+	if (stage.id==='PickPlayers') {
+		if ( ! stage.done) {
+			return <MultiplayerPage />;
+		}
+	}	
+	// The game itself :)
+	MyGame.init();
+	stage = Game.getStage(game);
+		// return <Misc.Loading />
+	Stage.start(stage, game);
 
 		// onLoad={() => this.refs.item.focus()}
 
