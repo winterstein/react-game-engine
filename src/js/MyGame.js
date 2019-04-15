@@ -135,7 +135,7 @@ Stage.start = function(stage, game) {
 };
 
 Player.onOffScreen = (sp, {dx, dy}) => {
-	console.warn("OFF", dx, dy, sp);
+	// console.warn("OFF", dx, dy, sp);
 	if (dy) {
 		console.error("LOSE");
 		Sprite.addCommand(sp, {name:"die"});

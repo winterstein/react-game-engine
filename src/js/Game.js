@@ -80,7 +80,7 @@ Game.update = () => {
 		// rightwards or up/down?
 		const dy = sp.y+sp.height < 0? -1 : sp.y > grid.height? 1 : 0;
 		const dx = sp.x+sp.width < 0? -1 : sp.x > grid.width? 1 : 0;		
-		console.log("OFF", dx, dy, "x y", sp.x, sp.y, "vs", grid.width, grid.height, "with", sp.width, sp.height);
+		// console.log("OFF", dx, dy, "x y", sp.x, sp.y, "vs", grid.width, grid.height, "with", sp.width, sp.height);
 		Rect.intersects(sp, grid);
 		getClass(sp).onOffScreen(sp, {dx, dy});
 	});
