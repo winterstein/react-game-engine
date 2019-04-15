@@ -30,7 +30,7 @@ let init = () => {
 
 	// one snake
 	let snake = new Snake({x:1, y:1, width:4, height:1});
-	// Stage.addSprite(stage, snake);
+	Stage.addSprite(stage, snake);
 
 	// players
 	if ( ! game.players || game.players.length===0) {
@@ -60,7 +60,7 @@ let init = () => {
 		dx:0.1, 
 		dy:0.1,
 	});
-	// Stage.addSprite(stage, goat);
+	Stage.addSprite(stage, goat);
 
 	let boom = new Sprite({x:3, y:3,
 		src:'/img/explode.png',
@@ -79,12 +79,13 @@ let init = () => {
 		src:'/img/bricksx64.png',
 		// screenWidth:50, screenHeight:50,
 	});
-	for(let wi=4; wi<4; wi++) {
+	for(let wi=4; wi<10; wi++) {
 		let walli = new Tile(wall);
 		walli.id = 'wall'+wi;
 		walli.x = wi; walli.y = 8;
 		Stage.addSprite(stage, walli);
-
+	}
+	for(let wi=9; wi<20; wi++) {
 		let walli2 = new Tile(wall);
 		walli2.id = 'wall2'+wi;
 		walli2.x = wi; walli2.y = 0;
