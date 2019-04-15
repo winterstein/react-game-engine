@@ -30,7 +30,7 @@ let init = () => {
 
 	// one snake
 	let snake = new Snake({x:1, y:1, width:4, height:1});
-	Stage.addSprite(stage, snake);
+	// Stage.addSprite(stage, snake);
 
 	// players
 	if ( ! game.players || game.players.length===0) {
@@ -60,7 +60,18 @@ let init = () => {
 		dx:0.1, 
 		dy:0.1,
 	});
+	// Stage.addSprite(stage, goat);
 
+	let boom = new Sprite({x:3, y:3,
+		src:'/img/explode.png',
+		screenWidth:72, screenHeight:72,
+		offsetx: 4, offsety: 4,
+		tileSize: [72,72],
+		tiles: [2,8],
+		animate: {frames:[0,1,2,3,4,5,6,7,8], dt:200, stop:true},
+	});
+	// Stage.addSprite(stage, boom);
+	Sprite.library.boom = boom;
 
 	// some tiles
 
@@ -68,7 +79,7 @@ let init = () => {
 		src:'/img/bricksx64.png',
 		// screenWidth:50, screenHeight:50,
 	});
-	for(let wi=4; wi<20; wi++) {
+	for(let wi=4; wi<4; wi++) {
 		let walli = new Tile(wall);
 		walli.id = 'wall'+wi;
 		walli.x = wi; walli.y = 8;
@@ -79,8 +90,6 @@ let init = () => {
 		walli2.x = wi; walli2.y = 0;
 		Stage.addSprite(stage, walli2);
 	}
-
-	Stage.addSprite(stage, goat);
 
 	// let tree = new Tile({
 	// 	src:'/img/tilesetOpenGame.png',
@@ -97,18 +106,6 @@ Stage.testCollisions = stage => {
 	const players = stage.sprites.filter(sp => Player.isa(sp));
 	const tiles = stage.sprites.filter(sp => Tile.isa(sp));
 	Stage.testCollisionsBetween(players, tiles);
-};
-
-Stage.testCollisionsBetween = (sprites1, sprites2) => {
-	sprites1.forEach(s1 => {
-		sprites2.forEach(s2 => {
-			if ( ! Rect.intersects(s1, s2)) return;
-			const t1 = getClass(s1);
-			const t2 = getClass(s2);
-			if (t1.onCollision) t1.onCollision(s1, s2);
-			if (t2.onCollision) t2.onCollision(s2, s1);
-		});
-	});
 };
 
 Player.onCollision = (p, s) => {

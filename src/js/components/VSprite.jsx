@@ -20,6 +20,9 @@ import CanvasComponent from './CanvasComponent';
  */
 const VSprite = ({sprite}) => {
 	Sprite.assIsa(sprite);
+	if (sprite.hidden) {
+		return null;
+	}
 	let rect = Sprite.screenRect(sprite);
 	let top = rect.y+'px';
 	let left = rect.x+'px';

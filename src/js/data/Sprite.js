@@ -17,6 +17,7 @@ import Grid from './Grid';
 
 
 /**
+ * id: always a fresh nonce
  * src: {url}
  * x: game-x
  * y: game-y (NOT height)
@@ -90,6 +91,10 @@ class Sprite extends DataClass {
 	 */
 	hidden = false;
 
+	/**
+	 * ALWAYS assigns a new id, to allow for copy constructors
+	 * @param base {Sprite}
+	 */
 	constructor(base) {
 		super(base);
 		const sp = this;
@@ -97,7 +102,8 @@ class Sprite extends DataClass {
 			src:'/img/dummy-sprite.png' 
 		}, base);
 		
-		if ( ! sp.id) sp.id = nonce();
+		// ALWAYS assign a new id, to allow for copy constructors, e.g. ufo2 = new Sprite(ufo)
+		sp.id = nonce();
 		// split into tiles?
 		Sprite.initFrames(this);
 	} // ./ constructor
@@ -107,18 +113,24 @@ DataClass.register(Sprite,'Sprite');
 export default Sprite;
 
 Sprite.initFrames = sp => {
-	if (sp.tileSize && sp.tiles && ! sp.frames) {
-		assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
-		sp.frames = [];		
-		let mx = (sp.tileMargin && sp.tileMargin.right) || 0;
-		let my = (sp.tileMargin && sp.tileMargin.top) || 0;
-		for(let r=0; r<sp.tiles[0]; r++) {
-			for(let c=0; c<sp.tiles[1]; c++) {
-				let fx = c*sp.tileSize[0] + c*mx;
-				let fy = r*sp.tileSize[1] + r*my + my;
-				let frame = [fx, fy];
-				sp.frames.push(frame);
-			}
+	if ( ! sp.tileSize) return;
+	if (sp.frames) {
+		return; // all done
+	}
+	if ( ! sp.tiles) {
+		console.warn("Sprite.js - tileSize but no tiles - NOT making frames", sp);
+		return;
+	}
+	assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
+	sp.frames = [];		
+	let mx = (sp.tileMargin && sp.tileMargin.right) || 0;
+	let my = (sp.tileMargin && sp.tileMargin.top) || 0;
+	for(let r=0; r<sp.tiles[0]; r++) {
+		for(let c=0; c<sp.tiles[1]; c++) {
+			let fx = c*sp.tileSize[0] + c*mx;
+			let fy = r*sp.tileSize[1] + r*my + my;
+			let frame = [fx, fy];
+			sp.frames.push(frame);
 		}
 	}
 };
@@ -163,9 +175,7 @@ Sprite.update = (sprite, game) => {
 	}
 	// animate 
 	if (sprite.animate) {
-		let tocks = Math.floor(tick / sprite.animate.dt);
-		const i = tocks % sprite.animate.frames.length;
-		sprite.frame = sprite.animate.frames[i];
+		Sprite.updateAnimation(sprite, game);
 	}
 	if (sprite.dx && dt) {
 		sprite.oldX = sprite.x; // NB: record old x,y so we can step-back onCollision
@@ -181,10 +191,34 @@ Sprite.update = (sprite, game) => {
 	// Game.
 }; // ./update()
 
+Sprite.updateAnimation = (sprite, game) => {
+	const tick = game.tick;
+	// animation tick
+	if ( ! sprite.animate.startTick) sprite.animate.startTick = tick;
+	let atick = tick - sprite.animate.startTick;
+	let tocks = Math.floor(atick / sprite.animate.dt);
+	// once only? (unusual but eg explosions)
+	if (sprite.animate.stop && tocks >= sprite.animate.frames.length) {
+		// ?? how to trigger the next thing? sprite.animate.onDone??
+	} else {
+		const i = tocks % sprite.animate.frames.length;
+		sprite.frame = sprite.animate.frames[i];
+	}
+};
+
+/**
+ * Usually replaced by Player.doCommand etc
+ */
 Sprite.doCommand = (sprite, cmd) => {
 	console.warn(cmd, sprite);
+	cmd.done = true;
 };
 
 Sprite.onOffScreen = sp => {
-	sp.hidden = true;
+	// sp.hidden = true;
 };
+
+/**
+ * @type {String: Sprite}
+ */
+Sprite.library = {};

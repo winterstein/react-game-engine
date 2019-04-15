@@ -1,5 +1,5 @@
 
-import DataClass, {getType} from '../base/data/DataClass';
+import DataClass, {getType, getClass} from '../base/data/DataClass';
 import Grid from './Grid';
 
 class Stage extends DataClass {
@@ -46,3 +46,14 @@ Stage.update = (stage, game) => {
  */
 Stage.testCollisions = stage => {};
 
+Stage.testCollisionsBetween = (sprites1, sprites2) => {
+	sprites1.forEach(s1 => {
+		sprites2.forEach(s2 => {
+			if ( ! Rect.intersects(s1, s2)) return;
+			const t1 = getClass(s1);
+			const t2 = getClass(s2);
+			if (t1.onCollision) t1.onCollision(s1, s2);
+			if (t2.onCollision) t2.onCollision(s2, s1);
+		});
+	});
+};

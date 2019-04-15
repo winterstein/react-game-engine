@@ -58,10 +58,11 @@ const VStage = ({stage}) => {
 		<UI stage={stage} />
 		<div className='debug'>
 			fps: {Math.round(fps*10)/10} <br/>
+			sprites: {stage.sprites.map(s => getType(s)+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
 		</div>
 </div>);
 			// Grid: {JSON.stringify(stage.grid)}<br/>
-			// Sprites: {stage.sprites.map(s => s.id+" "+getType(s)+" frame: "+s.frame+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
+			
 };
 
 const UI = ({stage}) => {

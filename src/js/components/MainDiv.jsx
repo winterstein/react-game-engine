@@ -28,11 +28,10 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	game: GamePage,
-	multiplayer: MultiplayerPage,
 	test: TestPage,
 };
 
-const DEFAULT_PAGE = 'multiplayer';
+const DEFAULT_PAGE = 'game';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 

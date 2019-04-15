@@ -53,6 +53,11 @@ Game.update = () => {
 	game.tick = newTick;
 	// in seconds
 	game.dt = (newTick - lastTick) / 1000;
+	// ...cap the dt at 0.2 second (for debugging, to avoid jumps)
+	if (game.dt > 0.2) {
+		game.dt = 0.2;
+		console.log("cap game.dt");
+	}
 	// update stage and sprites
 	const stage = Game.getStage();
 	if ( ! stage) return;
