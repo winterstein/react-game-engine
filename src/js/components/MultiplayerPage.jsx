@@ -27,10 +27,10 @@ const MultiplayerPage = () => {
 		return null;
 	}
 	const stage = Game.getStage(game);
-	return (<div>
+	return (<div className='container'>
 		<h2>Number of Players</h2>
 		{game.players.map(p => <div key={p.id}>{p.id} {p.name}</div>)}
-		<button className='btn btn-default'
+		<button className='btn btn-secondary'
 			onClick={
 				e => Game.setPlayers(game, game.players.concat(
 						new Player({name:"Player "+(1+game.players.length)})
