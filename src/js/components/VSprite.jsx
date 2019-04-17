@@ -7,6 +7,7 @@ import Snake from '../data/Snake';
 import GameControls from '../GameControls';
 import {DropZone} from '../base/components/DragDrop';
 import CanvasComponent from './CanvasComponent';
+import Sound from 'react-sound';
 
 // See https://github.com/FormidableLabs/react-game-kit/blob/master/src/components/sprite.js
 // img transform: `translate(-${left}px, -${top}px)`,
@@ -79,9 +80,15 @@ const VSprite = ({sprite}) => {
 		// clip is rect(top, right, bottom left)!		
 		img = <img src={sprite.src} style={imgStyle} />
 	}
+	// sound
+	let snd = null;
+	if (sprite.sound) {
+		snd = <Sound url={sprite.sound} playStatus={Sound.status.PLAYING} loop={false} />;
+	}
+	// main bit
 	let S = <div title={getType(sprite)+' '+sprite.id} 
 		style={style} onClick={e => GameControls.select({sprite})}
-		>{img}</div>;
+		>{img}{snd}</div>;
 	// debug {Math.round(sprite.x)} {Math.round(sprite.y)}
 	
 	if (sprite.dropzone) {

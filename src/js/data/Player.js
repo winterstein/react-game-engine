@@ -19,7 +19,7 @@ Player.doCommand = (player, cmd) => {
 		cmd.done = true;
 	}
 	if (cmd.name==='die') {
-		// TODO death animation	
+		// death animation	
 		let boom = new Sprite(Sprite.library.boom);
 		boom.x = player.x; boom.y = player.y;
 		const stage = Game.getStage();

@@ -69,9 +69,12 @@ let init = () => {
 		tileSize: [72,72],
 		tiles: [2,8],
 		animate: {frames:[0,1,2,3,4,5,6,7,8], dt:200, stop:true},
+		sound: '/sound/explosion-small.mp3'
 	});
 	// Stage.addSprite(stage, boom);
 	Sprite.library.boom = boom;
+	let testBoom = new Sprite(boom);
+	Stage.addSprite(stage, testBoom);
 
 	// some tiles
 
@@ -89,6 +92,12 @@ let init = () => {
 		let walli2 = new Tile(wall);
 		walli2.id = 'wall2'+wi;
 		walli2.x = wi; walli2.y = 0;
+		Stage.addSprite(stage, walli2);
+	}
+	for(let wi=1; wi<8; wi++) {
+		let walli2 = new Tile(wall);
+		walli2.id = 'wall3'+wi;
+		walli2.x = 15; walli2.y = wi;
 		Stage.addSprite(stage, walli2);
 	}
 
