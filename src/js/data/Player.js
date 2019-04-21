@@ -31,3 +31,24 @@ Player.doCommand = (player, cmd) => {
 		cmd.done = true;
 	}
 };
+
+
+Player.onCollision = (p, s, dx, dy) => {
+	// block
+	if (p.oldY !== undefined && dy) {
+		p.y = p.oldY;
+	}
+	if (p.oldX !== undefined && dx) {
+		p.x = p.oldX;
+	}
+};
+
+Player.onOffScreen = (sp, {dx, dy}) => {
+	// console.warn("OFF", dx, dy, sp);
+	if (dy) {
+		console.error("LOSE");
+		Sprite.addCommand(sp, {name:"die"});
+		return;
+	}
+	if (dx) console.error("WIN");
+};

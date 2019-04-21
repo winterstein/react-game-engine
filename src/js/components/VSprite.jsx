@@ -82,7 +82,7 @@ const VSprite = ({sprite}) => {
 	}
 	// sound
 	let snd = null;
-	if (sprite.sound) {
+	if (false && sprite.sound) {
 		snd = <Sound url={sprite.sound} playStatus={Sound.status.PLAYING} loop={false} />;
 	}
 	// main bit

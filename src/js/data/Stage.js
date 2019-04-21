@@ -95,3 +95,23 @@ Stage.testCollisionDirn = (sprite1, sprite2) => {
 	// NB: This is probably a bigger step back than is needed!
 	return {dx, dy};
 };
+
+Stage.testCollisions = stage => {
+	const players = stage.sprites.filter(sp => Player.isa(sp));
+	const tiles = stage.sprites.filter(sp => Tile.isa(sp));
+	Stage.testCollisionsBetween(players, tiles);
+};
+
+/**
+ * on start: go forward and down
+ */
+Stage.start = function(stage, game) {
+	if (stage.flag && stage.flag.start) return;
+	console.warn("Sstage start", stage);
+	game.players.forEach(p => {
+		p.dx = 2;
+		p.dy = 2;
+	});
+	if ( ! stage.flag) stage.flag = {};
+	stage.flag.start = true;
+};

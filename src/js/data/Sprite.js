@@ -75,7 +75,7 @@ class Sprite extends DataClass {
 	 */
 	tiles;
 	/**
-	 * @type {Number[]} width, height
+	 * @type {Number[]} width, height -- pixel size
 	 */
 	tileSize;
 	tileMargin;

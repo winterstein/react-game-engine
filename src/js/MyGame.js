@@ -24,7 +24,7 @@ let init = () => {
 
 	// How big is the Stage?
 	const grid = Grid.get();
-	grid.width = 100; grid.height = 12;
+	grid.width = 30; grid.height = 12;
 	grid.display = '2d';
 	Stage.setGrid(stage, grid);
 
@@ -61,6 +61,37 @@ let init = () => {
 		dy:0.1,
 	});
 	Stage.addSprite(stage, goat);
+
+	let honeyBadger = new Monster({x:12, y:4,
+		src:'/img/animals/badger.png',
+		screenWidth:48, screenHeight:48,
+		tileSize: [48,48],
+		tiles:[8,12],
+		animate: {frames:[15,16,17], dt:400},
+		dx: - 0.1, 
+		dy: 0.1,
+	});
+	Stage.addSprite(stage, honeyBadger);
+	let babyBear = new Monster({x:10, y:6,
+		src:'/img/animals/bear cubs.png',
+		screenWidth:48, screenHeight:48,
+		tileSize: [48,48],
+		tiles:[8,12],
+		animate: {frames:[12*7,12*7+1,12*7+2], dt:400},
+		dx: - 0.1, 
+		dy: 1,
+	});
+	Stage.addSprite(stage, babyBear);
+	let babyBear2 = new Monster({x:11, y:6,
+		src:'/img/animals/bear cubs_large pandas.png',
+		screenWidth:48, screenHeight:48,
+		tileSize: [48,48],
+		tiles:[8, 12],
+		animate: {frames:[12*6 + 9,12*6 + 10,12*6 +11], dt:400},
+		dx: - 0.1, 
+		dy: 1,
+	});
+	Stage.addSprite(stage, babyBear2);
 
 	let boom = new Sprite({x:3, y:3,
 		src:'/img/explode.png',
@@ -110,46 +141,6 @@ let init = () => {
 
 	// super init
 	Game.init();
-};
-
-Stage.testCollisions = stage => {
-	const players = stage.sprites.filter(sp => Player.isa(sp));
-	const tiles = stage.sprites.filter(sp => Tile.isa(sp));
-	Stage.testCollisionsBetween(players, tiles);
-};
-
-Player.onCollision = (p, s, dx, dy) => {
-	// block
-	if (p.oldY !== undefined && dy) {
-		p.y = p.oldY;
-	}
-	if (p.oldX !== undefined && dx) {
-		p.x = p.oldX;
-	}
-};
-
-/**
- * on start: go forward
- */
-Stage.start = function(stage, game) {
-	if (stage.flag && stage.flag.start) return;
-	console.warn("Sstage start", stage);
-	game.players.forEach(p => {
-		p.dx = 2;
-		p.dy = 2;
-	});
-	if ( ! stage.flag) stage.flag = {};
-	stage.flag.start = true;
-};
-
-Player.onOffScreen = (sp, {dx, dy}) => {
-	// console.warn("OFF", dx, dy, sp);
-	if (dy) {
-		console.error("LOSE");
-		Sprite.addCommand(sp, {name:"die"});
-		return;
-	}
-	if (dx) console.error("WIN");
 };
 
 const MyGame = {init};
