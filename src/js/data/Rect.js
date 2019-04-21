@@ -9,9 +9,19 @@ class Rect extends DataClass {
 	height;
 	depth=0;
 	constructor(base) {
-		super(base);
+		super({});
+		// NB: minor efficiency/cleanliness: 
+		// base might be e.g. a Sprite - and we only want to copy the Rect part
+		this['@type'] = 'Rect';
+		if ( ! base) return;
+		this.x = base.x;
+		this.y = base.y;
+		if (base.z !== undefined) this.z = base.z;
+		this.width = base.width;
+		this.height = base.height;
+		if (base.depth !== undefined) this.depth = base.depth;
 	}
-}
+} // ./Rect
 DataClass.register(Rect, 'Rect');
 
 /**

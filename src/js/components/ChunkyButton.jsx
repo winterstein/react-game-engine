@@ -20,7 +20,11 @@ const ChunkyButton = ({player, onClick}) => {
 		style.left = '-1vw';
 	}
 	return (
-<button style={style} className='btn btn-primary btn-xlg' onClick={onClick}> {pi} </button>
+<button style={style} className='btn btn-primary btn-xlg' 
+	onClick={onClick}
+	onTouchStart={e => console.log("onTouchStart",e)}
+	onTouchMove={e => console.log("onTouchMove",e)}
+	> {pi} </button>
 	);
 }
 

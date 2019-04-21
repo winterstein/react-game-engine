@@ -118,15 +118,14 @@ Stage.testCollisions = stage => {
 	Stage.testCollisionsBetween(players, tiles);
 };
 
-Player.onCollision = (p, s) => {
-	// block	
-	if (p.oldY !== undefined && p.dy) {
+Player.onCollision = (p, s, dx, dy) => {
+	// block
+	if (p.oldY !== undefined && dy) {
 		p.y = p.oldY;
-		return;
 	}
-	if (p.oldX !== undefined) {
+	if (p.oldX !== undefined && dx) {
 		p.x = p.oldX;
-	}	
+	}
 };
 
 /**
