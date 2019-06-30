@@ -160,6 +160,11 @@ Sprite.screenRect = (sp) => {
 	return new Rect({x,y,width,height});
 };
 
+/**
+ * (sprite1, srpite2, dx, dy) =>
+ */
+Sprite.onCollision = null;
+
 Sprite.update = (sprite, game) => {
 	const tick = game.tick;
 	const dt = game.dt;
