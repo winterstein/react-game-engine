@@ -29,6 +29,7 @@ Player.doCommand = (player, cmd) => {
 		// stop
 		player.dx = 0; player.dy = 0;
 		cmd.done = true;
+		console.log("BLEURGH");
 	}
 };
 
