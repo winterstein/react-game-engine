@@ -1,3 +1,1 @@
-# webpack --display-error-details --watch
-npm i &
-npm run compile-watch
+../wwappbase.js/project/watch.sh
