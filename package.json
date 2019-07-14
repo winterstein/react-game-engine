@@ -3,15 +3,13 @@
   "version": "0.1.0",
   "description": "React Game Engine",
   "author": "Daniel Winterstein",
-  "license": "AGPL-3.0",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/winterstein/react-game-engine"
   },
   "dependencies": {
-    "@babel/core": "^7.5.4",
-    "@babel/plugin-proposal-class-properties": "^7.5.0",
-    "@babel/preset-env": "^7.5.4",
+	"bootstrap": "^4.3.1",
     "easy-enums": "^1.1.6",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.0",
@@ -28,8 +26,6 @@
     "react-scroll": "^1.7.12",
     "react-sound": "^1.2.0",
     "sjtest": "^0.4.9",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.6",
     "wwutils": "^0.9.4",
     "you-again": "^0.8.4"
   },
@@ -52,7 +48,8 @@
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
-    "eslint-plugin-react": "^7.11.1",
+    "eslint-plugin-react": "^7.12.4",
+    "eslint-plugin-react-hooks": "^1.6.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
   }
