@@ -1,11 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
-import SJTest, {assert} from 'sjtest';
-
+import SJTest from 'sjtest';
 import MainDiv from './components/MainDiv';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import $ from 'jquery';
 
-ReactDOM.render(
-	<MainDiv />,
-	document.getElementById('mainDiv')
-	);
+// global jquery for You-Again
+window.$ = $;
+
+ReactDOM.render(<MainDiv />, document.getElementById('mainDiv'));

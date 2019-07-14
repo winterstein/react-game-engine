@@ -1,6 +1,6 @@
 {
   "name": "react-game-engine",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "React Game Engine",
   "author": "Daniel Winterstein",
   "license": "AGPL-3.0",
@@ -9,10 +9,13 @@
     "url": "https://github.com/winterstein/react-game-engine"
   },
   "dependencies": {
+    "@babel/core": "^7.5.4",
+    "@babel/plugin-proposal-class-properties": "^7.5.0",
+    "@babel/preset-env": "^7.5.4",
     "easy-enums": "^1.1.6",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.0",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.14",
     "matter-js": "^0.14.2",
     "md5": "^2.2.1",
     "promise-value": "^1.2.1",
@@ -25,21 +28,26 @@
     "react-scroll": "^1.7.12",
     "react-sound": "^1.2.0",
     "sjtest": "^0.4.9",
+    "webpack": "^4.35.3",
+    "webpack-cli": "^3.3.6",
     "wwutils": "^0.9.4",
     "you-again": "^0.8.4"
   },
   "scripts": {
-    "compile": "webpack --progress --colors",
-    "compile-watch": "webpack --progress --colors --watch",
+    "compile": "webpack --config $PWD/webpack.config.js --progress --colors",
+    "compile-watch": "webpack --config $PWD/webpack.config.js --progress --colors --watch",
     "compile-watch-fast": "NO_PROD=true webpack --progress --colors --watch"
   },
   "devDependencies": {
     "@babel/core": "^7.3.4",
     "@babel/plugin-proposal-class-properties": "^7.3.4",
     "@babel/plugin-transform-react-jsx": "^7.3.0",
+    "@babel/polyfill": "^7.2.5",
     "@babel/preset-env": "^7.3.4",
     "babel-loader": "^8.0.5",
     "babel-plugin-transform-node-env-inline": "^0.4.3",
+    "css-loader": "^3.0.0",
+    "style-loader": "^0.23.1",
     "eslint": "^5.15.1",
     "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-import": "^2.16.0",
