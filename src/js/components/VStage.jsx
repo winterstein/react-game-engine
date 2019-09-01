@@ -78,7 +78,7 @@ const UI = ({stage}) => {
 
 const PauseButton = () => {
 	return null; // TODO
-}
+};
 
 const Cards = () => {
 	if (true) return null;

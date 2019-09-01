@@ -2,12 +2,12 @@ import React, { Component } from 'react';
 import Login from 'you-again';
 import { assert } from 'sjtest';
 import { modifyHash } from 'wwutils';
-
+import _ from 'lodash';
 // Plumbing
-import DataStore from './../base/plumbing/DataStore';
-import Roles from './../base/Roles';
-import C from './../C';
-import Crud from './../base/plumbing/Crud'; // Crud is loaded here (but not used here)
+import DataStore from "../base/plumbing/DataStore";
+import Roles from "../base/Roles";
+import C from "../C";
+import Crud from "../base/plumbing/Crud"; // Crud is loaded here (but not used here)
 
 // Templates
 import MessageBar from '../base/components/MessageBar';
@@ -15,6 +15,7 @@ import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
 import GamePage from './GamePage';
+import SaveTheWorldPage from './SaveTheWorld';
 import MultiplayerPage from './MultiplayerPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
@@ -28,10 +29,11 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	game: GamePage,
+	savetheworld: SaveTheWorldPage,
 	test: TestPage,
 };
 
-const DEFAULT_PAGE = 'game';
+const DEFAULT_PAGE = 'savetheworld';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 
@@ -89,7 +91,7 @@ class MainDiv extends Component {
 		let path = DataStore.getValue('location', 'path');	
 		let page = (path && path[0]);
 		if ( ! page) {
-			_.defer(() =>modifyHash([DEFAULT_PAGE]));
+			_.defer(() => modifyHash([DEFAULT_PAGE]));
 			return null;
 		}
 		assert(page);

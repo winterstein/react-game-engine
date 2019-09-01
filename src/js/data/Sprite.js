@@ -26,9 +26,20 @@ import Grid from './Grid';
  */
 class Sprite extends DataClass {
 	/**
+	 * index into frames for the current frame
+	 */
+	frame = 0;
+	
+	/**
+	 * [[x,y]] coordinates into the src image
+	 */
+	frames;
+
+	/**
 	 * @type {UrlString}
 	 */
 	src;
+
 	/**
 	 * @type {Number} game tile x
 	 */
@@ -49,29 +60,13 @@ class Sprite extends DataClass {
 	height = 1;
 
 	/**
-	 * screen pixel width
-	 */
-	screenWidth;
-	/**
-	 * screen pixel height
-	 */
-	screenHeight;
-	/**
-	 * index into frames for the current frame
-	 */
-	frame = 0;
-	/**
-	 * [[x,y]]
-	 */
-	frames;
-	/**
 	 * @typedef {Command}
 	 */
 	commands = [];
 
 	/**
 	 * Use with tileSize and tileMargin to populate frames from a sprite-sheet
-	 * @type {?IntXY} [rows, columns] in the image
+	 * @type {?IntXY} [num-rows, num-columns] in the image
 	 */
 	tiles;
 	/**
@@ -94,6 +89,12 @@ class Sprite extends DataClass {
 	/**
 	 * ALWAYS assigns a new id, to allow for copy constructors
 	 * @param base {Sprite}
+	 * 
+	 * e.g.
+	 * new Sprite({
+	 * 	tileSize: [width px, height px]
+	 *  tiles: [index]
+	 * })
 	 */
 	constructor(base) {
 		super(base);
