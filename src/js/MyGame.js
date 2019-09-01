@@ -39,7 +39,6 @@ let init = () => {
 	// ...positions etc
 	game.players.forEach((player, i) => {
 		Object.assign(player, {x:5, y:5 + i*2, src:'/img/animals/chicken_large.png',
-			screenHeight:48, screenWidth:48,
 			tileSize: [48,48],
 			tileMargin: {top:0, right:0},
 			tiles: [8,12],
@@ -52,7 +51,6 @@ let init = () => {
 	// Monsters
 	let goat = new Monster({x:2, y:1,
 		src:'/img/animals/goats.png',
-		screenWidth:64, screenHeight:64,
 		tileSize: [37,36],
 		frames:[[290,61], [338,61], [386,60], 
 			[296,109], [344,108], [391,109]],
@@ -64,7 +62,6 @@ let init = () => {
 
 	let honeyBadger = new Monster({x:12, y:4,
 		src:'/img/animals/badger.png',
-		screenWidth:48, screenHeight:48,
 		tileSize: [48,48],
 		tiles:[8,12],
 		animate: {frames:[15,16,17], dt:400},
@@ -74,7 +71,6 @@ let init = () => {
 	Stage.addSprite(stage, honeyBadger);
 	let babyBear = new Monster({x:10, y:6,
 		src:'/img/animals/bear cubs.png',
-		screenWidth:48, screenHeight:48,
 		tileSize: [48,48],
 		tiles:[8,12],
 		animate: {frames:[12*7,12*7+1,12*7+2], dt:400},
@@ -84,7 +80,6 @@ let init = () => {
 	Stage.addSprite(stage, babyBear);
 	let babyBear2 = new Monster({x:11, y:6,
 		src:'/img/animals/bear cubs_large pandas.png',
-		screenWidth:48, screenHeight:48,
 		tileSize: [48,48],
 		tiles:[8, 12],
 		animate: {frames:[12*6 + 9,12*6 + 10,12*6 +11], dt:400},
@@ -111,7 +106,6 @@ let init = () => {
 
 	let wall = new Tile({
 		src:'/img/bricksx64.png',
-		// screenWidth:50, screenHeight:50,
 	});
 	for(let wi=4; wi<10; wi++) {
 		let walli = new Tile(wall);

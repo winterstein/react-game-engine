@@ -27,7 +27,14 @@ class Grid extends DataClass {
 	 */
 	focus;
 
+	/**
+	 * screen pixels
+	 */
 	screenWidth;
+
+	/**
+	 * screen pixels
+	 */
 	screenHeight;
 	
 	/**

@@ -35,7 +35,6 @@ let init = () => {
 	// ...positions etc
 	game.players.forEach((player, i) => {
 		// Object.assign(player, {x:5, y:5 + i*2, src:'/img/animals/chicken_large.png',
-		// 	screenHeight:48, screenWidth:48,
 		// 	tileSize: [48,48],
 		// 	tileMargin: {top:0, right:0},
 		// 	tiles: [8,12],
