@@ -15,6 +15,7 @@ import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
 import GamePage from './GamePage';
+import FrogGamePage from './FrogGamePage';
 import SaveTheWorldPage from './SaveTheWorld';
 import MultiplayerPage from './MultiplayerPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
@@ -30,6 +31,7 @@ const PAGES = {
 	account: BasicAccountPage,
 	game: GamePage,
 	savetheworld: SaveTheWorldPage,
+	frog: FrogGamePage,
 	test: TestPage,
 };
 

@@ -1,4 +1,6 @@
-
+/**
+ * Base class for Games
+ */
 import DataStore from './base/plumbing/DataStore';
 import DataClass, {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
