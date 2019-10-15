@@ -43,7 +43,7 @@ Player.onCollision = (p, s, dx, dy) => {
 		p.x = p.oldX;
 	}
 	// if s is a monster {
-	Sprite.addCommand(p, {name:"die"}); 
+	// Sprite.addCommand(p, {name:"die"}); 
 };
 
 Player.onOffScreen = (sp, {dx, dy}) => {

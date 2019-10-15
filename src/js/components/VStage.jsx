@@ -49,9 +49,10 @@ const VStage = ({stage}) => {
 	const height = grid.height*grid.tileHeight;
 
 	return (<div className='VStage container-fluid'>
-		<div className='VWorld'>
+		<div className='VWorld' style={{backgroundImage: 'url("'+stage.backgroundImage+'")', backgroundSize:'cover'}}>
 			<CanvasComponent id='VStage' width={1000} height={height}
-				render={ctx => drawGrid(ctx)} />
+				render={ctx => { drawGrid(ctx); }} 
+			/>
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
 		<Cards />
@@ -60,12 +61,9 @@ const VStage = ({stage}) => {
 			
 			
 		</div>
-</div>);
-// fps: {Math.round(fps*10)/10} <br/>
-// sprites: {stage.sprites.map(s => getType(s)+" xy: "+Math.round(s.x*10)/10+" "+Math.round(s.y*10)/10).join(", ")}
-			// Grid: {JSON.stringify(stage.grid)}<br/>
-			
+	</div>);			
 };
+
 
 const UI = ({stage}) => {
 	let players = Game.get().players;

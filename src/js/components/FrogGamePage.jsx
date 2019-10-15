@@ -23,19 +23,19 @@ import MultiplayerPage from './MultiplayerPage';
 const FrogGamePage = () => {
 	const game = Game.get();
 
-	let stage = Game.getStage(game);
-	if ( ! stage) {
-		stage = new Stage({id:'PickPlayers'});
-		Game.setStage(game, stage);		
-	}
-	if (stage.id==='PickPlayers') {
-		if ( ! stage.done) {
-			return <MultiplayerPage />;
-		}
-	}	
+	// let stage = Game.getStage(game);
+	// if ( ! stage) {
+	// 	stage = new Stage({id:'PickPlayers'});
+	// 	Game.setStage(game, stage);		
+	// }
+	// if (stage.id==='PickPlayers') {
+	// 	if ( ! stage.done) {
+	// 		return <MultiplayerPage />;
+	// 	}
+	// }	
 	// The game itself :)
 	FrogGame.init();
-	stage = Game.getStage(game);
+	let stage = Game.getStage(game);
 		// return <Misc.Loading />
 	Stage.start(stage, game);
 

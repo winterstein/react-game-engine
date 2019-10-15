@@ -10,7 +10,6 @@ import Monster from './data/Monster';
 import Card from './data/Card';
 import Game from './Game';
 import Rect from './data/Rect';
-import FrogGamePage from './components/FrogGamePage';
 
 let initFlag = false;
 
@@ -21,6 +20,8 @@ const init = () => {
 	Game.setStage(game, stage);	
 	stage.init = true;
 	initFlag = true;
+
+	stage.backgroundImage = '/img/bg/fishtank-bg.jpg';
 
 	// How big is the Stage?
 	const grid = Grid.get();
@@ -92,7 +93,7 @@ const init = () => {
 	for(let wi=4; wi<10; wi++) {
 		let walli = new Tile(wall);
 		walli.id = 'wall'+wi;
-		walli.x = wi; walli.y = 8;
+		walli.x = wi; walli.y = 12;
 		Stage.addSprite(stage, walli);
 	}
 	for(let wi=9; wi<20; wi++) {
