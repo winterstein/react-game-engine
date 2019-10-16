@@ -135,7 +135,18 @@ let init = () => {
 
 	// super init
 	Game.init();
+
+	// Set offscreen behaviour
+	Player.onOffScreen = (sp, {dx, dy}) => {
+		if (dy) {
+			console.error("LOSE");
+			Sprite.addCommand(sp, {name:"die"});
+			return;
+		}
+		if (dx) console.error("WIN");
+	};	
 };
+
 
 const MyGame = {init};
 

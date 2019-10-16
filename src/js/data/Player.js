@@ -33,7 +33,9 @@ Player.doCommand = (player, cmd) => {
 	}
 };
 
-
+/**
+ * @param {?Sprite} s - Can be unset e.g. edge-of-world collision
+ */
 Player.onCollision = (p, s, dx, dy) => {
 	// block
 	if (p.oldY !== undefined && dy) {
@@ -46,12 +48,7 @@ Player.onCollision = (p, s, dx, dy) => {
 	// Sprite.addCommand(p, {name:"die"}); 
 };
 
+/** default: treat as a collission */
 Player.onOffScreen = (sp, {dx, dy}) => {
-	// console.warn("OFF", dx, dy, sp);
-	if (dy) {
-		console.error("LOSE");
-		Sprite.addCommand(sp, {name:"die"});
-		return;
-	}
-	if (dx) console.error("WIN");
+	Player.onCollision(sp, null, dx, dy);
 };
