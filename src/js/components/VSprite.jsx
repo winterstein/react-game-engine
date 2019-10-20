@@ -21,7 +21,7 @@ import Sound from 'react-sound';
  */
 const VSprite = ({sprite}) => {
 	Sprite.assIsa(sprite);
-	if (sprite.hidden) {
+	if (sprite.hidden || sprite.loading) {
 		return null;
 	}
 	let rect = Sprite.screenRect(sprite);
@@ -36,8 +36,13 @@ const VSprite = ({sprite}) => {
 	if (sprite.zIndex < 0) zIndex -= 1000;
 
 	// animation frame
-	if (sprite.frame) assert(sprite.frames, "VSrpite.jsx frame without frames - Sprite not initFrames?");
-	let frameOffset = sprite.frames? sprite.frames[sprite.frame || 0] : [0,0];
+	let frameOffset = [0,0];
+	if (sprite.frame !== undefined) {
+		if ( ! sprite.frames) {
+			console.log("VSrpite.jsx frame without frames - call Sprite.initFrames() early", sprite);
+		}
+		frameOffset = sprite.frames[sprite.frame || 0];
+	}	
 
 	let style = {position:'absolute', overflow:'hidden', 
 		top, left, zIndex, width, height,

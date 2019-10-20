@@ -10,6 +10,7 @@ import C from "../C";
 import Crud from "../base/plumbing/Crud"; // Crud is loaded here (but not used here)
 
 // Templates
+import BS from '../base/components/BS4';
 import MessageBar from '../base/components/MessageBar';
 import LoginWidget from '../base/components/LoginWidget';
 
@@ -35,7 +36,7 @@ const PAGES = {
 	test: TestPage,
 };
 
-const DEFAULT_PAGE = 'savetheworld';
+const DEFAULT_PAGE = 'frog';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 

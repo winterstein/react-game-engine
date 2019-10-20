@@ -4,12 +4,15 @@ import {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Grid from './data/Grid';
 import Sprite from './data/Sprite';
+import SpriteLib from './data/SpriteLib';
 import Tile from './data/Tile';
 import Player from './data/Player';
 import Monster from './data/Monster';
 import Card from './data/Card';
 import Game from './Game';
 import Rect from './data/Rect';
+import GameControls from './GameControls';
+import { assert } from 'sjtest';
 
 let initFlag = false;
 
@@ -31,64 +34,36 @@ const init = () => {
 
 	// players
 	if ( ! game.players || game.players.length===0) {
-		Game.setPlayers(game, [new Player({name:"Player 1"})]);	
+		let p0 = new Player(SpriteLib.frog(),{name:"Player 1"});
+		Game.setPlayers(game, [p0]);
 	}
 	// ...positions etc
 	game.players.forEach((player, i) => {
-		Object.assign(player, {x:5, y:5 + i*2, src:'/img/animals/chicken_large.png',
-			tileSize: [48,48],
-			tileMargin: {top:0, right:0},
-			tiles: [8,12],
-			animate: {frames:[24+i*6,25+i*6,26+i*6], dt:200}
-		});
-		Sprite.initFrames(player);
+		Object.assign(player, {x:5, y:5 + i*2});
 		Stage.addSprite(stage, player);
 	});
 
+	let p0 = game.players[0];
+	GameControls.playerForKeyArrows(p0);
+
 	// Monsters
-	let goat = new Monster({x:2, y:1,
-		src:'/img/animals/goats.png',
-		tileSize: [37,36],
-		frames:[[290,61], [338,61], [386,60], 
-			[296,109], [344,108], [391,109]],
-		animate: {frames:[3,4,5], dt:400},
-		dx:0.1, 
-		dy:0.1,
-	});
+	let goat = new Monster(SpriteLib.goat(), 
+		{x:2, y:1, dx:0.1, dy:0.1});
 	Stage.addSprite(stage, goat);
 
-	let honeyBadger = new Monster({x:12, y:4,
-		src:'/img/animals/badger.png',
-		tileSize: [48,48],
-		tiles:[8,12],
-		animate: {frames:[15,16,17], dt:400},
-		dx: - 0.1, 
-		dy: 0.1,
-	});
-	Stage.addSprite(stage, honeyBadger);
-	let babyBear = new Monster({x:10, y:6,
-		src:'/img/animals/bear cubs.png',
-		tileSize: [48,48],
-		tiles:[8,12],
-		animate: {frames:[12*7,12*7+1,12*7+2], dt:400},
-		dx: - 0.1, 
-		dy: 1,
-	});
-	Stage.addSprite(stage, babyBear);
-	let babyBear2 = new Monster({x:11, y:6,
-		src:'/img/animals/bear cubs_large pandas.png',
-		tileSize: [48,48],
-		tiles:[8, 12],
-		animate: {frames:[12*6 + 9,12*6 + 10,12*6 +11], dt:400},
-		dx: - 0.1, 
-		dy: 1,
-	});
-	Stage.addSprite(stage, babyBear2);
+	let shark = new Monster(SpriteLib.shark(), 
+		{	x:10, y:1,
+			dx:-0.1, 
+			dy:0.1,
+		});
+	assert(shark.x, shark);
+	Stage.addSprite(stage, shark);
 
 	// some tiles
 
 	let wall = new Tile({
 		src:'/img/bricksx64.png',
+		frames: []
 	});
 	for(let wi=4; wi<10; wi++) {
 		let walli = new Tile(wall);

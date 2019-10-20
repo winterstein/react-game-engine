@@ -19,30 +19,57 @@ GameControls.select = ({sprite, stage}) => {
 	});
 };
 
+/**
+ * Bind your players to keys here
+ * 
+ * There's also a utility:
+ * GameControls.playerForKeyArrows(player)
+ */
+GameControls.playerForKey = {};
+/**
+ * Convenience for binding the arrows
+ * @param {Player} p
+ */
+GameControls.playerForKeyArrows = p => {
+	GameControls.playerForKey.ArrowLeft = p;
+	GameControls.playerForKey.ArrowRight = p;
+	GameControls.playerForKey.ArrowUp = p;
+	GameControls.playerForKey.ArrowDown = p;
+};
+
 GameControls.onKeyDown = e => {
-	let player = DataStore.getValue('data','Sprite','player');
+	let player = GameControls.playerForKey[e.key];
+	console.log("keyDown", e.key, player);
 	if ( ! player) return;
-	let v = 0.5;
+	let v = 1;
+	let a;
 	if (e.key==='ArrowLeft') {
 		player.dx = -v;
-		player.dy = -v;
-		player.animate.frames = [2,1,2];
+		// player.dy = -v;
+		a = 'left';
 	}
 	if (e.key==='ArrowRight') {
 		player.dx = v;
-		player.dy = v;
-		player.animate.frames = [6,7,6];
+		// player.dy = v;
+		a = 'right';
 	}
 	if (e.key==='ArrowUp') {
-		player.dx = v;
-		player.dy = -v;
-		player.animate.frames = [4,3,4,5];
+		// player.dx = v;
+		player.dy = -v;		
+		a = 'up';
 	}
 	if (e.key==='ArrowDown') {
-		player.dx = -v;
+		// player.dx = -v;
 		player.dy = v;
-		player.animate.frames = [0];
+		a = 'down';
 	}
+	if (player.animations && player.animations[a]) {
+		if (player.animate.name !== a) {			
+			player.animate = Object.assign({name:a}, player.animations[a]); // safety copy
+			console.log("set animation", a, player.animations[a], player.animate);
+		}
+	}
+	return false;
 };
 
 GameControls.onKeyUp = e => {

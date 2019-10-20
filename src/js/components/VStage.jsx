@@ -1,5 +1,7 @@
 
 import React from 'react';
+import BS from '../base/components/BS';
+import Misc from '../base/components/Misc';
 import { assert, assMatch } from 'sjtest';
 import {getType} from '../base/data/DataClass';
 import Sprite from '../data/Sprite';
@@ -12,8 +14,10 @@ import CanvasComponent from './CanvasComponent';
 import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 import ChunkyButton from './ChunkyButton';
+import StopWatch from '../StopWatch';
 
 let lastRender = new Date();
+
 
 const VStage = ({stage}) => {
 	const now = new Date();
@@ -48,22 +52,31 @@ const VStage = ({stage}) => {
 
 	const height = grid.height*grid.tileHeight;
 
+	const bgSprite = false && stage.backgroundImage? new Sprite({src: stage.backgroundImage}) : null;
+	const game = Game.get();
+
 	return (<div className='VStage container-fluid'>
-		<div className='VWorld' style={{backgroundImage: 'url("'+stage.backgroundImage+'")', backgroundSize:'cover'}}>
+		<div className='VWorld'>			
 			<CanvasComponent id='VStage' width={1000} height={height}
-				render={ctx => { drawGrid(ctx); }} 
-			/>
+				render={ctx => {/* hm? */}}>
+				<VGrid render={ctx => drawGrid(ctx)} />
+				{bgSprite? <VSprite sprite={bgSprite} /> : null}
+			</CanvasComponent>
 			{stage.sprites.map(s => <VSprite key={s.id} sprite={s} />)}
 		</div>
 		<Cards />
 		<UI stage={stage} />
 		<div className='debug'>
-			
-			
 		</div>
 	</div>);			
 };
 
+/**
+ * Hm - can we put a render on this?
+ */
+const VGrid = () => {
+	return <></>; //null; //
+};
 
 const UI = ({stage}) => {
 	let players = Game.get().players;
@@ -75,7 +88,17 @@ const UI = ({stage}) => {
 };
 
 const PauseButton = () => {
-	return null; // TODO
+	const sw = Game.get().ticker;
+	let style = {
+		position: 'fixed',
+		zIndex:10000,
+		top: '1vh',
+		right: '1vw'
+	};
+	if (sw.paused) {
+		return <BS.Button style={style} color='primary' onClick={e => StopWatch.start(sw)}><Misc.Icon fa='play' />go</BS.Button>;
+	}
+	return <BS.Button style={style} color='primary' onClick={e => StopWatch.pause(sw)}><Misc.Icon fa='pause' />pause</BS.Button>;
 };
 
 const Cards = () => {

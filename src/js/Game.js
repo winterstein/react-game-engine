@@ -6,7 +6,7 @@ import DataClass, {getClass} from './base/data/DataClass';
 import Stage from './data/Stage';
 import Sprite from './data/Sprite';
 import Rect from './data/Rect';
-
+import StopWatch from './StopWatch';
 import {assert} from 'sjtest';
 
 class Game extends DataClass {
@@ -20,10 +20,10 @@ class Game extends DataClass {
 	 * @typedef {Player[]}
 	 */
 	players = [];
-	/** {TimeNumber} */
-	tick;
-	/** {Number} */
-	dt;
+
+	/** @typedef {StopWatch}  */
+	ticker = new StopWatch();
+
 	/** {Stage} */
 	stage;
 
@@ -42,23 +42,12 @@ class Game extends DataClass {
 } // ./Game
 DataClass.register(Game, 'Game');
 
-const tickLength = 1000 / 20;
 
 Game.update = () => {
 	// tick
 	const game = Game.get();
-	const lastTick = game.tick;
-	let newTick = new Date().getTime(); // TODO pause logic
-	if (newTick - lastTick < tickLength) {
-		return; // target 20 fps
-	}
-	game.tick = newTick;
-	// in seconds
-	game.dt = (newTick - lastTick) / 1000;
-	// ...cap the dt at 0.2 second (for debugging, to avoid jumps)
-	if (game.dt > 0.2) {
-		game.dt = 0.2;
-		console.log("cap game.dt");
+	if ( ! StopWatch.update(game.ticker)) {
+		return;
 	}
 	// update stage and sprites
 	const stage = Game.getStage();
@@ -84,7 +73,9 @@ Game.update = () => {
 		const dx = sp.x+sp.width < 0? -1 : sp.x > grid.width? 1 : 0;		
 		// console.log("OFF", dx, dy, "x y", sp.x, sp.y, "vs", grid.width, grid.height, "with", sp.width, sp.height);
 		Rect.intersects(sp, grid);
-		getClass(sp).onOffScreen(sp, {dx, dy});
+		console.log("onOffScreen", sp);
+		const klass = getClass(sp);
+		klass.onOffScreen(sp, {dx, dy});
 	});
 
 	// focus on front player
@@ -98,12 +89,12 @@ Game.update = () => {
 Game.init = () => {
 	if (Game.initFlag) return;
 	Game.initFlag = true;
-	// update loop
-	let updater = setInterval(() => { Game.update(); }, tickLength/4); // target 1 tick
 	// game object, if not already made
 	const game = Game.get();
 	// tick
-	game.tick = new Date().getTime();
+	game.ticker = new StopWatch();
+	// update loop
+	let updater = setInterval(() => { Game.update(); }, game.ticker.tickLength/4); // target 1 tick
 };
 
 Game.getStage = (game) => {

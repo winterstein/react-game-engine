@@ -6,7 +6,6 @@ import Sprite from './Sprite';
  */
 class Tile extends Sprite {
 
-
 } // ./Tile
 DataClass.register(Tile, 'Tile');
 const This = Tile;

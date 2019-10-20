@@ -3,12 +3,17 @@ import DataClass, {getClass, getType, nonce} from '../base/data/DataClass';
 
 import Rect from './Rect';
 import Grid from './Grid';
+import StopWatch from '../StopWatch';
 
-/** 
- * @typedef {Object} Animate
- * @prop {Number[]} frames - indexes into Sprite.frames 
- * @prop {Number} dt
-*/
+class Animate extends DataClass {
+	
+	/** @type {Number[]} indexes into Sprite.frames */
+	frames;
+
+	/** @type {Number} */
+	dt;   
+}
+DataClass.register(Animate, 'Animate');
 
 
 /** 
@@ -36,6 +41,7 @@ class Sprite extends DataClass {
 	frames;
 
 	/**
+	 * The image to use!
 	 * @type {UrlString}
 	 */
 	src;
@@ -75,6 +81,9 @@ class Sprite extends DataClass {
 	tileSize;
 	tileMargin;
 	
+	/**
+	 * @type {String : Animate} name -> Animate
+	 */
 	animations = {};
 	/**
 	 * @type {Animate}
@@ -96,14 +105,16 @@ class Sprite extends DataClass {
 	 *  tiles: [index]
 	 * })
 	 */
-	constructor(base) {
+	constructor(base, base2) {
 		super(base);
+		const _type = this['@type'];
 		const sp = this;
 		Object.assign(this, {
 			src:'/img/dummy-sprite.png' 
-		}, base);
-		
-		// ALWAYS assign a new id, to allow for copy constructors, e.g. ufo2 = new Sprite(ufo)
+		}, base, base2);
+		// in case the base overwrites this
+		this['@type'] = _type;
+		// ALWAYS assigns a new id, to allow for copy constructors, e.g. ufo2 = new Sprite(ufo)
 		sp.id = nonce();
 		// split into tiles?
 		Sprite.initFrames(this);
@@ -113,13 +124,32 @@ DataClass.register(Sprite,'Sprite');
 
 export default Sprite;
 
+/**
+ * Setup frames for animation -- requires tileSize and tiles
+ * @param {Sprite} sp
+ */
 Sprite.initFrames = sp => {
-	if ( ! sp.tileSize) return;
 	if (sp.frames) {
 		return; // all done
 	}
-	if ( ! sp.tiles) {
-		console.warn("Sprite.js - tileSize but no tiles - NOT making frames", sp);
+	if ( ! sp.tileSize && ! sp.tiles) {
+		console.warn("Sprite.js - need tileSize and/or tiles to initFrames", sp);
+		return;
+	}
+	if ( ! sp.tiles || ! sp.tileSize) {
+		if ( ! sp.src) {
+			console.log("Sprite.js - no url = no frames", sp);
+			return;
+		}
+		sp.loading = true;
+		let _img = new Image();
+		_img.onload = () => {
+			sp.loading = false;
+			if ( ! sp.tiles) sp.tiles = [Math.round(_img.naturalHeight / sp.tileSize[1]), Math.round(_img.naturalWidth / sp.tileSize[0])];
+			if ( ! sp.tileSize) sp.tileSize = [Math.round(_img.naturalHeight / sp.tiles[0]), Math.round(_img.naturalWidth / sp.tiles[1])];
+			Sprite.initFrames(sp);
+		};
+		_img.src = sp.src;
 		return;
 	}
 	assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
@@ -167,8 +197,8 @@ Sprite.screenRect = (sp) => {
 Sprite.onCollision = null;
 
 Sprite.update = (sprite, game) => {
-	const tick = game.tick;
-	const dt = game.dt;
+	const tick = StopWatch.tick(game.ticker);
+	const dt = StopWatch.dt(game.ticker);
 	// command?
 	if (sprite.commands && sprite.commands[0]) {
 		const cmd = sprite.commands[0];
@@ -198,11 +228,12 @@ Sprite.update = (sprite, game) => {
 }; // ./update()
 
 Sprite.updateAnimation = (sprite, game) => {
-	const tick = game.tick;
+	const tick = StopWatch.tick(game.ticker);
 	// animation tick
 	if ( ! sprite.animate.startTick) sprite.animate.startTick = tick;
-	let atick = tick - sprite.animate.startTick;
-	let tocks = Math.floor(atick / sprite.animate.dt);
+	const atick = tick - sprite.animate.startTick;
+	const dt = sprite.animate.dt || 200; // default to 5 frames a second
+	const tocks = Math.floor(atick / dt);
 	// once only? (unusual but eg explosions)
 	if (sprite.animate.stop && tocks >= sprite.animate.frames.length) {
 		// ?? how to trigger the next thing? sprite.animate.onDone??

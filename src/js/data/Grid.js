@@ -94,7 +94,7 @@ Grid.screenFromGame = gxy => {
 	const tw = grid.tileWidth;
 	const th = grid.tileHeight;
 	let {x, y, z=0} = gxy;
-	assert(x !== undefined && y !== undefined, "Grid.js screenFromGame", gxy);
+	assert(x !== undefined && y !== undefined, "Grid.js screenFromGame gxy NPE", gxy);
 
 	// where is the center?
 	if (grid.focus) {
