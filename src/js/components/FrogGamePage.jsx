@@ -43,10 +43,7 @@ const FrogGamePage = () => {
 
 	// NB tabIndex needed for onKeyDown to work
 	return (<div tabIndex="1" className='GamePage'
-		onClick={e => DataStore.update()} 
-		onKeyDown={GameControls.onKeyDown}
-		onKeyUp={GameControls.onKeyUp} 
-	>
+		onClick={e => DataStore.update()} >
 		<VStage stage={stage} />
 	</div>);
 

@@ -72,7 +72,8 @@ class Sprite extends DataClass {
 
 	/**
 	 * Use with tileSize and tileMargin to populate frames from a sprite-sheet
-	 * @type {?IntXY} [num-rows, num-columns] in the image
+	 * @type {?IntXY} [num-rows, num-columns] in the image. 
+	 * NB: This is "normal" for matrix dimensions, but a bit confusing if thought as as coords, as its [y,x].
 	 */
 	tiles;
 	/**
@@ -146,7 +147,12 @@ Sprite.initFrames = sp => {
 		_img.onload = () => {
 			sp.loading = false;
 			if ( ! sp.tiles) sp.tiles = [Math.round(_img.naturalHeight / sp.tileSize[1]), Math.round(_img.naturalWidth / sp.tileSize[0])];
-			if ( ! sp.tileSize) sp.tileSize = [Math.round(_img.naturalHeight / sp.tiles[0]), Math.round(_img.naturalWidth / sp.tiles[1])];
+			if ( ! sp.tileSize) {
+				sp.tileSize = [
+					Math.round(_img.naturalWidth / sp.tiles[1]),
+					Math.round(_img.naturalHeight / sp.tiles[0])
+				];
+			}
 			Sprite.initFrames(sp);
 		};
 		_img.src = sp.src;

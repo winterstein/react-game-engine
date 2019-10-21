@@ -73,7 +73,7 @@ Game.update = () => {
 		const dx = sp.x+sp.width < 0? -1 : sp.x > grid.width? 1 : 0;		
 		// console.log("OFF", dx, dy, "x y", sp.x, sp.y, "vs", grid.width, grid.height, "with", sp.width, sp.height);
 		Rect.intersects(sp, grid);
-		console.log("onOffScreen", sp);
+		// console.log("onOffScreen", sp);
 		const klass = getClass(sp);
 		klass.onOffScreen(sp, {dx, dy});
 	});

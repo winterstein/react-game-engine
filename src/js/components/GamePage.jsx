@@ -21,6 +21,7 @@ import GameControls from '../GameControls';
 import MultiplayerPage from './MultiplayerPage';
 
 const GamePage = () => {
+
 	const game = Game.get();
 
 	let stage = Game.getStage(game);
@@ -43,10 +44,7 @@ const GamePage = () => {
 
 	// NB tabIndex needed for onKeyDown to work
 	return (<div tabIndex="1" className='GamePage'
-		onClick={e => DataStore.update()} 
-		onKeyDown={GameControls.onKeyDown}
-		onKeyUp={GameControls.onKeyUp} 
-	>
+		onClick={e => DataStore.update()} >
 		<VStage stage={stage} />
 	</div>);
 

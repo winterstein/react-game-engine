@@ -30,14 +30,15 @@ class CanvasComponent extends React.Component {
 		}
 	}
 	
-    render() {
+	render() {
 		if (this.refs.canvas) {
 			this.updateCanvas();
 		}
 		// NB if the width is set in css -- weird zooming occurs!
-        return (
+		return (
 			<div ref="cwrapper" >
 				<canvas width={this.props.width} height={this.props.height} ref="canvas" />
+				{this.props.children}
 			</div>
         );
     }

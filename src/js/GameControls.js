@@ -3,6 +3,7 @@
 // TODO selection manager
 import Game from './Game';
 import DataStore from './base/plumbing/DataStore';
+import { stopEvent } from 'wwutils';
 
 const GameControls = {};
 
@@ -37,46 +38,65 @@ GameControls.playerForKeyArrows = p => {
 	GameControls.playerForKey.ArrowDown = p;
 };
 
-GameControls.onKeyDown = e => {
+GameControls.onKeyDown = e => onkey(e, true);
+
+const onkey = (e, isDown) => {
 	let player = GameControls.playerForKey[e.key];
-	console.log("keyDown", e.key, player);
+	// console.log("key", e.key, player);
 	if ( ! player) return;
 	let v = 1;
 	let a;
 	if (e.key==='ArrowLeft') {
-		player.dx = -v;
+		player.dx = isDown? -v : 0;
 		// player.dy = -v;
 		a = 'left';
 	}
 	if (e.key==='ArrowRight') {
-		player.dx = v;
+		player.dx = isDown? v : 0;
 		// player.dy = v;
 		a = 'right';
 	}
 	if (e.key==='ArrowUp') {
 		// player.dx = v;
-		player.dy = -v;		
+		player.dy = isDown? -v : 0;		
 		a = 'up';
 	}
 	if (e.key==='ArrowDown') {
 		// player.dx = -v;
-		player.dy = v;
+		player.dy = isDown? v : 0;
 		a = 'down';
 	}
 	if (player.animations && player.animations[a]) {
-		if (player.animate.name !== a) {			
+		if (isDown && player.animate.name !== a) {			
 			player.animate = Object.assign({name:a}, player.animations[a]); // safety copy
 			console.log("set animation", a, player.animations[a], player.animate);
 		}
+		if ( ! isDown && player.animate.name === a) {
+			player.animate.frames.splice(1); // first frame
+			console.log("stop animation", a, player.animations[a], player.animate);
+		}
 	}
-	return false;
+	// consume the event?
+	if (a) {
+		stopEvent(e);
+		return false;
+	}
+	return true;
 };
 
-GameControls.onKeyUp = e => {
-	let player = DataStore.getValue('data','Sprite','player');
-	if ( ! player) return;
-	player.dx = 0; player.dy = 0;
-	player.animate.frames = [player.animate.frames[0]]; // stop animating [0,1,2,3,4,5,6,7];
+GameControls.onKeyUp = e => onkey(e,false);
+
+let keyFlag;
+/** install controls  */
+GameControls.init = () => {
+	if (keyFlag) return;
+	const body = window; //document.body;
+	body.onkeydown = GameControls.onKeyDown;
+	body.onkeyup = GameControls.onKeyUp;
+	// body.addEventListener('keyDown', GameControls.onKeyDown);
+	// body.addEventListener('keyUp', GameControls.onKeyUp);
+	keyFlag = true;
+	console.log("Key listeners added");
 };
 
 export default GameControls;

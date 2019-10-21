@@ -22,6 +22,7 @@ import MultiplayerPage from './MultiplayerPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
+import GameControls from '../GameControls';
 
 // DataStore
 C.setupDataStore();
@@ -90,6 +91,9 @@ class MainDiv extends Component {
 			setTimeout(() => DataStore.update(), 1);
 			return null;
 		}
+
+		// keys
+		GameControls.init();
 
 		let path = DataStore.getValue('location', 'path');	
 		let page = (path && path[0]);
