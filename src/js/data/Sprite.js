@@ -250,6 +250,18 @@ Sprite.updateAnimation = (sprite, game) => {
 };
 
 /**
+ * Set the current animation
+ * @param {Sprite} sp
+ * @param {String} a
+ */
+Sprite.animate = (sp, a) => {
+	if (sp.animate && sp.animate.name === a) return;
+	sp.animate = Object.assign({name:a}, sp.animations[a]); // safety copy
+	sp.frame = 0;
+	console.log("set animation", a, sp, sp.animations[a]);
+};
+
+/**
  * Usually replaced by Player.doCommand etc
  */
 Sprite.doCommand = (sprite, cmd) => {

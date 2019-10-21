@@ -52,7 +52,7 @@ const VStage = ({stage}) => {
 
 	const height = grid.height*grid.tileHeight;
 
-	const bgSprite = false && stage.backgroundImage? new Sprite({src: stage.backgroundImage}) : null;
+	const bgSprite = stage.backgroundImage? new Sprite({src: stage.backgroundImage, x:0, y:0}) : null;
 	const game = Game.get();
 
 	return (<div className='VStage container-fluid'>

@@ -47,10 +47,6 @@ const init = () => {
 	GameControls.playerForKeyArrows(p0);
 
 	// Monsters
-	let goat = new Monster(SpriteLib.goat(), 
-		{x:2, y:1, dx:0.1, dy:0.1});
-	Stage.addSprite(stage, goat);
-
 	let shark = new Monster(SpriteLib.shark(), 
 		{	x:10, y:1,
 			dx:-0.1, 
@@ -58,6 +54,19 @@ const init = () => {
 		});
 	assert(shark.x, shark);
 	Stage.addSprite(stage, shark);
+
+	let fish1 = new Monster(SpriteLib.fish(), 
+		{	x:10, y:3,
+			dx:-0.1, 
+		});
+	Sprite.animate(fish1, 'left');
+	Stage.addSprite(stage, fish1);
+	let fish2 = new Monster(SpriteLib.fish(1), 
+		{	x:10, y:5,
+			dx:0.1, 
+		});
+	Sprite.animate(fish2, 'right');
+	Stage.addSprite(stage, fish2);
 
 	// some tiles
 

@@ -4,6 +4,7 @@
 import Game from './Game';
 import DataStore from './base/plumbing/DataStore';
 import { stopEvent } from 'wwutils';
+import Sprite from './data/Sprite';
 
 const GameControls = {};
 
@@ -67,13 +68,13 @@ const onkey = (e, isDown) => {
 		a = 'down';
 	}
 	if (player.animations && player.animations[a]) {
-		if (isDown && player.animate.name !== a) {			
-			player.animate = Object.assign({name:a}, player.animations[a]); // safety copy
-			console.log("set animation", a, player.animations[a], player.animate);
+		if (isDown) {	
+			Sprite.animate(player, a);
 		}
 		if ( ! isDown && player.animate.name === a) {
-			player.animate.frames.splice(1); // first frame
-			console.log("stop animation", a, player.animations[a], player.animate);
+			// TODO
+			// player.animate.frames.splice(1); // first frame
+			// console.log("stop animation", a, player.animations[a], player.animate);
 		}
 	}
 	// consume the event?

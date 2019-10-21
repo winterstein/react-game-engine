@@ -39,9 +39,10 @@ const VSprite = ({sprite}) => {
 	let frameOffset = [0,0];
 	if (sprite.frame !== undefined) {
 		if ( ! sprite.frames) {
-			console.log("VSrpite.jsx frame without frames - call Sprite.initFrames() early", sprite);
+			console.warn("VSprite.jsx frame without frames - call Sprite.initFrames() early", sprite);
+		} else {
+			frameOffset = sprite.frames[sprite.frame || 0];
 		}
-		frameOffset = sprite.frames[sprite.frame || 0];
 	}	
 
 	let style = {position:'absolute', overflow:'hidden', 
