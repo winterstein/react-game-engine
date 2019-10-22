@@ -38,10 +38,10 @@ const VSprite = ({sprite}) => {
 	// animation frame
 	let frameOffset = [0,0];
 	if (sprite.frame !== undefined) {
-		if ( ! sprite.frames) {
-			console.warn("VSprite.jsx frame without frames - call Sprite.initFrames() early", sprite);
-		} else {
+		if (sprite.frames) {			
 			frameOffset = sprite.frames[sprite.frame || 0];
+		} else if (sprite.frame) {
+			console.warn("VSprite.jsx frame "+sprite.frame+" without frames - call Sprite.initFrames() early", sprite);
 		}
 	}	
 

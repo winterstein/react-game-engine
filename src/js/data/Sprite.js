@@ -54,6 +54,12 @@ class Sprite extends DataClass {
 	 * @type {Number} game tile y
 	 */
 	y;
+
+	/**
+	 * @type {Number} game tile z -- NOT usually used TODO
+	 */
+	z;
+
 	offsetx = 0;
 	offsety = 0;
 	/**

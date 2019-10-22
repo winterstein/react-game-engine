@@ -15,6 +15,7 @@ import Game from '../Game';
 import {DropZone, Draggable, dragstate} from '../base/components/DragDrop';
 import ChunkyButton from './ChunkyButton';
 import StopWatch from '../StopWatch';
+import Tile from '../data/Tile';
 
 let lastRender = new Date();
 
@@ -52,7 +53,7 @@ const VStage = ({stage}) => {
 
 	const height = grid.height*grid.tileHeight;
 
-	const bgSprite = stage.backgroundImage? new Sprite({src: stage.backgroundImage, x:0, y:0}) : null;
+	const bgSprite = stage.backgroundImage? new Tile({src: stage.backgroundImage, x:0, y:0, width:grid.width, height:grid.height}) : null;
 	const game = Game.get();
 
 	return (<div className='VStage container-fluid'>
@@ -80,9 +81,9 @@ const VGrid = () => {
 
 const UI = ({stage}) => {
 	let players = Game.get().players;
+	// {players.map(plyr => <ChunkyButton key={plyr.id} player={plyr} 
+	// 	onClick={ e => Sprite.addCommand(plyr, {name:'fire'}) } />)}
 	return (<div className='VUI' >
-		{players.map(plyr => <ChunkyButton key={plyr.id} player={plyr} 
-			onClick={ e => Sprite.addCommand(plyr, {name:'fire'}) } />)}
 		<PauseButton />
 	</div>);
 };

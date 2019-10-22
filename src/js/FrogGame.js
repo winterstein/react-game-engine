@@ -39,7 +39,7 @@ const init = () => {
 	}
 	// ...positions etc
 	game.players.forEach((player, i) => {
-		Object.assign(player, {x:5, y:5 + i*2});
+		Object.assign(player, {x:5, y:5 + i*2, dx:0, dy:0});
 		Stage.addSprite(stage, player);
 	});
 
