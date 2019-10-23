@@ -100,6 +100,8 @@ Stage.testCollisions = stage => {
 	const players = stage.sprites.filter(sp => Player.isa(sp));
 	const tiles = stage.sprites.filter(sp => Tile.isa(sp));
 	Stage.testCollisionsBetween(players, tiles);
+	const monsters = stage.sprites.filter(sp => Monster.isa(sp));
+	Stage.testCollisionsBetween(players, monsters);
 };
 
 /**

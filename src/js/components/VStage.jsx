@@ -84,6 +84,7 @@ const UI = ({stage}) => {
 	// {players.map(plyr => <ChunkyButton key={plyr.id} player={plyr} 
 	// 	onClick={ e => Sprite.addCommand(plyr, {name:'fire'}) } />)}
 	return (<div className='VUI' >
+		<div>Score: {players && players[0] && players[0].score}</div>
 		<PauseButton />
 	</div>);
 };

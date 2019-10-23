@@ -24,7 +24,7 @@ const init = () => {
 	stage.init = true;
 	initFlag = true;
 
-	stage.backgroundImage = '/img/bg/fishtank-bg.jpg';
+	// stage.backgroundImage = '/img/bg/fishtank-bg.jpg';
 
 	// How big is the Stage?
 	const grid = Grid.get();
@@ -39,12 +39,19 @@ const init = () => {
 	}
 	// ...positions etc
 	game.players.forEach((player, i) => {
-		Object.assign(player, {x:5, y:5 + i*2, dx:0, dy:0});
+		Object.assign(player, {x:3, y:3 + i*2, dx:0, dy:0});
 		Stage.addSprite(stage, player);
 	});
 
 	let p0 = game.players[0];
 	GameControls.playerForKeyArrows(p0);
+
+	let spawn = new Sprite({
+		src:'/img/animals/frogspawn.png',
+		x:12, y:5,
+	});
+	Stage.addSprite(stage, spawn);
+
 
 	// Monsters
 	let shark = new Monster(SpriteLib.shark(), 
@@ -55,18 +62,44 @@ const init = () => {
 	assert(shark.x, shark);
 	Stage.addSprite(stage, shark);
 
+	let alligator = new Monster(SpriteLib.alligator(0), 
+		{	x:7, y:1,
+			dx:0.1, 
+			dy:0.1,
+			width:2,height:2
+		});
+	Stage.addSprite(stage, alligator);
+
+	let bindo = new Monster(SpriteLib.alligator(1), 
+		{	x:7, y:7,
+			dx:0.4, 
+			dy:0,
+			width:3, height:1
+		});
+	Stage.addSprite(stage, bindo);
+
+
+
 	let fish1 = new Monster(SpriteLib.fish(), 
-		{	x:10, y:3,
-			dx:-0.1, 
+		{	x:15, y:3,
+			dx:-0.3, 
 		});
 	Sprite.animate(fish1, 'left');
 	Stage.addSprite(stage, fish1);
+
 	let fish2 = new Monster(SpriteLib.fish(1), 
-		{	x:10, y:5,
-			dx:0.1, 
+		{	x:6, y:5,
+			dx:0.3, 
 		});
 	Sprite.animate(fish2, 'right');
 	Stage.addSprite(stage, fish2);
+
+	let fish3 = new Monster(SpriteLib.fish(2), 
+	{	x:1, y:4,
+		dx:0.3, 
+	});
+	Sprite.animate(fish3, 'right');
+	Stage.addSprite(stage, fish3);
 
 	// some tiles
 
@@ -92,6 +125,9 @@ const init = () => {
 		walli2.x = 15; walli2.y = wi;
 		Stage.addSprite(stage, walli2);
 	}
+
+	// Rules
+
 
 	// super init
 	Game.init();	

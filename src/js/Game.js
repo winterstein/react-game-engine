@@ -17,14 +17,14 @@ class Game extends DataClass {
 		loading: new Sprite()
 	};
 	/**
-	 * @typedef {Player[]}
+	 * @type {Player[]}
 	 */
 	players = [];
 
-	/** @typedef {StopWatch}  */
+	/** @type {StopWatch}  */
 	ticker = new StopWatch();
 
-	/** {Stage} */
+	/** @type {Stage} */
 	stage;
 
 	constructor(base) {
