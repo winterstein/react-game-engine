@@ -1,6 +1,7 @@
 
 import DataClass, {getType, getClass} from '../base/data/DataClass';
 import Grid from './Grid';
+import {collision} from '../components/Collision';
 
 class Stage extends DataClass {
 	sprites = [];
@@ -51,7 +52,8 @@ Stage.testCollisionsBetween = (sprites1, sprites2) => {
 		sprites2.forEach(s2 => {
 			if ( ! Rect.intersects(s1, s2)) return;
 			const t1 = getClass(s1);
-			const t2 = getClass(s2);			
+			const t2 = getClass(s2);	
+			collision(s1,s2);
 			// call onCollision functions
 			if (t1.onCollision) {
 				let {dx, dy} = Stage.testCollisionDirn(s1, s2);

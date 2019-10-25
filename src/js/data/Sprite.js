@@ -136,6 +136,10 @@ export default Sprite;
  * @param {Sprite} sp
  */
 Sprite.initFrames = sp => {
+	if ( ! sp.Image) {
+		sp.Image = new Image();
+		sp.Image.src = sp.src;
+	}
 	if (sp.frames) {
 		return; // all done
 	}
@@ -149,19 +153,18 @@ Sprite.initFrames = sp => {
 			return;
 		}
 		sp.loading = true;
-		let _img = new Image();
-		_img.onload = () => {
+		// let _img = new Image();
+		sp.Image.onload = () => {
 			sp.loading = false;
-			if ( ! sp.tiles) sp.tiles = [Math.round(_img.naturalHeight / sp.tileSize[1]), Math.round(_img.naturalWidth / sp.tileSize[0])];
+			if ( ! sp.tiles) sp.tiles = [Math.round(sp.Image.naturalHeight / sp.tileSize[1]), Math.round(sp.Image.naturalWidth / sp.tileSize[0])];
 			if ( ! sp.tileSize) {
 				sp.tileSize = [
-					Math.round(_img.naturalWidth / sp.tiles[1]),
-					Math.round(_img.naturalHeight / sp.tiles[0])
+					Math.round(sp.Image.naturalWidth / sp.tiles[1]),
+					Math.round(sp.Image.naturalHeight / sp.tiles[0])
 				];
 			}
 			Sprite.initFrames(sp);
 		};
-		_img.src = sp.src;
 		return;
 	}
 	assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
