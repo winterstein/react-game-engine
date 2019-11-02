@@ -53,7 +53,8 @@ Stage.testCollisionsBetween = (sprites1, sprites2) => {
 			if ( ! Rect.intersects(s1, s2)) return;
 			const t1 = getClass(s1);
 			const t2 = getClass(s2);	
-			collision(s1,s2);
+			let col = collision(s1,s2);
+			if ( ! col) return;
 			// call onCollision functions
 			if (t1.onCollision) {
 				let {dx, dy} = Stage.testCollisionDirn(s1, s2);

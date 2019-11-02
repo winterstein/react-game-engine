@@ -68,7 +68,7 @@ const init = () => {
 			dy:0.1,
 			width:2,height:2
 		});
-	Stage.addSprite(stage, alligator);
+	// Stage.addSprite(stage, alligator);
 
 	let bindo = new Monster(SpriteLib.alligator(1), 
 		{	x:7, y:7,
@@ -76,9 +76,7 @@ const init = () => {
 			dy:0,
 			width:3, height:1
 		});
-	Stage.addSprite(stage, bindo);
-
-
+	// Stage.addSprite(stage, bindo);
 
 	let fish1 = new Monster(SpriteLib.fish(), 
 		{	x:15, y:3,
@@ -102,29 +100,28 @@ const init = () => {
 	Stage.addSprite(stage, fish3);
 
 	// some tiles
-
-	let wall = new Tile({
-		src:'/img/bricksx64.png',
-		frames: []
-	});
-	for(let wi=4; wi<10; wi++) {
-		let walli = new Tile(wall);
-		walli.id = 'wall'+wi;
-		walli.x = wi; walli.y = 12;
-		Stage.addSprite(stage, walli);
-	}
-	for(let wi=9; wi<20; wi++) {
-		let walli2 = new Tile(wall);
-		walli2.id = 'wall2'+wi;
-		walli2.x = wi; walli2.y = 0;
-		Stage.addSprite(stage, walli2);
-	}
-	for(let wi=1; wi<8; wi++) {
-		let walli2 = new Tile(wall);
-		walli2.id = 'wall3'+wi;
-		walli2.x = 15; walli2.y = wi;
-		Stage.addSprite(stage, walli2);
-	}
+	// let wall = new Tile({
+	// 	src:'/img/bricksx64.png',
+	// 	frames: []
+	// });
+	// for(let wi=4; wi<10; wi++) {
+	// 	let walli = new Tile(wall);
+	// 	walli.id = 'wall'+wi;
+	// 	walli.x = wi; walli.y = 12;
+	// 	Stage.addSprite(stage, walli);
+	// }
+	// for(let wi=9; wi<20; wi++) {
+	// 	let walli2 = new Tile(wall);
+	// 	walli2.id = 'wall2'+wi;
+	// 	walli2.x = wi; walli2.y = 0;
+	// 	Stage.addSprite(stage, walli2);
+	// }
+	// for(let wi=1; wi<8; wi++) {
+	// 	let walli2 = new Tile(wall);
+	// 	walli2.id = 'wall3'+wi;
+	// 	walli2.x = 15; walli2.y = wi;
+	// 	Stage.addSprite(stage, walli2);
+	// }
 
 	// Rules
 
