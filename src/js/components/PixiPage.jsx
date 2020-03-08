@@ -16,10 +16,13 @@ import Sprite from '../data/Sprite';
 import Stage from '../data/Stage';
 import Tile from '../data/Tile';
 import PixiComponent from './PixiComponent';
+import StopWatch from '../StopWatch';
 
 const PixiPage = () => {
-	return (<div>
+	return (<div style={{position:'relative'}}>
 		<PixiComponent />
+		<div style={{cursor:'pointer',fontSize:'300%',position:'absolute',bottom:'20px',left:'20px',color:'red'}} onClick={e => console.warn(e)}>&#x25B2;</div>
 	</div>);
 };
+
 export default PixiPage;

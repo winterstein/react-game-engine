@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 /**
- * A chunky corner labutton for one-button multi-player games
+ * A chunky corner button for one-button multi-player games
  * @param onClick {Function} ACtually uses onTouchStart as that gives
  * better arcade control.
  */

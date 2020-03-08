@@ -1,3 +1,11 @@
-# React Game Engine
+# React + Pixi Game Engine
 
-TODO sprites, tiles, etc
+## Simple World TODO
+
+1. player character
+2. arrow buttons
+3. toolbox with fixed contents: pick-axe, spawn-sheep
+4. spawn from toolbox
+5. Sheep.js sheep random walk behaviour
+6. collision tests
+7. player can kill sheep
