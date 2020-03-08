@@ -36,7 +36,7 @@ const PAGES = {
 	savetheworld: SaveTheWorldPage,
 	frog: FrogGamePage,
 	test: TestPage,
-	pixi, PixiPage
+	pixi: PixiPage
 };
 
 const DEFAULT_PAGE = 'frog';

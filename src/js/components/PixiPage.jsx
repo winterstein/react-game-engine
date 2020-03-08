@@ -15,19 +15,11 @@ import Player from '../data/Player';
 import Sprite from '../data/Sprite';
 import Stage from '../data/Stage';
 import Tile from '../data/Tile';
+import PixiComponent from './PixiComponent';
 
 const PixiPage = () => {
-	let type = "WebGL"
-	if( ! PIXI.utils.isWebGLSupported()){
-		type = "canvas"
-	}
-	PIXI.utils.sayHello(type);
-	
-	//Create a Pixi Application
-	let app = new PIXI.Application({width: 256, height: 256});
-
-
 	return (<div>
-		{app.view}
+		<PixiComponent />
 	</div>);
 };
+export default PixiPage;
