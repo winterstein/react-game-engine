@@ -9,8 +9,9 @@
     "type": "git"
   },
   "dependencies": {
-	"bootstrap": "^4.3.1",
-	"font-awesome": "4.7.0",
+    "pixi.js": "^5.2.1",
+    "bootstrap": "^4.3.1",
+    "font-awesome": "4.7.0",
     "easy-enums": "^1.1.6",
     "jquery": "^3.4.1",
     "js-cookie": "^2.2.0",

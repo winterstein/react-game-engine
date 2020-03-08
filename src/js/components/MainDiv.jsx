@@ -17,6 +17,7 @@ import LoginWidget from '../base/components/LoginWidget';
 // Pages
 import GamePage from './GamePage';
 import FrogGamePage from './FrogGamePage';
+import PixiPage from './PixiPage';
 import SaveTheWorldPage from './SaveTheWorld';
 import MultiplayerPage from './MultiplayerPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
@@ -35,6 +36,7 @@ const PAGES = {
 	savetheworld: SaveTheWorldPage,
 	frog: FrogGamePage,
 	test: TestPage,
+	pixi, PixiPage
 };
 
 const DEFAULT_PAGE = 'frog';
