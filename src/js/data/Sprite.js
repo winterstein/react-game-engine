@@ -33,7 +33,7 @@ class Sprite extends DataClass {
 	/**
 	 * index into frames for the current frame
 	 */
-	frame = 0;
+	frameIndex = 0;
 	
 	/**
 	 * [[x,y]] coordinates into the src image
@@ -60,17 +60,6 @@ class Sprite extends DataClass {
 	 */
 	z;
 
-	offsetx = 0;
-	offsety = 0;
-	/**
-	 * tile width
-	 */
-	width = 1;
-	/**
-	 * tile height
-	 */
-	height = 1;
-
 	/**
 	 * @typedef {Command}
 	 */
@@ -96,38 +85,7 @@ class Sprite extends DataClass {
 	 * @type {Animate}
 	 */
 	animate;
-
-	/**
-	 * @type {Boolean}
-	 */
-	hidden = false;
-
-	/**
-	 * ALWAYS assigns a new id, to allow for copy constructors
-	 * @param base {Sprite}
-	 * 
-	 * e.g.
-	 * new Sprite({
-	 * 	tileSize: [width px, height px]
-	 *  tiles: [index]
-	 * })
-	 */
-	constructor(base, base2) {
-		super(base);
-		const _type = this['@type'];
-		const sp = this;
-		Object.assign(this, {
-			src:'/img/dummy-sprite.png' 
-		}, base, base2);
-		// in case the base overwrites this
-		this['@type'] = _type;
-		// ALWAYS assigns a new id, to allow for copy constructors, e.g. ufo2 = new Sprite(ufo)
-		sp.id = nonce();
-		// split into tiles?
-		Sprite.initFrames(this);
-	} // ./ constructor
 }
-DataClass.register(Sprite,'Sprite');
 
 export default Sprite;
 
@@ -136,10 +94,6 @@ export default Sprite;
  * @param {Sprite} sp
  */
 Sprite.initFrames = sp => {
-	if ( ! sp.Image) {
-		sp.Image = new Image();
-		sp.Image.src = sp.src;
-	}
 	if (sp.frames) {
 		return; // all done
 	}
@@ -152,19 +106,6 @@ Sprite.initFrames = sp => {
 			console.log("Sprite.js - no url = no frames", sp);
 			return;
 		}
-		sp.loading = true;
-		// let _img = new Image();
-		sp.Image.onload = () => {
-			sp.loading = false;
-			if ( ! sp.tiles) sp.tiles = [Math.round(sp.Image.naturalHeight / sp.tileSize[1]), Math.round(sp.Image.naturalWidth / sp.tileSize[0])];
-			if ( ! sp.tileSize) {
-				sp.tileSize = [
-					Math.round(sp.Image.naturalWidth / sp.tiles[1]),
-					Math.round(sp.Image.naturalHeight / sp.tiles[0])
-				];
-			}
-			Sprite.initFrames(sp);
-		};
 		return;
 	}
 	assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
@@ -265,6 +206,11 @@ Sprite.updateAnimation = (sprite, game) => {
  */
 Sprite.animate = (sp, a) => {
 	if (sp.animate && sp.animate.name === a) return;
+	if ( ! sp.animations || ! sp.animations[a]) {
+		console.warn("animate() - No animation "+a, sp);
+		return;
+	}
+
 	sp.animate = Object.assign({name:a}, sp.animations[a]); // safety copy
 	sp.frame = 0;
 	console.log("set animation", a, sp, sp.animations[a]);

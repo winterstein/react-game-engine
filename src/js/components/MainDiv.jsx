@@ -15,15 +15,10 @@ import MessageBar from '../base/components/MessageBar';
 import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
-import GamePage from './GamePage';
-import FrogGamePage from './FrogGamePage';
 import PixiPage from './PixiPage';
-import SaveTheWorldPage from './SaveTheWorld';
-import MultiplayerPage from './MultiplayerPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
-import GameControls from '../GameControls';
 
 // DataStore
 C.setupDataStore();
@@ -32,14 +27,11 @@ C.setupDataStore();
 
 const PAGES = {
 	account: BasicAccountPage,
-	game: GamePage,
-	savetheworld: SaveTheWorldPage,
-	frog: FrogGamePage,
 	test: TestPage,
 	pixi: PixiPage
 };
 
-const DEFAULT_PAGE = 'frog';
+const DEFAULT_PAGE = 'pixi';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 
@@ -93,9 +85,6 @@ class MainDiv extends Component {
 			setTimeout(() => DataStore.update(), 1);
 			return null;
 		}
-
-		// keys
-		GameControls.init();
 
 		let path = DataStore.getValue('location', 'path');	
 		let page = (path && path[0]);

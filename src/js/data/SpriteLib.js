@@ -6,7 +6,7 @@ import Sprite from './Sprite';
 const SpriteLib = {};
 
 const stdAnimal = (src,n=0,name) => {
-	let sp = new Sprite({
+	let sp = {
 		name,
 		src,
 		tiles: [8,12],
@@ -16,7 +16,7 @@ const stdAnimal = (src,n=0,name) => {
 			up: {frames:[36+n*3,37+n*3,38+n*3]}, 
 			down: {frames:[0+n*3,1+n*3,2+n*3]} 
 		},
-	});
+	};
 	// ??starting animation??
 	Sprite.animate(sp, 'right');
 	return sp;
