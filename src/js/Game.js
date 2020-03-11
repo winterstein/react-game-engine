@@ -17,6 +17,11 @@ class Game extends DataClass {
 	/** @type {StopWatch}  */
 	ticker = new StopWatch();
 
+	/**
+	 * @type {PIXI.Application}
+	 */
+	app;
+
 	constructor(base) {
 		super(base);
 		Object.assign(this, base);
@@ -33,30 +38,19 @@ class Game extends DataClass {
 DataClass.register(Game, 'Game');
 
 
-Game.update = () => {
-	// tick
-	const game = Game.get();
-	if ( ! StopWatch.update(game.ticker)) {
-		return;
-	}
-	// TODO update stage and sprites
-
-	// collisions?
-
-	// off screen?
-
-	// focus on X?
-};
-
 Game.init = () => {
-	if (Game.initFlag) return;
-	Game.initFlag = true;
 	// game object, if not already made
 	const game = Game.get();
+	if (game.initFlag) return;
+	game.initFlag = true;
 	// tick
 	game.ticker = new StopWatch();
-	// update loop
-	let updater = setInterval(() => { Game.update(); }, game.ticker.tickLength/4); // target 1 tick
+
+	// setup
+	Game.setup(game);
+
+	// // update loop - use request ani frame
+	// let updater = setInterval(() => { Game.update(); }, game.ticker.tickLength/4); // target 1 tick
 
 	let gameLoop = () => {
 		if (game.isStopped) {
