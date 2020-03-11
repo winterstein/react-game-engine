@@ -6,7 +6,7 @@ import Sprite from './Sprite';
 const SpriteLib = {};
 
 const stdAnimal = (src,n=0,name) => {
-	let sp = {
+	let sp = new Sprite({
 		name,
 		src,
 		tiles: [8,12],
@@ -16,7 +16,7 @@ const stdAnimal = (src,n=0,name) => {
 			up: {frames:[36+n*3,37+n*3,38+n*3]}, 
 			down: {frames:[0+n*3,1+n*3,2+n*3]} 
 		},
-	};
+	});
 	// ??starting animation??
 	Sprite.animate(sp, 'right');
 	return sp;
@@ -44,6 +44,10 @@ SpriteLib.shark = () => new Sprite({
 });
 
 SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'fish');
+
+
+// TODO Tiles eg grass
+
 
 window.SpriteLib = SpriteLib;
 export default SpriteLib;

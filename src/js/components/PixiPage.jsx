@@ -34,15 +34,25 @@ const PixiPage = () => {
 };
 
 const ArrowPad = ({game}) => {
-	return <div>
-		<Arrow />
-		<div><Arrow /> <Arrow /></div>
-		<Arrow />
+	return <div style={{position:'absolute',bottom:'20px',left:'20px',color:'red'}}>
+		<center><Arrow dirn='up' game={game} /></center>
+		<div><Arrow dirn='left' game={game} /> <Arrow dirn='right' game={game} /></div>
+		<center><Arrow dirn='down' game={game} /></center>
 	</div>
 		
 };
-const Arrow = () => {
-	return <div style={{cursor:'pointer',fontSize:'300%',position:'absolute',bottom:'20px',left:'20px',color:'red'}} onClick={e => console.warn(e)}>&#x25B2;</div>;
+const Arrow = ({dirn, game}) => {
+	let c = {
+		up: '&#x25B2;',
+		left: '&#x25C0', right: '&#x25B6',
+		down: "&#x25BC"
+	};
+	// onClick={ e => Game.handleInput({input:dirn, on:true}) } 
+	return <span style={{cursor:'pointer',fontSize:'300%'}} 
+		onTouchStart={ e => Game.handleInput({input:dirn, on:true}) }
+		onTouchCancel={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
+		onTouchEnd={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
+		dangerouslySetInnerHTML={{__html:c[dirn]}}></span>;
 }
 
 export default PixiPage;

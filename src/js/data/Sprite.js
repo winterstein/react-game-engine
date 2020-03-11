@@ -30,6 +30,10 @@ DataClass.register(Animate, 'Animate');
  * tiles: ?[rows, columns] in the image
  */
 class Sprite extends DataClass {
+	
+	/** @type {PIXI.Sprite} */
+	pixi;
+
 	/**
 	 * index into frames for the current frame
 	 */
@@ -49,16 +53,20 @@ class Sprite extends DataClass {
 	/**
 	 * @type {Number} game tile x
 	 */
-	x;
+	x = 0;
 	/**
 	 * @type {Number} game tile y
 	 */
-	y;
+	y = 0;
 
 	/**
 	 * @type {Number} game tile z -- NOT usually used TODO
 	 */
-	z;
+	z = 0;
+
+	dx = 0;
+	dy = 0;
+	dz = 0;
 
 	/**
 	 * @typedef {Command}
@@ -85,6 +93,12 @@ class Sprite extends DataClass {
 	 * @type {Animate}
 	 */
 	animate;
+
+	constructor(base) {
+		super(base);
+		Object.assign(this, base);
+		delete this.status;
+	}
 }
 
 export default Sprite;

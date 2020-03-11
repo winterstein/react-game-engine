@@ -10,6 +10,13 @@ Game.update = game => {
 		return;
 	}
 	// TODO update stage and sprites
+	Object.values(game.sprites).forEach(s => {
+		s.x += s.dx;
+		s.y += s.dy;
+		s.z += s.dz;
+		s.pixi.x = s.x;
+		s.pixi.y = s.y;
+	});
 
 	// collisions?
 
