@@ -10,6 +10,10 @@ import {assert} from 'sjtest';
 
 class Game extends DataClass {
 	/**
+	 * {String: PIXI.Container} world | ui | ground | characters
+	 */
+	containerFor = {};
+	/**
 	 * String to Sprite
 	 */
 	sprites = {};

@@ -26,6 +26,8 @@ SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n);
 
 SpriteLib.goat = n => stdAnimal('/img/animals/goats.png', n);
 
+SpriteLib.goose = n => stdAnimal('/img/animals/goose.png', n);
+
 SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n);
 
 SpriteLib.alligator = n => {
@@ -45,15 +47,23 @@ SpriteLib.shark = () => new Sprite({
 
 SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'fish');
 
-
+/**
+ * @returns {Sprite}
+ */
 SpriteLib.tile = (tileName) => {
 	console.log("tile", tileName);
+	let fx=0, fy=0;
+	if (tileName==='water') {
+		fy=9*64; fx=5*64;
+	}
 	return new Sprite({
 		name: tileName,
 		src:'/img/tiles/iso-64x64-outside.png',
 		tiles: [16,10],
 		frameIndex:0,
-		tileSize: [64,64]
+		frames: [[fx,fy]],
+		tileSize: [64,64],
+		width:64, height:64
 	});
 };
 

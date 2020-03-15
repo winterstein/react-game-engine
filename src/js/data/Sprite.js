@@ -68,6 +68,9 @@ class Sprite extends DataClass {
 	dy = 0;
 	dz = 0;
 
+	width;
+	height;
+
 	/**
 	 * @typedef {Command}
 	 */
@@ -134,6 +137,9 @@ Sprite.initFrames = sp => {
 			sp.frames.push(frame);
 		}
 	}
+	// also set width & height
+	if ( ! sp.width) sp.width = tileSize[0];
+	if ( ! sp.height) sp.height = tileSize[1];
 };
 
 /**

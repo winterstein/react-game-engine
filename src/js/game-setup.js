@@ -1,8 +1,9 @@
 
 import DataStore from './base/plumbing/DataStore';
-import {getClass} from './base/data/DataClass';
+import {getClass, nonce} from './base/data/DataClass';
 import Grid from './data/Grid';
 import Sprite from './data/Sprite';
+import SpriteLib from './data/SpriteLib';
 import Game from './Game';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
@@ -13,24 +14,27 @@ import { assMatch } from 'sjtest';
  * @param {!Sprite} sprite An instance of a sprite
  * @returns {Sprite} sprite, having set sprite.pixi
  */
-const makePixiSprite = (game, sprite, name) => {
+const makePixiSprite = (game, sprite, name, container) => {
 	Game.assIsa(game);
 	Sprite.assIsa(sprite);
 	assMatch(name, String);
 	let pres = app.loader.resources[sprite.src];
 	assert(pres, "Not loaded Pixi resource "+sprite.src);
 	let psprite = new PIXI.Sprite(pres.texture);
-	const w = sprite.tileSize? sprite.tileSize[0] : 48;
-	const h = sprite.tileSize? sprite.tileSize[1] : 48;
-	psprite.texture.frame = new PIXI.Rectangle(0,0,w,h);
+	// TODO a setTexture fn	
+	const w = sprite.width || 48;
+	const h = sprite.height || 48;
+	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
+	psprite.texture.frame = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
+	
 	sprite.pixi = psprite;
 
-	game.world.addChild(psprite);
+	psprite.x = sprite.x;
+	psprite.y = sprite.y;
+	
+	if ( ! container) container = game.containerFor.world;
+	container.addChild(psprite);
 	game.sprites[name] = sprite;
-	sprite.x = 10;
-	sprite.y = 10;
-	sprite.dx = 0;
-	sprite.dy = 0;
 
 	return sprite;
 };
@@ -48,23 +52,30 @@ Game.basicPixiSetup = game => {
 	// a handy container for the game world, to separate it from UI
 	const world = new PIXI.Container();
 	app.stage.addChild(world);
-	game.world = world;
+	game.containerFor.world = world;
 
 	// Tiles for the background
-	let ground = new PIXI.ParticleContainer();
-	world.addChild(ground);
+	game.containerFor.ground = new PIXI.ParticleContainer();
+	world.addChild(game.containerFor.ground);
+	game.containerFor.characters = new PIXI.Container();
+	world.addChild(game.containerFor.characters);
+	game.containerFor.ui = new PIXI.Container();
+	app.stage.addChild(game.containerFor.ui);
 
 	app.loader
 	.add("/img/animals.TP.json")
 	.add(SpriteLib.alligator().src)
 	.add(SpriteLib.goat().src)
+	.add(SpriteLib.frog().src)
+	.add(SpriteLib.chicken().src)
+	.add(SpriteLib.goose().src)
 	.add(SpriteLib.tile("grass").src)
 	  .load(() => setupAfterLoad(game));
 }
 
 const setupAfterLoad = game => {
 
-	let sprite = makePixiSprite(game, SpriteLib.goat(), "player0");
+	let sprite = makePixiSprite(game, SpriteLib.goat(), "player0", game.characters);
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);
@@ -106,6 +117,22 @@ const setupAfterLoad = game => {
 		console.log(sprite.dx + " dy: "+sprite.dy, sprite);
 	};
 
+	// UI
+	{
+		let isprite = makePixiSprite(game, SpriteLib.frog(), "inventory1", game.containerFor.ui);
+		let psprite = isprite.pixi;
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			let spawn = makePixiSprite(game, isprite, isprite.name+nonce(), game.containerFor.characters);
+			spawn.x = player.x;
+			spawn.y = player.y;
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	}
+
 	// land
 	let landPlan = makeLandPlan(game);
 	// sprites
@@ -113,9 +140,9 @@ const setupAfterLoad = game => {
 		for(let coli = 0; coli<landPlan[0].length; coli++) {
 			let cell = landPlan[rowi][coli];
 			let tileSprite = SpriteLib.tile(cell);
-			tileSprite.x = coli * 10;
-			tileSprite.y = rowi * 10;
-			makePixiSprite(game, tileSprite, "row"+rowi+"_col"+coli);
+			tileSprite.x = coli * tileSprite.width;
+			tileSprite.y = rowi * tileSprite.height;
+			makePixiSprite(game, tileSprite, "row"+rowi+"_col"+coli, game.containerFor.ground);
 		}
 	}
 };
