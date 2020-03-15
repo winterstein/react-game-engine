@@ -55,10 +55,22 @@ SpriteLib.tile = (tileName) => {
 	let fx=0, fy=0;
 	let size=32;
 	if (tileName==='water') {
-		fy=2*size; fx=2*size;
+		fy=1.5*size; fx=0.5*size;
 		return new Sprite({
 			name: tileName,
-			src:'/img/tiles/celiana/celianna_TileA1.png',
+			src:'/img/tiles/celianna/celianna_TileA1.png',
+			tiles: [16,10],
+			frameIndex:0,
+			frames: [[fx,fy]],
+			tileSize: [size,size],
+			width:size, height:size
+		});	
+	}
+	if (tileName==='earth') {
+		fy=7*size;
+		return new Sprite({
+			name: tileName,
+			src:'/img/tiles/celianna/celianna_TileA2.png',
 			tiles: [16,10],
 			frameIndex:0,
 			frames: [[fx,fy]],
@@ -69,7 +81,7 @@ SpriteLib.tile = (tileName) => {
 	if (tileName==='grass' || true) {
 		return new Sprite({
 			name: tileName,
-			src:'/img/tiles/celiana/celianna_TileA2.png',
+			src:'/img/tiles/celianna/celianna_TileA2.png',
 			tiles: [16,10],
 			frameIndex:0,
 			frames: [[fx,fy]],

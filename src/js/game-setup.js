@@ -18,14 +18,17 @@ const makePixiSprite = (game, sprite, name, container) => {
 	Game.assIsa(game);
 	Sprite.assIsa(sprite);
 	assMatch(name, String);
+	assert( ! game.sprites[name], "Duplicate sprite for "+name);
 	let pres = app.loader.resources[sprite.src];
+	console.log(name, pres.texture);
 	assert(pres, "Not loaded Pixi resource "+sprite.src);
-	let psprite = new PIXI.Sprite(pres.texture);
-	// TODO a setTexture fn	
 	const w = sprite.width || 48;
 	const h = sprite.height || 48;
+	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
 	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
-	psprite.texture.frame = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
+	let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
+	let texture = new PIXI.Texture(pres.texture, tframe);
+	let psprite = new PIXI.Sprite(texture);
 	
 	sprite.pixi = psprite;
 
@@ -76,50 +79,52 @@ Game.basicPixiSetup = game => {
 
 const setupAfterLoad = game => {
 
-	let sprite = makePixiSprite(game, SpriteLib.goat(), "player0", game.characters);
+	if (true) {
+		let sprite = makePixiSprite(game, SpriteLib.goat(), "player0", game.characters);
 
-	let right = new Key(KEYS.ArrowRight);
-	let left = new Key(KEYS.ArrowLeft);
-	let up = new Key(KEYS.ArrowUp);
-	let down = new Key(KEYS.ArrowDown);
+		let right = new Key(KEYS.ArrowRight);
+		let left = new Key(KEYS.ArrowLeft);
+		let up = new Key(KEYS.ArrowUp);
+		let down = new Key(KEYS.ArrowDown);
 
-	right.press = () => Game.handleInput({input:'right', on:true});
-	right.press = () => Game.handleInput({input:'right', on:false});
-	left.press = () => Game.handleInput({input:'left', on:true});
-	left.press = () => Game.handleInput({input:'left', on:false})
-	up.press = () => Game.handleInput({input:'up', on:true});
-	up.press = () => Game.handleInput({input:'up', on:false})
-	down.press = () => Game.handleInput({input:'down', on:true});
-	down.press = () => Game.handleInput({input:'down', on:false})
+		right.press = () => Game.handleInput({input:'right', on:true});
+		right.press = () => Game.handleInput({input:'right', on:false});
+		left.press = () => Game.handleInput({input:'left', on:true});
+		left.press = () => Game.handleInput({input:'left', on:false})
+		up.press = () => Game.handleInput({input:'up', on:true});
+		up.press = () => Game.handleInput({input:'up', on:false})
+		down.press = () => Game.handleInput({input:'down', on:true});
+		down.press = () => Game.handleInput({input:'down', on:false})
 
-	/**
-	 * @param {!String} input e.g. "up"
-	 */
-	Game.handleInput = ({input, on}) => {
-		const v = 100; // pixles per second
-		switch(input) {
-			case 'up':
-				if (on) sprite.dy = -v;
-				if ( ! on && sprite.dy < 0) sprite.dy = 0;
-				break;
-			case 'down':
-				if (on) sprite.dy = v;
-				if ( ! on && sprite.dy > 0) sprite.dy = 0;
-				break;
-			case 'left':
-				if (on) sprite.dx = -v;
-				if ( ! on && sprite.dx < 0) sprite.dx = 0;
-				break;
-			case 'right':
-				if (on) sprite.dx = v;
-				if ( ! on && sprite.dx > 0) sprite.dx = 0;
-				break;
-		}
-		console.log(sprite.dx + " dy: "+sprite.dy, sprite);
-	};
+		/**
+		 * @param {!String} input e.g. "up"
+		 */
+		Game.handleInput = ({input, on}) => {
+			const v = 100; // pixles per second
+			switch(input) {
+				case 'up':
+					if (on) sprite.dy = -v;
+					if ( ! on && sprite.dy < 0) sprite.dy = 0;
+					break;
+				case 'down':
+					if (on) sprite.dy = v;
+					if ( ! on && sprite.dy > 0) sprite.dy = 0;
+					break;
+				case 'left':
+					if (on) sprite.dx = -v;
+					if ( ! on && sprite.dx < 0) sprite.dx = 0;
+					break;
+				case 'right':
+					if (on) sprite.dx = v;
+					if ( ! on && sprite.dx > 0) sprite.dx = 0;
+					break;
+			}
+			console.log(sprite.dx + " dy: "+sprite.dy, sprite);
+		};
+	}
 
 	// UI
-	{
+	if (true) {
 		let isprite = makePixiSprite(game, SpriteLib.frog(), "inventory1", game.containerFor.ui);
 		let psprite = isprite.pixi;
 		psprite.interactive = true;
@@ -160,7 +165,7 @@ Game.setup = game => {
 };
 
 const makeLandPlan = game => {
-	return [['grass','grass','grass'],['water','grass','water'],['grass','grass','grass']];
+	return [['grass','earth','water']] //,['grass','earth','water'],['grass','earth','water']];
 };
 
 
