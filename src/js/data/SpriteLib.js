@@ -53,6 +53,38 @@ SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'fish');
 SpriteLib.tile = (tileName) => {
 	console.log("tile", tileName);
 	let fx=0, fy=0;
+	let size=32;
+	if (tileName==='water') {
+		fy=2*size; fx=2*size;
+		return new Sprite({
+			name: tileName,
+			src:'/img/tiles/celiana/celianna_TileA1.png',
+			tiles: [16,10],
+			frameIndex:0,
+			frames: [[fx,fy]],
+			tileSize: [size,size],
+			width:size, height:size
+		});	
+	}
+	if (tileName==='grass' || true) {
+		return new Sprite({
+			name: tileName,
+			src:'/img/tiles/celiana/celianna_TileA2.png',
+			tiles: [16,10],
+			frameIndex:0,
+			frames: [[fx,fy]],
+			tileSize: [size,size],
+			width:size, height:size
+		});	
+	}	
+};
+
+/**
+ * @returns {Sprite}
+ */
+SpriteLib.tileIso = (tileName) => {
+	console.log("tile", tileName);
+	let fx=0, fy=0;
 	if (tileName==='water') {
 		fy=9*64; fx=5*64;
 	}

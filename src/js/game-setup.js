@@ -70,6 +70,7 @@ Game.basicPixiSetup = game => {
 	.add(SpriteLib.chicken().src)
 	.add(SpriteLib.goose().src)
 	.add(SpriteLib.tile("grass").src)
+	.add(SpriteLib.tile("water").src)
 	  .load(() => setupAfterLoad(game));
 }
 
