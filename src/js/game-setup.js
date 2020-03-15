@@ -8,14 +8,16 @@ import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
 
 /**
- * 
- * @param {!Sprite} spriteSpec 
- * @returns {Sprite} having set sprite.pixi
+ * @param {!Game} game
+ * @param {!Sprite} sprite An instance of a sprite
+ * @returns {Sprite} sprite, having set sprite.pixi
  */
 const makePixiSprite = (game, sprite, name) => {
 	Game.assIsa(game);
 	Sprite.assIsa(sprite);
-	let psprite = new PIXI.Sprite(app.loader.resources[sprite.src].texture);
+	let pres = app.loader.resources[sprite.src];
+	assert(pres, "Not loaded Pixi resource "+sprite.src);
+	let psprite = new PIXI.Sprite(pres.texture);
 	psprite.texture.frame = new PIXI.Rectangle(0,0,48,48);
 	sprite.pixi = psprite;
 
@@ -44,10 +46,15 @@ Game.basicPixiSetup = game => {
 	app.stage.addChild(world);
 	game.world = world;
 
+	// Tiles for the background
+	let ground = new PIXI.ParticleContainer();
+	world.addChild(ground);
+
 	app.loader
 	.add("/img/animals.TP.json")
 	.add(SpriteLib.alligator().src)
 	.add(SpriteLib.goat().src)
+	.add(SpriteLib.tile("grass").src)
 	  .load(() => setupAfterLoad(game));
 }
 
@@ -94,13 +101,16 @@ const setupAfterLoad = game => {
 		console.log(sprite.dx + " dy: "+sprite.dy, sprite);
 	};
 
-	// TODO land
+	// land
 	let landPlan = makeLandPlan(game);
-	// TODO sprites
+	// sprites
 	for(let rowi = 0; rowi<landPlan.length; rowi++) {
 		for(let coli = 0; coli<landPlan[0].length; coli++) {
 			let cell = landPlan[rowi][coli];
-			
+			let tileSprite = SpriteLib.tile(cell);
+			tileSprite.x = coli * 10;
+			tileSprite.y = rowi * 10;
+			makePixiSprite(game, tileSprite);
 		}
 	}
 };
@@ -116,7 +126,7 @@ Game.setup = game => {
 	Game.basicPixiSetup(game);
 };
 
-makeLandPlan = game => {
+const makeLandPlan = game => {
 	return [['grass','grass','grass'],['water','grass','water'],['grass','grass','grass']];
 };
 

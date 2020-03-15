@@ -27,7 +27,7 @@ const PixiPage = () => {
 	const game = Game.get();
 	Game.init(game);
 
-	return (<div style={{position:'relative'}}>
+	return (<div style={{position:'relative', userSelect:"none"}}>
 		<PixiComponent app={game.app} />
 		<ArrowPad game={game} />		
 	</div>);
@@ -36,7 +36,7 @@ const PixiPage = () => {
 const ArrowPad = ({game}) => {
 	return <div style={{position:'absolute',bottom:'20px',left:'20px',color:'red'}}>
 		<center><Arrow dirn='up' game={game} /></center>
-		<div><Arrow dirn='left' game={game} /> <Arrow dirn='right' game={game} /></div>
+		<div><Arrow dirn='left' game={game} /> &nbsp;&nbsp; <Arrow dirn='right' game={game} /></div>
 		<center><Arrow dirn='down' game={game} /></center>
 	</div>
 		

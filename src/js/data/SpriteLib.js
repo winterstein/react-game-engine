@@ -46,6 +46,14 @@ SpriteLib.shark = () => new Sprite({
 SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'fish');
 
 
+SpriteLib.tile = (tileName) => new Sprite({
+	name:tileName,
+	src:'/img/tiles/iso-64x64-outside.png',
+	tiles: [16,10],
+	frameIndex:0,
+	tileSize: [64,64]
+});
+
 // TODO Tiles eg grass
 
 
