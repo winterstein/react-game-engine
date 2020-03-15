@@ -6,6 +6,7 @@ import Sprite from './data/Sprite';
 import Game from './Game';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
+import { assMatch } from 'sjtest';
 
 /**
  * @param {!Game} game
@@ -15,10 +16,13 @@ import Key, {KEYS} from './Key';
 const makePixiSprite = (game, sprite, name) => {
 	Game.assIsa(game);
 	Sprite.assIsa(sprite);
+	assMatch(name, String);
 	let pres = app.loader.resources[sprite.src];
 	assert(pres, "Not loaded Pixi resource "+sprite.src);
 	let psprite = new PIXI.Sprite(pres.texture);
-	psprite.texture.frame = new PIXI.Rectangle(0,0,48,48);
+	const w = sprite.tileSize? sprite.tileSize[0] : 48;
+	const h = sprite.tileSize? sprite.tileSize[1] : 48;
+	psprite.texture.frame = new PIXI.Rectangle(0,0,w,h);
 	sprite.pixi = psprite;
 
 	game.world.addChild(psprite);
@@ -60,7 +64,7 @@ Game.basicPixiSetup = game => {
 
 const setupAfterLoad = game => {
 
-	let sprite = makePixiSprite(game, SpriteLib.goat());
+	let sprite = makePixiSprite(game, SpriteLib.goat(), "player0");
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);
@@ -80,22 +84,23 @@ const setupAfterLoad = game => {
 	 * @param {!String} input e.g. "up"
 	 */
 	Game.handleInput = ({input, on}) => {
+		const v = 100; // pixles per second
 		switch(input) {
 			case 'up':
-				if (on) sprite.dy = -1;
-				if ( ! on && sprite.dy === -1) sprite.dy = 0;
+				if (on) sprite.dy = -v;
+				if ( ! on && sprite.dy < 0) sprite.dy = 0;
 				break;
 			case 'down':
-				if (on) sprite.dy = 1;
-				if ( ! on && sprite.dy === 1) sprite.dy = 0;
+				if (on) sprite.dy = v;
+				if ( ! on && sprite.dy > 0) sprite.dy = 0;
 				break;
 			case 'left':
-				if (on) sprite.dx = -1;
-				if ( ! on && sprite.dx === -1) sprite.dx = 0;
+				if (on) sprite.dx = -v;
+				if ( ! on && sprite.dx < 0) sprite.dx = 0;
 				break;
 			case 'right':
-				if (on) sprite.dx = 1;
-				if ( ! on && sprite.dx === 1) sprite.dx = 0;
+				if (on) sprite.dx = v;
+				if ( ! on && sprite.dx > 0) sprite.dx = 0;
 				break;
 		}
 		console.log(sprite.dx + " dy: "+sprite.dy, sprite);
@@ -110,7 +115,7 @@ const setupAfterLoad = game => {
 			let tileSprite = SpriteLib.tile(cell);
 			tileSprite.x = coli * 10;
 			tileSprite.y = rowi * 10;
-			makePixiSprite(game, tileSprite);
+			makePixiSprite(game, tileSprite, "row"+rowi+"_col"+coli);
 		}
 	}
 };

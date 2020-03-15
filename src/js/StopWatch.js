@@ -40,7 +40,7 @@ class StopWatch extends DataClass {
 DataClass.register(StopWatch, "StopWatch");
 
 /**
- *  The dt in seconds since the last tick checked
+ *  The dt in seconds since the last tick checked (call `update()` first).
  * @returns {Number}
  */
 StopWatch.dt = sw => {
@@ -64,8 +64,8 @@ StopWatch.time = sw => {
 };
 
 /**
- * Update and fetch tick.
- * @returns {?Number} null if the last call to tick was less than tickLength
+ * Update and fetch tick. Also updates dt
+ * @returns {?Number} null if the last call to tick was less than tickLength.
  */
 StopWatch.update = sw => {	
 	let newTick = StopWatch.time(sw);
