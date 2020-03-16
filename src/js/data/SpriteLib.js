@@ -59,6 +59,7 @@ SpriteLib.tile = (tileName) => {
 		return new Sprite({
 			name: tileName,
 			src:'/img/tiles/celianna/celianna_TileA1.png',
+			// src:'/img/tilewater.png',
 			tiles: [16,10],
 			frameIndex:0,
 			frames: [[fx,fy]],
@@ -82,6 +83,7 @@ SpriteLib.tile = (tileName) => {
 		return new Sprite({
 			name: tileName,
 			src:'/img/tiles/celianna/celianna_TileA2.png',
+			// src:'/img/TileA2.png',
 			tiles: [16,10],
 			frameIndex:0,
 			frames: [[fx,fy]],

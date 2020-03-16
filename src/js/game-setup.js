@@ -38,7 +38,8 @@ const makePixiSprite = (game, sprite, name, container) => {
 	if ( ! container) container = game.containerFor.world;
 	container.addChild(psprite);
 	game.sprites[name] = sprite;
-
+	// let res = texture.res
+	console.log("Made "+name+" from",sprite,"texture",psprite.texture);
 	return sprite;
 };
 
@@ -58,7 +59,8 @@ Game.basicPixiSetup = game => {
 	game.containerFor.world = world;
 
 	// Tiles for the background
-	game.containerFor.ground = new PIXI.ParticleContainer();
+	// NB: ParticleContainer only works with a single source image!
+	game.containerFor.ground = new PIXI.Container();
 	world.addChild(game.containerFor.ground);
 	game.containerFor.characters = new PIXI.Container();
 	world.addChild(game.containerFor.characters);
@@ -141,7 +143,11 @@ const setupAfterLoad = game => {
 
 	// land
 	let landPlan = makeLandPlan(game);
-	// sprites
+	// // sprites
+	// const w = SpriteLib.tile("water");
+	// w.x = 48; w.y=48;
+	// makePixiSprite(game, w, "water00", game.containerFor.characters);
+	// makePixiSprite(game, SpriteLib.tile("grass"), "grass11", game.containerFor.ground);
 	for(let rowi = 0; rowi<landPlan.length; rowi++) {
 		for(let coli = 0; coli<landPlan[0].length; coli++) {
 			let cell = landPlan[rowi][coli];
@@ -165,7 +171,7 @@ Game.setup = game => {
 };
 
 const makeLandPlan = game => {
-	return [['grass','earth','water']] //,['grass','earth','water'],['grass','earth','water']];
+	return [['water','grass'],['grass','earth','water'],['grass','earth','water']];
 };
 
 
