@@ -9,3 +9,12 @@
 5. Sheep.js sheep random walk behaviour
 6. collision tests
 7. player can kill sheep
+
+
+## Server Update
+
+ssh to hugh
+dw.winterwell.com
+npm run compile 
+	or npm run compile-watch
+

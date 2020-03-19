@@ -26,6 +26,10 @@ class Game extends DataClass {
 	 */
 	app;
 
+	width;
+	
+	height;
+
 	constructor(base) {
 		super(base);
 		Object.assign(this, base);

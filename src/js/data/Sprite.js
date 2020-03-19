@@ -186,9 +186,8 @@ Sprite.update = (sprite, game) => {
 		}
 	}
 	// animate 
-	if (sprite.animate) {
-		Sprite.updateAnimation(sprite, game);
-	}
+	Sprite.updateAnimation(sprite, game);
+	
 	if (sprite.dx && dt) {
 		sprite.oldX = sprite.x; // NB: record old x,y so we can step-back onCollision
 		sprite.x += sprite.dx * dt;
@@ -204,6 +203,7 @@ Sprite.update = (sprite, game) => {
 }; // ./update()
 
 Sprite.updateAnimation = (sprite, game) => {
+	if ( ! sprite.animate) return;
 	const tick = StopWatch.tick(game.ticker);
 	// animation tick
 	if ( ! sprite.animate.startTick) sprite.animate.startTick = tick;

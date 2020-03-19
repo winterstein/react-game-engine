@@ -18,9 +18,19 @@ const stdAnimal = (src,n=0,name) => {
 		},
 	});
 	// ??starting animation??
+	Sprite.initFrames(sp);
 	Sprite.animate(sp, 'right');
 	return sp;
 };
+
+const stdIcon = (src,name) => {	
+	let sp = new Sprite({
+		name:name||src,
+		src,
+	});
+	return sp;
+};
+
 
 SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n);
 
@@ -37,6 +47,9 @@ SpriteLib.alligator = n => {
 	return a;
 };
 
+
+SpriteLib.grab = () => stdIcon('/img/icon/hand-grab.png');
+SpriteLib.pickAxe = () => stdIcon('/img/icon/pick-axe.png');
 
 SpriteLib.shark = () => new Sprite({
 	name:'shark',

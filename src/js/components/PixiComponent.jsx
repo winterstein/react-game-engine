@@ -14,10 +14,9 @@ class PixiComponent extends React.Component {
    */
   componentDidMount() {
 	let type = "WebGL"
-	// if( ! PIXI.utils.isWebGLSupported()){
-	// 	type = "canvas"
-	// }
-	// PIXI.utils.sayHello(type);
+	if( ! PIXI.utils.isWebGLSupported()){
+		type = "canvas"
+	}
 	window.PIXI = PIXI;	
 	this.app = this.props.app;
 	this.app.renderer.autoResize = true;
@@ -38,7 +37,7 @@ class PixiComponent extends React.Component {
   render() {
     let component = this;
     return (
-      <div ref={(thisDiv) => {component.gameCanvas = thisDiv}} />
+      <div className='PixiComponent' ref={(thisDiv) => {component.gameCanvas = thisDiv}} />
     );
   }
 }

@@ -1,6 +1,7 @@
 
 import Game from './Game';
 import StopWatch from './StopWatch'
+import Sprite from './data/Sprite';
 
 /**
  * @param {!Game} game
@@ -29,8 +30,10 @@ const updateSprite = (s, game) => {
 	s.x += s.dx * dt;
 	s.y += s.dy * dt;
 	s.z += s.dz * dt;
-	s.pixi.x = s.x;
-	s.pixi.y = s.y;
+
+	Sprite.updateAnimation(s, game);
+
+	Sprite.setPixiProps(s);
 };
 
 export default {}; // dummy export to keep imports happy
