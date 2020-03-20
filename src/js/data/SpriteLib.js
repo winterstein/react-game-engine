@@ -10,6 +10,7 @@ const stdAnimal = (src,n=0,name) => {
 		name,
 		src,
 		tiles: [8,12],
+		tileSize: [48,48],
 		animations: {
 			left: {frames:[12+n*3,13+n*3,14+n*3,13+n*3]}, 
 			right: {frames:[24+n*3,25+n*3,26+n*3,25+n*3]}, 
@@ -37,6 +38,10 @@ SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n);
 SpriteLib.goat = n => stdAnimal('/img/animals/goats.png', n);
 
 SpriteLib.goose = n => stdAnimal('/img/animals/goose.png', n);
+
+SpriteLib.sheep = n => stdAnimal('/img/animals/Sheep.png', n);
+SpriteLib.wolf = n => stdAnimal('/img/animals/wolfdog.png', n);
+SpriteLib.werewolf = n => stdAnimal('/img/Mythological animals/wolfbeast.png', n);
 
 SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n);
 

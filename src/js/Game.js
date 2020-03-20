@@ -73,5 +73,44 @@ Game.init = () => {
 	gameLoop();
 };
 
+/**
+ * @param {?Sprite} sprite default to player0
+ * @param {!String} input e.g. "up"
+ * @param {?Boolean} on if false the input is being switched off - eg key-up
+ */
+Game.handleInput = ({sprite, input, on}) => {
+	if ( ! sprite) {
+		sprite = Game.get().sprites['player0'];
+	}
+	const v = 100; // pixles per second
+	switch(input) {
+		case 'up':
+			if (on) {
+				sprite.dy = -v;
+			}
+			if ( ! on && sprite.dy < 0) sprite.dy = 0;
+			break;
+		case 'down':
+			if (on) {
+				sprite.dy = v;
+			}
+			if ( ! on && sprite.dy > 0) sprite.dy = 0;
+			break;
+		case 'left':
+			if (on) {
+				sprite.dx = -v;
+			}
+			if ( ! on && sprite.dx < 0) sprite.dx = 0;
+			break;
+		case 'right':
+			if (on) {
+				sprite.dx = v;
+			}
+			if ( ! on && sprite.dx > 0) sprite.dx = 0;
+			break;
+	}
+	// console.log(input, on, sprite.dx + " dy: "+sprite.dy, sprite);
+};
+
 window.Game = Game; //debug
 export default Game;

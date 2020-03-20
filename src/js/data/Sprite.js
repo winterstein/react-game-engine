@@ -12,6 +12,9 @@ class Animate extends DataClass {
 
 	/** @type {Number} */
 	dt;   
+
+	/** @type {Boolean} */
+	stop;
 }
 DataClass.register(Animate, 'Animate');
 
@@ -35,7 +38,7 @@ class Sprite extends DataClass {
 	pixi;
 
 	/**
-	 * index into frames for the current frame
+	 * @type {?Number} index into frames for the current frame
 	 */
 	frameIndex = 0;
 	
@@ -97,6 +100,9 @@ class Sprite extends DataClass {
 	 */
 	animate;
 
+	/**
+	 * @param {?Sprite} base 
+	 */
 	constructor(base) {
 		super(base);
 		Object.assign(this, base);
@@ -114,15 +120,12 @@ Sprite.initFrames = sp => {
 	if (sp.frames) {
 		return; // all done
 	}
-	if ( ! sp.tileSize && ! sp.tiles) {
-		console.warn("Sprite.js - need tileSize and/or tiles to initFrames", sp);
+	if ( ! sp.src) {
+		console.log("Sprite.js - no url = no frames", sp);
 		return;
 	}
 	if ( ! sp.tiles || ! sp.tileSize) {
-		if ( ! sp.src) {
-			console.log("Sprite.js - no url = no frames", sp);
-			return;
-		}
+		console.warn("Sprite.js - need tileSize and/or tiles to initFrames", sp);		
 		return;
 	}
 	assert(sp.tiles.length === 2, "Sprite.js tiles not [num-rows, num-cols]", sp);
@@ -138,8 +141,8 @@ Sprite.initFrames = sp => {
 		}
 	}
 	// also set width & height
-	if ( ! sp.width) sp.width = tileSize[0];
-	if ( ! sp.height) sp.height = tileSize[1];
+	if ( ! sp.width) sp.width = sp.tileSize[0];
+	if ( ! sp.height) sp.height = sp.tileSize[1];
 };
 
 /**
@@ -202,6 +205,9 @@ Sprite.update = (sprite, game) => {
 	// Game.
 }; // ./update()
 
+/**
+ * @param {!Sprite} sprite
+ */
 Sprite.updateAnimation = (sprite, game) => {
 	if ( ! sprite.animate) return;
 	const tick = StopWatch.tick(game.ticker);
@@ -215,16 +221,20 @@ Sprite.updateAnimation = (sprite, game) => {
 		// ?? how to trigger the next thing? sprite.animate.onDone??
 	} else {
 		const i = tocks % sprite.animate.frames.length;
-		sprite.frame = sprite.animate.frames[i];
+		sprite.frameIndex = sprite.animate.frames[i];
 	}
 };
 
 /**
  * Set the current animation
  * @param {Sprite} sp
- * @param {String} a
+ * @param {String} a e.g. "left". "stop" for well, stop
  */
 Sprite.animate = (sp, a) => {
+	if (a==='stop') {
+		if (sp.animate) sp.animate.stop = true;
+		return;	
+	}
 	if (sp.animate && sp.animate.name === a) return;
 	if ( ! sp.animations || ! sp.animations[a]) {
 		console.warn("animate() - No animation "+a, sp);

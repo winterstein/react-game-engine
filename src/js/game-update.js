@@ -31,6 +31,13 @@ const updateSprite = (s, game) => {
 	s.y += s.dy * dt;
 	s.z += s.dz * dt;
 
+	// set animation from dx/dy
+	if (s.dy < 0) Sprite.animate(s, 'up');
+	if (s.dy > 0) Sprite.animate(s, 'down');
+	if (s.dx < 0) Sprite.animate(s, 'left');
+	if (s.dx > 0) Sprite.animate(s, 'right');
+	if ( ! s.dx && ! s.dy) Sprite.animate(s, 'stop');
+
 	Sprite.updateAnimation(s, game);
 
 	Sprite.setPixiProps(s);

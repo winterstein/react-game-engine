@@ -7,7 +7,10 @@ import SpriteLib from './data/SpriteLib';
 import Game from './Game';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
-import { assMatch } from 'sjtest';
+import { assMatch, assert } from 'sjtest';
+
+
+const DEBUG_FOCUS = false;
 
 /**
  * @param {!Game} game
@@ -65,8 +68,8 @@ Sprite.setPixiProps = sprite => {
  */
 Game.basicPixiSetup = game => {
 	if ( ! game.app) {
-		game.width = window.innerWidth;
-		game.height = window.innerHeight;
+		game.width = window.innerWidth - 75; // ??how to manage the browser address bar and UI blocking part of the screen??
+		game.height = window.innerHeight - 75;
 		console.log("app size "+window.innerWidth+" x "+window.innerHeight);
 		game.app = new PIXI.Application(game.width, game.height);
 		window.app = game.app;
@@ -92,6 +95,9 @@ Game.basicPixiSetup = game => {
 	.add(SpriteLib.alligator().src)
 	.add(SpriteLib.goat().src)
 	.add(SpriteLib.frog().src)
+	.add(SpriteLib.sheep().src)
+	.add(SpriteLib.wolf().src)
+	.add(SpriteLib.werewolf().src)
 	.add(SpriteLib.chicken().src)
 	.add(SpriteLib.goose().src)
 	.add(SpriteLib.grab().src)
@@ -103,12 +109,12 @@ Game.basicPixiSetup = game => {
 
 const setupAfterLoad = game => {
 
-	if (true) {
+	if ( ! DEBUG_FOCUS) {
 		setupAfterLoad2_Player(game);
 	}
 
 	// UI
-	if (true) {
+	if ( ! DEBUG_FOCUS) {
 
 		// Create the inventory bar
 		let width = 6*50+20;
@@ -128,9 +134,13 @@ const setupAfterLoad = game => {
 		inventoryBar.addChild(innerBar);
 
 		// default inventory
+		const xOffset = 5, slotWidth=50; 
+		let slot = 0;
 		{	// grab
 			let grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
-			let psprite = grabSprite.pixi;
+			grabSprite.x = xOffset + slot*slotWidth;
+			slot++;
+			let psprite = grabSprite.pixi;			
 			psprite.interactive = true;
 			const onDown = e => {
 				console.log("onDown",e, ""+e.target);
@@ -142,7 +152,8 @@ const setupAfterLoad = game => {
 		}
 		if (false) {	// weapon - pickaxe
 			let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
-			grabSprite.x = 50;
+			grabSprite.x = xOffset + slot*slotWidth;
+			slot++;
 			let psprite = grabSprite.pixi;
 			psprite.interactive = true;
 			const onDown = e => {
@@ -153,23 +164,27 @@ const setupAfterLoad = game => {
 			psprite.on('mousedown', onDown);
 			psprite.on('touchstart', onDown);
 		}
-
-		{
-			let isprite = makePixiSprite(game, SpriteLib.frog(), "inventory1", inventoryBar);
-			isprite.x = 100;
-			let psprite = isprite.pixi;
+		// spawns
+		['sheep','wolf','frog','werewolf'].forEach(spawnName => {
+			let base = SpriteLib[spawnName]();
+			let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
+			iSprite.animate = null;
+			iSprite.x = xOffset + slot*slotWidth;
+			slot++;
+			let psprite = iSprite.pixi;
 			psprite.interactive = true;
 			const onDown = e => {
 				console.log("onDown",e, ""+e.target);
 				let player = game.sprites.player0;
-				let spawn = makePixiSprite(game, isprite, isprite.name+nonce(), game.containerFor.characters);
+				// move it
+				let spawn = Object.assign(iSprite);
 				spawn.x = player.x;
 				spawn.y = player.y;
+				makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				
 			};
 			psprite.on('mousedown', onDown);
 			psprite.on('touchstart', onDown);
-		}
-
+		});		
 	}
 
 	// land
@@ -193,7 +208,7 @@ const setupAfterLoad = game => {
 };
 
 const setupAfterLoad2_Player = game => {
-	let sprite = makePixiSprite(game, SpriteLib.goose(6), "player0", game.characters);
+	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);
@@ -208,39 +223,7 @@ const setupAfterLoad2_Player = game => {
 	up.release = () => Game.handleInput({input:'up', on:false})
 	down.press = () => Game.handleInput({input:'down', on:true});
 	down.release = () => Game.handleInput({input:'down', on:false})
-
-	/**
-	 * @param {!String} input e.g. "up"
-	 */
-	Game.handleInput = ({input, on}) => {
-		const v = 100; // pixles per second
-		switch(input) {
-			case 'up':
-				if (on) sprite.dy = -v;
-				if ( ! on && sprite.dy < 0) sprite.dy = 0;
-				break;
-			case 'down':
-				if (on) sprite.dy = v;
-				if ( ! on && sprite.dy > 0) sprite.dy = 0;
-				break;
-			case 'left':
-				if (on) {
-					sprite.dx = -v;
-					Sprite.animate(sprite, 'left');
-				}
-				if ( ! on && sprite.dx < 0) sprite.dx = 0;
-				break;
-			case 'right':
-				if (on) {
-					sprite.dx = v;
-					Sprite.animate(sprite, 'right');
-				}
-				if ( ! on && sprite.dx > 0) sprite.dx = 0;
-				Sprite. sprite
-				break;
-		}
-		console.log(input, on, sprite.dx + " dy: "+sprite.dy, sprite);
-	};
+	
 };
 
 
@@ -255,9 +238,21 @@ Game.setup = game => {
 };
 
 const makeLandPlan = game => {
-	return [['water','grass'],['grass','earth','water'],['grass','earth','water'],
-	['grass','earth','water','water','water','grass'],
-	['grass','earth','water','water','water','grass']];
+	let nrows = Math.floor(game.height / 48);
+	let ncols = Math.floor(game.width / 48);
+	assert(nrows > 1, game);
+	assert(ncols > 1, game);
+	let map = [];
+	for(let ri=0; ri<nrows; ri++) {
+		let row = [];
+		map.push(row);
+		for(let ci=0; ci<ncols; ci++) {
+			let r = Math.floor(Math.random()*3);
+			let tile = ['grass','water','earth'][r];
+			row.push(tile);
+		}
+	}
+	return map;
 };
 
 
