@@ -91,7 +91,6 @@ Game.basicPixiSetup = game => {
 	app.stage.addChild(game.containerFor.ui);
 
 	app.loader
-	.add("/img/animals.TP.json")
 	.add(SpriteLib.alligator().src)
 	.add(SpriteLib.goat().src)
 	.add(SpriteLib.frog().src)
