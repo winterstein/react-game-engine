@@ -149,7 +149,7 @@ const setupAfterLoad = game => {
 			psprite.on('mousedown', onDown);
 			psprite.on('touchstart', onDown);
 		}
-		if (false) {	// weapon - pickaxe
+		if (true) {	// weapon - pickaxe
 			let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
 			grabSprite.x = xOffset + slot*slotWidth;
 			slot++;
