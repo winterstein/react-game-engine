@@ -65,6 +65,8 @@ SpriteLib.shark = () => new Sprite({
 
 SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'fish');
 
+SpriteLib.badger = n => stdAnimal('/img/animals/badger.png', n, 'badger');
+
 /**
  * @returns {Sprite}
  */

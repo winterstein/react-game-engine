@@ -95,6 +95,9 @@ Game.basicPixiSetup = game => {
 	.add(SpriteLib.alligator().src)
 	.add(SpriteLib.goat().src)
 	.add(SpriteLib.frog().src)
+	.add(SpriteLib.badger().src)
+	.add(SpriteLib.fish().src)
+	.add(SpriteLib.shark().src)
 	.add(SpriteLib.sheep().src)
 	.add(SpriteLib.wolf().src)
 	.add(SpriteLib.werewolf().src)
@@ -178,7 +181,7 @@ const setupAfterLoad = game => {
 			psprite.on('touchstart', onDown);
 		}
 		// spawns
-		['sheep','wolf','frog','werewolf'].forEach(spawnName => {
+		['sheep','goat','chicken','wolf','frog','fish','shark','badger','werewolf'].forEach(spawnName => {
 			let base = SpriteLib[spawnName]();
 			let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
 			iSprite.animate = null;
