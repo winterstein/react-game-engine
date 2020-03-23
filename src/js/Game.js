@@ -112,5 +112,30 @@ Game.handleInput = ({sprite, input, on}) => {
 	// console.log(input, on, sprite.dx + " dy: "+sprite.dy, sprite);
 };
 
+/**
+ * @returns {Sprite}
+ */
+Game.getPlayer = game => {
+	return game.sprites.player0;
+};
+/**
+ * TODO
+ * @returns {{row:Number, column:Number}}
+ */
+Game.getTileInFront = (game, sprite) => {	
+	// the sprite's tile
+	let c = Math.floor(sprite.x / 48);
+	let r = Math.floor(sprite.y / 48);
+	// the one in front
+	if (sprite.dx) {
+		if (sprite.dx>0) c++; else c--;	
+	} else if (sprite.dy) {
+		if (sprite.dy>0) r++; else r--;
+	} else if (sprite.animate && sprite.animate.name) {
+		// TODO
+	}
+	return {row:r, column:c}
+};
+
 window.Game = Game; //debug
 export default Game;

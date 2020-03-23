@@ -3,12 +3,28 @@
 import DataClass, {getType} from '../base/data/DataClass';
 import Rect from './Rect';
 
+class InGameTiles extends Number {};
+
+/** 
+ * @typedef {Object} SXY
+ * Screen x-y measure in pixels
+ * @prop {Number} x
+ * @prop {Number} y
+*/
+
+/** 
+ * @typedef {Object} GXY 
+ * Game x-y, measured in tiles. E.g. 0-10. Fractions are used.
+ * @prop {Number} x
+ * @prop {Number} y
+*/
+
 class Grid extends DataClass {
 	/** Set x,y = 0 to implement Rect */
 	x=0;
 	y=0;
 	/**
-	 * @type {Number} the in-game width in tiles
+	 * @type {InGameTiles} the in-game width in tiles
 	 */
 	width;
 	/**
@@ -63,21 +79,6 @@ const defaultGrid = new Grid();
 Grid.get = () => defaultGrid;
 
 const RT2 = Math.sqrt(2);
-
-
-/** 
- * @typedef {Object} SXY
- * Screen x-y measure in pixels
- * @prop {Number} x
- * @prop {Number} y
-*/
-
-/** 
- * @typedef {Object} GXY 
- * Game x-y, measured in tiles. E.g. 0-10. Fractions are used.
- * @prop {Number} x
- * @prop {Number} y
-*/
 
 /**
  * Isometric projection:

@@ -53,6 +53,7 @@ Sprite.setPixiProps = sprite => {
 	psprite.x = sprite.x;
 	psprite.y = sprite.y;
 	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
+	if ( ! sprite.src) return; // eg drawn Graphics
 	const w = sprite.width || 48;
 	const h = sprite.height || 48;
 	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
@@ -71,7 +72,7 @@ Game.basicPixiSetup = game => {
 		game.width = window.innerWidth - 75; // ??how to manage the browser address bar and UI blocking part of the screen??
 		game.height = window.innerHeight - 75;
 		console.log("app size "+window.innerWidth+" x "+window.innerHeight);
-		game.app = new PIXI.Application(game.width, game.height);
+		game.app = new PIXI.Application({width: game.width, height:game.height});
 		window.app = game.app;
 	}
 	
@@ -115,6 +116,19 @@ const setupAfterLoad = game => {
 	// UI
 	if ( ! DEBUG_FOCUS) {
 
+		{	// tile shine
+			let tileShine = new Sprite();
+			let pSprite = new PIXI.Graphics();
+			pSprite.beginFill(0xFFCCFF);
+			pSprite.drawRect(0, 0, 4848);
+			pSprite.endFill();			
+			tileShine.pixi = pSprite;
+		
+			Sprite.setPixiProps(tileShine);
+			game.containerFor.ui.addChild(pSprite);
+			game.sprites["tileShine"] = tileShine;
+		}		
+
 		// Create the inventory bar
 		let width = 6*50+20;
 		const stage = game.app.stage;
@@ -122,7 +136,7 @@ const setupAfterLoad = game => {
 		inventoryBar.name = "inventoryBar";
 		inventoryBar.position.set((game.width - width) / 2, 500);
 		console.log("inventoryBar",inventoryBar);
-		game.containerFor.ui.addChild(inventoryBar);		
+		game.containerFor.ui.addChild(inventoryBar);
 
 		//Create the black background rectangle
 		let innerBar = new PIXI.Graphics();

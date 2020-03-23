@@ -14,6 +14,17 @@ Game.update = game => {
 	// TODO update stage and sprites
 	Object.values(game.sprites).forEach(s => updateSprite(s,game));
 
+	// player
+	let player = Game.getPlayer(game);
+	if (player) {
+		let rc = Game.getTileInFront(game, player);
+		// TODO shine!
+		// console.log("Game.getTileInFront", rc);
+		let selectTile = game.sprites.selectTile;
+		if (selectTile) {			
+		}		
+	}
+
 	// collisions?
 
 	// off screen?
