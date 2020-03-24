@@ -181,19 +181,23 @@ const setupAfterLoad = game => {
 			psprite.on('touchstart', onDown);
 		}
 		// spawns
-		['sheep','goat','chicken','wolf','frog','fish','shark','badger','werewolf'].forEach(spawnName => {
-			let base = SpriteLib[spawnName]();
+		// NB shark is bigger than 48x48
+		['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {
+			// use Tile so no updates
+			let base = new Tile(SpriteLib[spawnName]());
 			let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
-			iSprite.animate = null;
+			// iSprite.animate = null;
 			iSprite.x = xOffset + slot*slotWidth;
+			Sprite.setPixiProps(iSprite); // Tiles dont update so we have to prod the pixi xy
 			slot++;
 			let psprite = iSprite.pixi;
 			psprite.interactive = true;
 			const onDown = e => {
 				console.log("onDown",e, ""+e.target);
 				let player = game.sprites.player0;
-				// move it
-				let spawn = Object.assign(iSprite);
+				// copy from Tile to Sprite, and move it
+				let spawn = new Sprite(iSprite);
+				spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
 				spawn.x = player.x;
 				spawn.y = player.y;
 				makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				

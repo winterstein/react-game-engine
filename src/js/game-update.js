@@ -37,6 +37,19 @@ Game.update = game => {
  * @param {!Sprite} s 
  */
 const updateSprite = (s, game) => {
+	if (Tile.isa(s)) {
+		return; // no update 
+	}
+
+	// What would the sprite like to do?
+	if (s.name) {
+		let ufn = updaterForAnimal[s.name];
+		if (ufn) ufn(s, game);
+	}
+
+	s.oldX = s.x; // NB: record old x,y so we can step-back onCollision
+	s.oldY = s.y;
+
 	const dt = StopWatch.dt(game.ticker);
 	s.x += s.dx * dt;
 	s.y += s.dy * dt;
@@ -54,4 +67,28 @@ const updateSprite = (s, game) => {
 	Sprite.setPixiProps(s);
 };
 
+const updateSheep = (sprite,game) => {
+	// mostly no change
+	if (Math.random() < 0.99) return;
+	// pick a direction
+	sprite.speed = 20;
+	sprite.theta = Math.random()*Math.PI*2;
+	sprite.dx = Math.cos(sprite.theta) * (sprite.speed || 1);
+	sprite.dy = Math.sin(sprite.theta) * (sprite.speed || 1);
+};
+
+const updaterForAnimal = {
+	'Sheep': updateSheep,
+	'Frog': updateSheep,
+	'Wolf': updateSheep,
+	'Werewolf': updateSheep,
+	'Chicken': updateSheep,
+	'Badger': updateSheep,
+	'Fish': updateSheep,
+	'Goat': updateSheep,
+};
+
 export default {}; // dummy export to keep imports happy
+export {
+	updaterForAnimal
+}

@@ -33,17 +33,17 @@ const stdIcon = (src,name) => {
 };
 
 
-SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n);
+SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n,'Chicken');
 
-SpriteLib.goat = n => stdAnimal('/img/animals/goats.png', n);
+SpriteLib.goat = n => stdAnimal('/img/animals/goats.png', n, 'Goat');
 
-SpriteLib.goose = n => stdAnimal('/img/animals/goose.png', n);
+SpriteLib.goose = n => stdAnimal('/img/animals/goose.png', n, 'Goose');
 
-SpriteLib.sheep = n => stdAnimal('/img/animals/Sheep.png', n);
-SpriteLib.wolf = n => stdAnimal('/img/animals/wolfdog.png', n);
-SpriteLib.werewolf = n => stdAnimal('/img/Mythological animals/wolfbeast.png', n);
+SpriteLib.sheep = n => stdAnimal('/img/animals/Sheep.png', n, 'Sheep');
+SpriteLib.wolf = n => stdAnimal('/img/animals/wolfdog.png', n, 'Wolf');
+SpriteLib.werewolf = n => stdAnimal('/img/Mythological animals/wolfbeast.png', n, "Werewolf");
 
-SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n);
+SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n, "Frog");
 
 SpriteLib.alligator = n => {
 	let a = stdAnimal('/img/animals/alligators.png', n, 'alligator');
@@ -63,9 +63,9 @@ SpriteLib.shark = () => new Sprite({
 	animate: {frames:[3,4,5], dt:400},
 });
 
-SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'fish');
+SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'Fish');
 
-SpriteLib.badger = n => stdAnimal('/img/animals/badger.png', n, 'badger');
+SpriteLib.badger = n => stdAnimal('/img/animals/badger.png', n, 'Badger');
 
 /**
  * @returns {Sprite}
@@ -76,7 +76,7 @@ SpriteLib.tile = (tileName) => {
 	let size=32;
 	if (tileName==='water') {
 		fy=1.5*size; fx=0.5*size;
-		return new Sprite({
+		return new Tile({
 			name: tileName,
 			src:'/img/tiles/celianna/celianna_TileA1.png',
 			// src:'/img/tilewater.png',
@@ -89,7 +89,7 @@ SpriteLib.tile = (tileName) => {
 	}
 	if (tileName==='earth') {
 		fy=7*size;
-		return new Sprite({
+		return new Tile({
 			name: tileName,
 			src:'/img/tiles/celianna/celianna_TileA2.png',
 			tiles: [16,10],
@@ -100,7 +100,7 @@ SpriteLib.tile = (tileName) => {
 		});	
 	}
 	if (tileName==='grass' || true) {
-		return new Sprite({
+		return new Tile({
 			name: tileName,
 			src:'/img/tiles/celianna/celianna_TileA2.png',
 			// src:'/img/TileA2.png',

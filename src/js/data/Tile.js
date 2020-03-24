@@ -6,6 +6,11 @@ import Sprite from './Sprite';
  */
 class Tile extends Sprite {
 
+	constructor(base) {
+		super(base);
+		this['@type'] = 'Tile';	// allow for copying a Sprite base
+	}
+
 } // ./Tile
 DataClass.register(Tile, 'Tile');
 const This = Tile;

@@ -243,7 +243,7 @@ Sprite.animate = (sp, a) => {
 
 	sp.animate = Object.assign({name:a}, sp.animations[a]); // safety copy
 	sp.frame = 0;
-	console.log("set animation", a, sp, sp.animations[a]);
+	// console.log("set animation", a, sp, sp.animations[a]);
 };
 
 /**
