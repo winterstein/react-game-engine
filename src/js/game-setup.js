@@ -133,7 +133,7 @@ const setupAfterLoad = game => {
 		}		
 
 		// Create the inventory bar
-		let width = 6*50+20;
+		let width = 10*50+20;
 		const stage = game.app.stage;
 		const inventoryBar = new PIXI.Container();
 		inventoryBar.name = "inventoryBar";
