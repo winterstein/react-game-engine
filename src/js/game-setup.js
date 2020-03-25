@@ -118,93 +118,7 @@ const setupAfterLoad = game => {
 
 	// UI
 	if ( ! DEBUG_FOCUS) {
-
-		{	// tile shine
-			let tileShine = new Sprite();
-			let pSprite = new PIXI.Graphics();
-			pSprite.beginFill(0xFFCCFF);
-			pSprite.drawRect(0, 0, 4848);
-			pSprite.endFill();			
-			tileShine.pixi = pSprite;
-		
-			Sprite.setPixiProps(tileShine);
-			game.containerFor.ui.addChild(pSprite);
-			game.sprites["tileShine"] = tileShine;
-		}		
-
-		// Create the inventory bar
-		let width = 10*50+20;
-		const stage = game.app.stage;
-		const inventoryBar = new PIXI.Container();
-		inventoryBar.name = "inventoryBar";
-		inventoryBar.position.set((game.width - width) / 2, 500);
-		console.log("inventoryBar",inventoryBar);
-		game.containerFor.ui.addChild(inventoryBar);
-
-		//Create the black background rectangle
-		let innerBar = new PIXI.Graphics();
-		innerBar.lineStyle(4, 0xFF3300, 1);
-		innerBar.beginFill(0xCCFFFF);
-		innerBar.drawRoundedRect(0, 0, 6*50, 50, 10);
-		innerBar.endFill();
-		inventoryBar.addChild(innerBar);
-
-		// default inventory
-		const xOffset = 5, slotWidth=50; 
-		let slot = 0;
-		{	// grab
-			let grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
-			grabSprite.x = xOffset + slot*slotWidth;
-			slot++;
-			let psprite = grabSprite.pixi;			
-			psprite.interactive = true;
-			const onDown = e => {
-				console.log("onDown",e, ""+e.target);
-				let player = game.sprites.player0;
-				console.log("TODO what can we grab");
-			};
-			psprite.on('mousedown', onDown);
-			psprite.on('touchstart', onDown);
-		}
-		if (true) {	// weapon - pickaxe
-			let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
-			grabSprite.x = xOffset + slot*slotWidth;
-			slot++;
-			let psprite = grabSprite.pixi;
-			psprite.interactive = true;
-			const onDown = e => {
-				console.log("onDown",e, ""+e.target);
-				let player = game.sprites.player0;
-				console.log("TODO what can we hit");
-			};
-			psprite.on('mousedown', onDown);
-			psprite.on('touchstart', onDown);
-		}
-		// spawns
-		// NB shark is bigger than 48x48
-		['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {
-			// use Tile so no updates
-			let base = new Tile(SpriteLib[spawnName]());
-			let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
-			// iSprite.animate = null;
-			iSprite.x = xOffset + slot*slotWidth;
-			Sprite.setPixiProps(iSprite); // Tiles dont update so we have to prod the pixi xy
-			slot++;
-			let psprite = iSprite.pixi;
-			psprite.interactive = true;
-			const onDown = e => {
-				console.log("onDown",e, ""+e.target);
-				let player = game.sprites.player0;
-				// copy from Tile to Sprite, and move it
-				let spawn = new Sprite(iSprite);
-				spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
-				spawn.x = player.x;
-				spawn.y = player.y;
-				makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				
-			};
-			psprite.on('mousedown', onDown);
-			psprite.on('touchstart', onDown);
-		});		
+		setupAfterLoad2_UI(game);
 	}
 
 	// land
@@ -243,7 +157,97 @@ const setupAfterLoad2_Player = game => {
 	up.release = () => Game.handleInput({input:'up', on:false})
 	down.press = () => Game.handleInput({input:'down', on:true});
 	down.release = () => Game.handleInput({input:'down', on:false})
+};
+
+
+const setupAfterLoad2_UI = game => {
+	{	// tile shine
+		let tileShine = new Sprite();
+		let pSprite = new PIXI.Graphics();
+		pSprite.beginFill(0xFFCCFF);
+		pSprite.drawRect(0, 0, 4848);
+		pSprite.endFill();			
+		tileShine.pixi = pSprite;
 	
+		Sprite.setPixiProps(tileShine);
+		game.containerFor.ui.addChild(pSprite);
+		game.sprites["tileShine"] = tileShine;
+	}		
+
+	// Create the inventory bar
+	let icons = 10;
+	const xOffset = 10, slotWidth=50; 
+	let width = icons*slotWidth + 2*xOffset;
+	const stage = game.app.stage;
+	const inventoryBar = new PIXI.Container();
+	inventoryBar.name = "inventoryBar";
+	inventoryBar.position.set((game.width - width) / 2, 500);
+	console.log("inventoryBar",inventoryBar);
+	game.containerFor.ui.addChild(inventoryBar);
+
+	//Create the black background rectangle
+	let innerBar = new PIXI.Graphics();
+	innerBar.lineStyle(4, 0xFF3300, 1);
+	innerBar.beginFill(0xCCFFFF);
+	innerBar.drawRoundedRect(0, 0, width, 50, 10);
+	innerBar.endFill();
+	inventoryBar.addChild(innerBar);
+
+	// default inventory	
+	let slot = 0;
+	{	// grab
+		let grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
+		grabSprite.x = xOffset + slot*slotWidth;
+		slot++;
+		let psprite = grabSprite.pixi;			
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			console.log("TODO what can we grab");
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	}
+	if (true) {	// weapon - pickaxe
+		let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
+		grabSprite.x = xOffset + slot*slotWidth;
+		slot++;
+		let psprite = grabSprite.pixi;
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			console.log("TODO what can we hit");
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	}
+	// spawns
+	// NB shark is bigger than 48x48
+	['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {
+		// use Tile so no updates
+		let base = new Tile(SpriteLib[spawnName]());
+		let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
+		// iSprite.animate = null;
+		iSprite.x = xOffset + slot*slotWidth;
+		Sprite.setPixiProps(iSprite); // Tiles dont update so we have to prod the pixi xy
+		slot++;
+		let psprite = iSprite.pixi;
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			// copy from Tile to Sprite, and move it
+			let spawn = new Sprite(iSprite);
+			spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
+			spawn.x = player.x;
+			spawn.y = player.y;
+			makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	});		
 };
 
 
