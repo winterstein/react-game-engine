@@ -47,11 +47,17 @@ const Arrow = ({dirn, game}) => {
 		left: '&#x25C0', right: '&#x25B6',
 		down: "&#x25BC"
 	};
+
+	// onMouseDown={ e => Game.handleInput({input:dirn, on:true}) }
+	// onMouseUp={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
+	// onMouseOut={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
+
 	// onClick={ e => Game.handleInput({input:dirn, on:true}) } 
 	return <span style={{cursor:'pointer',fontSize:'300%'}} 
 		onTouchStart={ e => Game.handleInput({input:dirn, on:true}) }
 		onTouchCancel={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
 		onTouchEnd={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
+
 		dangerouslySetInnerHTML={{__html:c[dirn]}}></span>;
 }
 
