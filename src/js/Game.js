@@ -7,6 +7,7 @@ import Sprite from './data/Sprite';
 import Rect from './data/Rect';
 import StopWatch from './StopWatch';
 import {assert} from 'sjtest';
+import Grid from './data/Grid';
 
 class Game extends DataClass {
 	/**
@@ -118,6 +119,11 @@ Game.handleInput = ({sprite, input, on}) => {
 Game.getPlayer = game => {
 	return game.sprites.player0;
 };
+
+Game.grid = game => {
+	return Grid.get(); // just return the default
+};
+
 /**
  * TODO
  * @returns {{row:Number, column:Number}}

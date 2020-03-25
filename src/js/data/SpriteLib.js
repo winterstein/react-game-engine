@@ -5,8 +5,15 @@ import Sprite from './Sprite';
 
 const SpriteLib = {};
 
-const stdAnimal = (src,n=0,name) => {
-	let sp = new Sprite({
+/**
+ * 
+ * @param {*} src 
+ * @param {*} n 
+ * @param {*} name 
+ * @param {?Object} base 
+ */
+const stdAnimal = (src,n=0,name,base) => {
+	let sbase = Object.assign({
 		name,
 		src,
 		tiles: [8,12],
@@ -17,7 +24,8 @@ const stdAnimal = (src,n=0,name) => {
 			up: {frames:[36+n*3,37+n*3,38+n*3]}, 
 			down: {frames:[0+n*3,1+n*3,2+n*3]} 
 		},
-	});
+	}, base);
+	let sp = new Sprite(sbase);
 	// ??starting animation??
 	Sprite.initFrames(sp);
 	Sprite.animate(sp, 'right');
@@ -41,7 +49,11 @@ SpriteLib.goose = n => stdAnimal('/img/animals/goose.png', n, 'Goose');
 
 SpriteLib.sheep = n => stdAnimal('/img/animals/Sheep.png', n, 'Sheep');
 SpriteLib.wolf = n => stdAnimal('/img/animals/wolfdog.png', n, 'Wolf');
-SpriteLib.werewolf = n => stdAnimal('/img/Mythological animals/wolfbeast.png', n, "Werewolf");
+SpriteLib.werewolf = n => {
+	// a bit taller
+	let ww = stdAnimal('/img/Mythological animals/wolfbeast.png', n, "Werewolf", {tileSize:[48,52]});
+	return ww;
+}
 
 SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n, "Frog");
 

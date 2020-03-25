@@ -22,16 +22,6 @@ const makePixiSprite = (game, sprite, name, container) => {
 	Sprite.assIsa(sprite);
 	assMatch(name, String);
 	assert( ! game.sprites[name], "Duplicate sprite for "+name);
-	// let pres = app.loader.resources[sprite.src];
-	// // console.log(name, pres.texture);
-	// assert(pres, "Not loaded Pixi resource "+sprite.src);
-	// const w = sprite.width || 48;
-	// const h = sprite.height || 48;
-	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
-	// let frame = sprite.frames && sprite.frames[sprite.frameIndex];
-	// let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
-	// let texture = new PIXI.Texture(pres.texture, tframe);
-	// let psprite = new PIXI.Sprite(texture);
 	let psprite = new PIXI.Sprite();	
 	sprite.pixi = psprite;
 
@@ -54,14 +44,20 @@ Sprite.setPixiProps = sprite => {
 	psprite.y = sprite.y;
 	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
 	if ( ! sprite.src) return; // eg drawn Graphics
-	const w = sprite.width || 48;
-	const h = sprite.height || 48;
+
+	// texture width & height
+	// TODO detect no-op for speed??
+	const w = (sprite.tileSize && sprite.tileSize[0]) || 48;
+	const h = (sprite.tileSize && sprite.tileSize[1]) || 48;
 	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
 	let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
 	let pres = app.loader.resources[sprite.src];
 	assert(pres, "Not loaded Pixi resource "+sprite.src);
 	let texture = new PIXI.Texture(pres.texture, tframe);
-	psprite.texture = texture; //let psprite = new PIXI.Sprite(texture);	
+	psprite.texture = texture; //let psprite = new PIXI.Sprite(texture);
+	// scale
+	psprite.width = sprite.width;
+	psprite.height = sprite.height;
 };
 
 /**
@@ -123,18 +119,22 @@ const setupAfterLoad = game => {
 
 	// land
 	if (true) {
-		let landPlan = makeLandPlan(game);
+		let grid = Game.grid(game);
+		let landPlan = makeLandPlan(game, grid);
 		// // sprites
 		// const w = SpriteLib.tile("water");
 		// w.x = 48; w.y=48;
 		// makePixiSprite(game, w, "water00", game.containerFor.characters);
 		// makePixiSprite(game, SpriteLib.tile("grass"), "grass11", game.containerFor.ground);
+		let tileWidth = grid.tileWidth, tileHeight = grid.tileHeight;
 		for(let rowi = 0; rowi<landPlan.length; rowi++) {
 			for(let coli = 0; coli<landPlan[0].length; coli++) {
 				let cell = landPlan[rowi][coli];
 				let tileSprite = SpriteLib.tile(cell);
-				tileSprite.x = coli * tileSprite.width;
-				tileSprite.y = rowi * tileSprite.height;
+				tileSprite.x = coli * tileWidth;
+				tileSprite.y = rowi * tileHeight;
+				tileSprite.width = tileWidth;
+				tileSprite.height = tileHeight;
 				makePixiSprite(game, tileSprite, "row"+rowi+"_col"+coli, game.containerFor.ground);
 			}
 		}
@@ -256,14 +256,18 @@ Game.setup = game => {
 	const grid = Grid.get();
 	grid.width = 30; grid.height = 12;
 	grid.display = '2d';
-	Game.grid = grid;
 
 	Game.basicPixiSetup(game);
 };
 
-const makeLandPlan = game => {
-	let nrows = Math.floor(game.height / 48);
-	let ncols = Math.floor(game.width / 48);
+/**
+ * 
+ * @param {Game} game 
+ * @param {Grid} grid 
+ */
+const makeLandPlan = (game, grid) => {
+	let nrows = Math.floor(game.height / grid.tileHeight);
+	let ncols = Math.floor(game.width / grid.tileWidth);
 	assert(nrows > 1, game);
 	assert(ncols > 1, game);
 	let map = [];
