@@ -65,10 +65,11 @@ Sprite.setPixiProps = sprite => {
  */
 Game.basicPixiSetup = game => {
 	if ( ! game.app) {
-		game.width = window.innerWidth - 75; // ??how to manage the browser address bar and UI blocking part of the screen??
-		game.height = window.innerHeight - 75;
+		let grid = Game.grid(game);
+		grid.screenWidth = window.innerWidth; // ??how to manage the browser address bar and UI blocking part of the screen??
+		grid.screenHeight = window.innerHeight;
 		console.log("app size "+window.innerWidth+" x "+window.innerHeight);
-		game.app = new PIXI.Application({width: game.width, height:game.height});
+		game.app = new PIXI.Application({width: grid.screenWidth, height:grid.screenHeight});
 		window.app = game.app;
 	}
 	
@@ -181,7 +182,8 @@ const setupAfterLoad2_UI = game => {
 	const stage = game.app.stage;
 	const inventoryBar = new PIXI.Container();
 	inventoryBar.name = "inventoryBar";
-	inventoryBar.position.set((game.width - width) / 2, 500);
+	const grid = Game.grid(game);
+	inventoryBar.position.set((grid.screenWidth - width) / 2, grid.screenHeight - 200);
 	console.log("inventoryBar",inventoryBar);
 	game.containerFor.ui.addChild(inventoryBar);
 
@@ -209,7 +211,7 @@ const setupAfterLoad2_UI = game => {
 		psprite.on('mousedown', onDown);
 		psprite.on('touchstart', onDown);
 	}
-	if (true) {	// weapon - pickaxe
+	if (false) {	// weapon - pickaxe
 		let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
 		grabSprite.x = xOffset + slot*slotWidth;
 		slot++;
@@ -266,8 +268,8 @@ Game.setup = game => {
  * @param {Grid} grid 
  */
 const makeLandPlan = (game, grid) => {
-	let nrows = Math.floor(game.height / grid.tileHeight);
-	let ncols = Math.floor(game.width / grid.tileWidth);
+	let nrows = Math.floor(grid.screenHeight / grid.tileHeight);
+	let ncols = Math.floor(grid.screenWidth / grid.tileWidth);
 	assert(nrows > 1, game);
 	assert(ncols > 1, game);
 	let map = [];

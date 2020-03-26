@@ -34,7 +34,7 @@ const PixiPage = () => {
 };
 
 const ArrowPad = ({game}) => {
-	return <div style={{position:'absolute',bottom:'20px',left:'20px',color:'red'}}>
+	return <div style={{position:'absolute',bottom:'100px',left:'50px',color:'red'}}>
 		<center><Arrow dirn='up' game={game} /></center>
 		<div><Arrow dirn='left' game={game} /> &nbsp;&nbsp; <Arrow dirn='right' game={game} /></div>
 		<center><Arrow dirn='down' game={game} /></center>

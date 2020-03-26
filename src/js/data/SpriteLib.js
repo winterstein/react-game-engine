@@ -83,7 +83,6 @@ SpriteLib.badger = n => stdAnimal('/img/animals/badger.png', n, 'Badger');
  * @returns {Sprite}
  */
 SpriteLib.tile = (tileName) => {
-	console.log("tile", tileName);
 	let fx=0, fy=0;
 	let size=32;
 	if (tileName==='water') {

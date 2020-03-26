@@ -44,7 +44,7 @@ class Grid extends DataClass {
 	focus;
 
 	/**
-	 * screen pixels
+	 * @type {Number} screen pixels
 	 */
 	screenWidth;
 
@@ -56,11 +56,11 @@ class Grid extends DataClass {
 	/**
 	 * screen pixels
 	 */
-	tileWidth = 50;
+	tileWidth = 48;
 	/**
 	 * screen pixels
 	 */
-	tileHeight = 50;
+	tileHeight = 48;
 
 	constructor(base) {
 		super(base);
