@@ -197,9 +197,11 @@ const setupAfterLoad2_UI = game => {
 
 	// default inventory	
 	let slot = 0;
-	{	// grab
-		let grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
+	{	// grab FIXME no show?!
+		let grabSprite = new Tile(SpriteLib.grab());
+		grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
 		grabSprite.x = xOffset + slot*slotWidth;
+		Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
 		slot++;
 		let psprite = grabSprite.pixi;			
 		psprite.interactive = true;
