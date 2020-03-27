@@ -35,6 +35,9 @@ DataClass.register(Animate, 'Animate');
  */
 class Sprite extends DataClass {
 
+	/** @type {String} e.g. "Chicken" */
+	kind;
+
 	/** @type {PIXI.Sprite} */
 	pixi;
 

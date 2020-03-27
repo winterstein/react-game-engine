@@ -89,23 +89,23 @@ Game.basicPixiSetup = game => {
 	app.stage.addChild(game.containerFor.ui);
 
 	app.loader
-	.add(SpriteLib.alligator().src)
-	.add(SpriteLib.goat().src)
-	.add(SpriteLib.frog().src)
-	.add(SpriteLib.badger().src)
-	.add(SpriteLib.fish().src)
-	.add(SpriteLib.shark().src)
-	.add(SpriteLib.sheep().src)
-	.add(SpriteLib.wolf().src)
-	.add(SpriteLib.werewolf().src)
-	.add(SpriteLib.chicken().src)
-	.add(SpriteLib.goose().src)
-	.add(SpriteLib.grab().src)
-	.add(SpriteLib.pickAxe().src)
-	.add(SpriteLib.tile("grass").src)
-	.add(SpriteLib.tile("water").src)
-	  .load(() => setupAfterLoad(game));
-}
+		.add(SpriteLib.alligator().src)
+		.add(SpriteLib.goat().src)
+		.add(SpriteLib.frog().src)
+		.add(SpriteLib.badger().src)
+		.add(SpriteLib.fish().src)
+		.add(SpriteLib.shark().src)
+		.add(SpriteLib.sheep().src)
+		.add(SpriteLib.wolf().src)
+		.add(SpriteLib.werewolf().src)
+		.add(SpriteLib.chicken().src)
+		.add(SpriteLib.goose().src)
+		.add(SpriteLib.grab().src)
+		.add(SpriteLib.pickAxe().src)
+		.add(SpriteLib.tile("Grass").src)
+		.add(SpriteLib.tile("Water").src)
+		.load(() => setupAfterLoad(game));
+};
 
 const setupAfterLoad = game => {
 
@@ -122,21 +122,18 @@ const setupAfterLoad = game => {
 	if (true) {
 		let grid = Game.grid(game);
 		let landPlan = makeLandPlan(game, grid);
+		game.landPlan = landPlan;
 		// // sprites
 		// const w = SpriteLib.tile("water");
 		// w.x = 48; w.y=48;
 		// makePixiSprite(game, w, "water00", game.containerFor.characters);
 		// makePixiSprite(game, SpriteLib.tile("grass"), "grass11", game.containerFor.ground);
-		let tileWidth = grid.tileWidth, tileHeight = grid.tileHeight;
 		for(let rowi = 0; rowi<landPlan.length; rowi++) {
 			for(let coli = 0; coli<landPlan[0].length; coli++) {
 				let cell = landPlan[rowi][coli];
 				let tileSprite = SpriteLib.tile(cell);
-				tileSprite.x = coli * tileWidth;
-				tileSprite.y = rowi * tileHeight;
-				tileSprite.width = tileWidth;
-				tileSprite.height = tileHeight;
-				makePixiSprite(game, tileSprite, "row"+rowi+"_col"+coli, game.containerFor.ground);
+				Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
+				makePixiSprite(game, tileSprite, tileSprite.name, game.containerFor.ground);
 			}
 		}
 	}
@@ -281,7 +278,7 @@ const makeLandPlan = (game, grid) => {
 		map.push(row);
 		for(let ci=0; ci<ncols; ci++) {
 			let r = Math.floor(Math.random()*3);
-			let tile = ['grass','water','earth'][r];
+			let tile = ['Grass','Water','Earth'][r];
 			row.push(tile);
 		}
 	}

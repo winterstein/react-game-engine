@@ -2,6 +2,7 @@
  * Let's define some nice sprites for easy use :)
  */
 import Sprite from './Sprite';
+import Tile from './Tile';
 
 const SpriteLib = {};
 
@@ -9,12 +10,12 @@ const SpriteLib = {};
  * 
  * @param {*} src 
  * @param {*} n 
- * @param {*} name 
+ * @param {*} kind 
  * @param {?Object} base 
  */
-const stdAnimal = (src,n=0,name,base) => {
+const stdAnimal = (src,n=0,kind,base) => {
 	let sbase = Object.assign({
-		name,
+		kind,
 		src,
 		tiles: [8,12],
 		tileSize: [48,48],
@@ -32,9 +33,9 @@ const stdAnimal = (src,n=0,name,base) => {
 	return sp;
 };
 
-const stdIcon = (src,name) => {	
+const stdIcon = (src,kind) => {	
 	let sp = new Sprite({
-		name:name||src,
+		kind: kind||src,
 		src,
 	});
 	return sp;
@@ -53,7 +54,7 @@ SpriteLib.werewolf = n => {
 	// a bit taller
 	let ww = stdAnimal('/img/Mythological animals/wolfbeast.png', n, "Werewolf", {tileSize:[48,52]});
 	return ww;
-}
+};
 
 SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n, "Frog");
 
@@ -69,7 +70,7 @@ SpriteLib.grab = () => stdIcon('/img/icon/hand-grab.png');
 SpriteLib.pickAxe = () => stdIcon('/img/icon/pick-axe.png');
 
 SpriteLib.shark = () => new Sprite({
-	name:'shark',
+	kind:'Shark',
 	src:'/img/fish/shark.png',
 	tiles: [4,3],
 	animate: {frames:[3,4,5], dt:400},
@@ -80,15 +81,16 @@ SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'Fish');
 SpriteLib.badger = n => stdAnimal('/img/animals/badger.png', n, 'Badger');
 
 /**
+ * @param {!String} tileKind e.g. "grass"
  * @returns {Sprite}
  */
-SpriteLib.tile = (tileName) => {
+SpriteLib.tile = (tileKind) => {
 	let fx=0, fy=0;
 	let size=32;
-	if (tileName==='water') {
+	if (tileKind==='Water') {
 		fy=1.5*size; fx=0.5*size;
 		return new Tile({
-			name: tileName,
+			kind: tileKind,
 			src:'/img/tiles/celianna/celianna_TileA1.png',
 			// src:'/img/tilewater.png',
 			tiles: [16,10],
@@ -98,10 +100,10 @@ SpriteLib.tile = (tileName) => {
 			width:size, height:size
 		});	
 	}
-	if (tileName==='earth') {
+	if (tileKind==='Earth') {
 		fy=7*size;
 		return new Tile({
-			name: tileName,
+			kind: tileKind,
 			src:'/img/tiles/celianna/celianna_TileA2.png',
 			tiles: [16,10],
 			frameIndex:0,
@@ -110,9 +112,9 @@ SpriteLib.tile = (tileName) => {
 			width:size, height:size
 		});	
 	}
-	if (tileName==='grass' || true) {
+	if (tileKind==='Grass' || true) {
 		return new Tile({
-			name: tileName,
+			kind: tileKind,
 			src:'/img/tiles/celianna/celianna_TileA2.png',
 			// src:'/img/TileA2.png',
 			tiles: [16,10],
@@ -134,7 +136,7 @@ SpriteLib.tileIso = (tileName) => {
 		fy=9*64; fx=5*64;
 	}
 	return new Sprite({
-		name: tileName,
+		kind: tileName,
 		src:'/img/tiles/iso-64x64-outside.png',
 		tiles: [16,10],
 		frameIndex:0,

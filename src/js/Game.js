@@ -123,11 +123,27 @@ Game.getPlayer = game => {
 
 /**
  * @param {!String[]} types
+ * @param {?Number} limit in tiles. If set, ignore sprites further away than this
+ * @returns {?Sprite}
  */
-Game.getNearest = ({sprite, game, types}) => {	
-	let sprites = Object.values(game.sprites).filter(s => types.includes(s.name) && s !== sprite);
+Game.getNearest = ({sprite, game, types,limit}) => {	
+	let sprites = Object.values(game.sprites).filter(s => types.includes(s.kind) && s !== sprite);
+	if (limit) {
+		// in pixels
+		const plimit = limit * Game.grid(game).tileWidth;
+		const l2 = plimit*plimit;
+		sprites = sprites.filter(s => dist2(sprite,s) <= l2);
+	}
+	// NB: assume using the top-left corner gives the same order as using sprite pivot points
+	sprites.sort((a,b) => dist2(sprite, a) - dist2(sprite, b));
 	return sprites[0]; // TODO sort and pick!
 };
+/**
+ * xy distance squared
+ * @param {!Sprite} s1 
+ * @param {!Sprite} s2 
+ */
+const dist2 = (s1, s2) => (s1.x-s2.x)*(s1.x-s2.x) + (s1.y-s2.y)*(s1.y-s2.y);
 
 Game.grid = game => {
 	return Grid.get(); // just return the default
@@ -138,7 +154,7 @@ Game.grid = game => {
  */
 Game.getTileInFront = (game, sprite) => {	
 	// the sprite's tile
-	let {row,column} = Game.getTile(game,sprite);
+	let {row,column} = Game.getRowColumn(game,sprite);
 	// the one in front
 	if (sprite.dx) {
 		if (sprite.dx>0) column++; else column--;	
@@ -157,14 +173,38 @@ Game.getTileInFront = (game, sprite) => {
 };
 
 /**
+ * @param {!Game} game
+ * @param {!Sprite} sprite
  * @returns {{row:Number, column:Number}}
  */
-Game.getTile = (game, sprite) => {	
+Game.getRowColumn = (game, sprite) => {	
 	// the sprite's tile
 	const half = 24; // hack to get pivot point
 	let c = Math.floor((sprite.x + half) / 48);
 	let r = Math.floor((sprite.y + 36) / 48); // hack plus a bit to the feet 
 	return {row:r, column:c};
+};
+
+Game.getTile = ({game, row, column}) => {
+	let tileName = "row"+row+"_col"+column;
+	let tile = game.sprites[tileName];
+	return tile;
+};
+
+/**
+ * Does NOT include making a PIXI sprite, or setting game.sprites
+ */
+Game.setTile = ({game, row, column, tile}) => {
+	Sprite.assIsa(tile);
+	const grid = Game.grid(game);
+	const tileWidth = grid.tileWidth;
+	const tileHeight = grid.tileHeight;
+	tile.x = column * tileWidth;
+	tile.y = row * tileHeight;
+	tile.width = tileWidth;
+	tile.height = tileHeight;
+	tile.name = "row"+row+"_col"+column;	
+	// game.sprites[tile.name] = tile; Done in makePixiSprite
 };
 
 window.Game = Game; //debug
