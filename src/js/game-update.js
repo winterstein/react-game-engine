@@ -2,6 +2,7 @@
 import Game from './Game';
 import StopWatch from './StopWatch'
 import Sprite from './data/Sprite';
+import Tile from './data/Tile';
 
 /**
  * @param {!Game} game
@@ -34,17 +35,18 @@ Game.update = game => {
  */
 const updatePlayer = (game, player) => {
 	let rc = Game.getTileInFront(game, player);
+	let grid = Game.grid(game);
 	// TODO shine!
 	// console.log("Game.getTileInFront", rc);
 	let selectTile = game.sprites.selectTile;
 	if (selectTile) {
-		selectTile.x = player.x;
-		selectTile.y = player.y;
+		selectTile.x = rc.column * grid.tileWidth;
+		selectTile.y = rc.row * grid.tileHeight;
 		Sprite.setPixiProps(selectTile);
 	} else {
 		console.warn("huh");
 	}	
-}
+};
 
 /**
  * 
@@ -81,27 +83,51 @@ const updateSprite = (s, game) => {
 	Sprite.setPixiProps(s);
 };
 
+/**
+ * @returns [1 - 6] randomly
+ */
+const rollDice = () => 1 + Math.floor(Math.random()*6);
+window.rollDice = rollDice;
+
 const updateSheep = (sprite,game) => {
 	// TODO Chase / Fight / Flee
-
 	// mostly no change
-	if (Math.random() < 0.99) return;
-	// pick a direction
+	if (Math.random() < 0.95) return;
 	sprite.speed = 20;
-	sprite.theta = Math.random()*Math.PI*2;
+	// flock?
+	if (Math.random() < 0.6) {
+		let near = Game.getNearest({sprite, game, types:['Sheep']});
+		if (near) {
+			Sprite.turnTowards(sprite, near);
+			return;
+		}
+	}
+	// pick a direction	
+	sprite.theta = Math.random()*Math.PI*2;		
 	sprite.dx = Math.cos(sprite.theta) * (sprite.speed || 1);
 	sprite.dy = Math.sin(sprite.theta) * (sprite.speed || 1);
 };
 
+const updateRandomWalk = (sprite,game) => {
+	// mostly no change
+	if (Math.random() < 0.95) return;
+	sprite.speed = 20;
+	// pick a direction	
+	sprite.theta = Math.random()*Math.PI*2;		
+	sprite.dx = Math.cos(sprite.theta) * (sprite.speed || 1);
+	sprite.dy = Math.sin(sprite.theta) * (sprite.speed || 1);
+};
+
+
 const updaterForAnimal = {
-	'Sheep': updateSheep,
-	'Frog': updateSheep,
-	'Wolf': updateSheep,
-	'Werewolf': updateSheep,
-	'Chicken': updateSheep,
-	'Badger': updateSheep,
-	'Fish': updateSheep,
-	'Goat': updateSheep,
+	Sheep: updateSheep,
+	Frog: updateRandomWalk,
+	Wolf: updateSheep,
+	Werewolf: updateRandomWalk,
+	Chicken: updateRandomWalk,
+	Badger: updateRandomWalk,
+	Fish: updateRandomWalk,
+	Goat: updateRandomWalk,
 };
 
 export default {}; // dummy export to keep imports happy

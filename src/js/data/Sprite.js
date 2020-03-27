@@ -4,6 +4,7 @@ import DataClass, {getClass, getType, nonce} from '../base/data/DataClass';
 import Rect from './Rect';
 import Grid from './Grid';
 import StopWatch from '../StopWatch';
+import { assert } from 'sjtest';
 
 class Animate extends DataClass {
 	
@@ -33,7 +34,7 @@ DataClass.register(Animate, 'Animate');
  * tiles: ?[rows, columns] in the image
  */
 class Sprite extends DataClass {
-	
+
 	/** @type {PIXI.Sprite} */
 	pixi;
 
@@ -57,6 +58,7 @@ class Sprite extends DataClass {
 	 * @type {Number} game tile x
 	 */
 	x = 0;
+
 	/**
 	 * @type {Number} game tile y
 	 */
@@ -68,10 +70,13 @@ class Sprite extends DataClass {
 	z = 0;
 
 	dx = 0;
+
 	dy = 0;
+
 	dz = 0;
 
 	width;
+
 	height;
 
 	/**
@@ -85,16 +90,19 @@ class Sprite extends DataClass {
 	 * NB: This is "normal" for matrix dimensions, but a bit confusing if thought as as coords, as its [y,x].
 	 */
 	tiles;
+
 	/**
 	 * @type {Number[]} width, height -- pixel size
 	 */
 	tileSize;
+
 	tileMargin;
 	
 	/**
 	 * @type {String : Animate} name -> Animate
 	 */
 	animations = {};
+
 	/**
 	 * @type {Animate}
 	 */
@@ -109,7 +117,7 @@ class Sprite extends DataClass {
 		delete this.status;
 	}
 }
-
+DataClass.register(Sprite, "Sprite");
 export default Sprite;
 
 /**
@@ -256,6 +264,24 @@ Sprite.doCommand = (sprite, cmd) => {
 
 Sprite.onOffScreen = sp => {
 	// sp.hidden = true;
+};
+
+/**
+ * adjust sprite theta, dx, dy to point towards target
+ * @param {!Sprite} sprite
+ * @param {!Sprite} target
+ */
+Sprite.turnTowards = (sprite, target) => {
+	let x = target.x - sprite.x;
+	// if (x===0) {
+	// 	sprite.theta = Math.PI/2;
+	// } else {
+	let y = target.y - sprite.y;	
+	sprite.theta = Math.atan2(y,x);
+	// }
+	sprite.dx = Math.cos(sprite.theta) * (sprite.speed || 1);
+	sprite.dy = Math.sin(sprite.theta) * (sprite.speed || 1);
+	return [sprite.dx, sprite.dy];
 };
 
 /**

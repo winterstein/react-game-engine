@@ -1,3 +1,9 @@
+/*
+	NB The webpack.config.js files in my-loop, adserver and wwappbase.js are identical but cannot be symlinked!
+	If it's a symlink, NPM will resolve paths (including module names) relative to the symlink source - and
+	complain that it can't find webpack, because it's not installed in /wwappbase.js/templates/node_modules
+	Keep this copy in sync with the others - if the same file can't be used for all three, there should be a good reason.
+ */
 const webpack = require('webpack');
 const path = require('path');
 
@@ -10,22 +16,39 @@ const baseConfig = {
 	},
 	devtool: 'source-map',
 	resolve: {
-		extensions: ['.js', '.jsx'],
+		extensions: ['.ts', '.tsx', '.js', '.jsx'],
 		symlinks: false
 	},
 	module: {
 		rules: [
-			{
+			{	// Typescript
+				test: /\.tsx?$/,
+				loader: 'babel-loader',
+				exclude: /node_modules/,
+				options: {
+					presets: [
+						['@babel/preset-typescript', { targets: { ie: "11" }, loose: true }],
+						'@babel/react'
+					],
+					plugins: [
+						'@babel/plugin-transform-typescript',
+						'@babel/plugin-proposal-object-rest-spread',
+						'babel-plugin-const-enum'
+					]
+				}
+			},
+			{	// .js or .jsx
 				test: /.jsx?$/,
 				loader: 'babel-loader',
 				exclude: /node_modules/,
 				options: {
 					presets: [
-						['@babel/preset-env', { targets: { ie: "11" }, loose: true }]
+						['@babel/preset-env', { targets: { ie: "11" }, loose: true }],
+						['@babel/preset-react']
 					],
 					plugins: [
 						'@babel/plugin-proposal-class-properties',
-						'@babel/plugin-transform-react-jsx',
+						'@babel/plugin-proposal-object-rest-spread',
 						'transform-node-env-inline'
 					]
 				}
@@ -70,6 +93,7 @@ const makeConfig = ({ filename, mode }) => {
 const configs = [
 	makeConfig({filename: 'bundle-debug.js', mode: 'development' }),
 ];
+// Allow debug-only compilation for faster iteration in dev
 if (process.env.NO_PROD !== 'true') {
 	configs.push(makeConfig({filename: 'bundle.js', mode: 'production' }));
 }

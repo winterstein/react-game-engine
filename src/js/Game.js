@@ -14,6 +14,7 @@ class Game extends DataClass {
 	 * {String: PIXI.Container} world | ui | ground | characters
 	 */
 	containerFor = {};
+
 	/**
 	 * String to Sprite
 	 */
@@ -41,7 +42,7 @@ class Game extends DataClass {
 	 */
 	static get() {
 		return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], new Game(), false);
-	};
+	}
 
 } // ./Game
 DataClass.register(Game, 'Game');
@@ -81,34 +82,34 @@ Game.init = () => {
  */
 Game.handleInput = ({sprite, input, on}) => {
 	if ( ! sprite) {
-		sprite = Game.get().sprites['player0'];
+		sprite = Game.get().sprites.player0;
 	}
 	const v = 100; // pixles per second
 	switch(input) {
-		case 'up':
-			if (on) {
-				sprite.dy = -v;
-			}
-			if ( ! on && sprite.dy < 0) sprite.dy = 0;
-			break;
-		case 'down':
-			if (on) {
-				sprite.dy = v;
-			}
-			if ( ! on && sprite.dy > 0) sprite.dy = 0;
-			break;
-		case 'left':
-			if (on) {
-				sprite.dx = -v;
-			}
-			if ( ! on && sprite.dx < 0) sprite.dx = 0;
-			break;
-		case 'right':
-			if (on) {
-				sprite.dx = v;
-			}
-			if ( ! on && sprite.dx > 0) sprite.dx = 0;
-			break;
+	case 'up':
+		if (on) {
+			sprite.dy = -v;
+		}
+		if ( ! on && sprite.dy < 0) sprite.dy = 0;
+		break;
+	case 'down':
+		if (on) {
+			sprite.dy = v;
+		}
+		if ( ! on && sprite.dy > 0) sprite.dy = 0;
+		break;
+	case 'left':
+		if (on) {
+			sprite.dx = -v;
+		}
+		if ( ! on && sprite.dx < 0) sprite.dx = 0;
+		break;
+	case 'right':
+		if (on) {
+			sprite.dx = v;
+		}
+		if ( ! on && sprite.dx > 0) sprite.dx = 0;
+		break;
 	}
 	// console.log(input, on, sprite.dx + " dy: "+sprite.dy, sprite);
 };
@@ -120,33 +121,50 @@ Game.getPlayer = game => {
 	return game.sprites.player0;
 };
 
+/**
+ * @param {!String[]} types
+ */
+Game.getNearest = ({sprite, game, types}) => {	
+	let sprites = Object.values(game.sprites).filter(s => types.includes(s.name) && s !== sprite);
+	return sprites[0]; // TODO sort and pick!
+};
+
 Game.grid = game => {
 	return Grid.get(); // just return the default
 };
 
 /**
- * TODO
  * @returns {{row:Number, column:Number}}
  */
 Game.getTileInFront = (game, sprite) => {	
 	// the sprite's tile
-	let c = Math.floor(sprite.x / 48);
-	let r = Math.floor(sprite.y / 48);
+	let {row,column} = Game.getTile(game,sprite);
 	// the one in front
 	if (sprite.dx) {
-		if (sprite.dx>0) c++; else c--;	
+		if (sprite.dx>0) column++; else column--;	
 	} else if (sprite.dy) {
-		if (sprite.dy>0) r++; else r--;
+		if (sprite.dy>0) row++; else row--;
 	} else if (sprite.animate && sprite.animate.name) {
 		const an = sprite.animate.name;
 		switch(an) {
-			case "left": c--; break;
-			case "right": c++; break;
-			case "up": r--; break;
-			case "down": r++; break;			
+		case "left": column--; break;
+		case "right": column++; break;
+		case "up": row--; break;
+		case "down": row++; break;			
 		}
 	}
-	return {row:r, column:c}
+	return {row, column};
+};
+
+/**
+ * @returns {{row:Number, column:Number}}
+ */
+Game.getTile = (game, sprite) => {	
+	// the sprite's tile
+	const half = 24; // hack to get pivot point
+	let c = Math.floor((sprite.x + half) / 48);
+	let r = Math.floor((sprite.y + 36) / 48); // hack plus a bit to the feet 
+	return {row:r, column:c};
 };
 
 window.Game = Game; //debug
