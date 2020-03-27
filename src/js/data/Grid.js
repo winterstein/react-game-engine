@@ -49,7 +49,7 @@ class Grid extends DataClass {
 	screenWidth;
 
 	/**
-	 * screen pixels
+	 * @type {Number} screen pixels
 	 */
 	screenHeight;
 	

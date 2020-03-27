@@ -165,14 +165,15 @@ const setupAfterLoad2_UI = game => {
 	{	// tile shine
 		let tileShine = new Sprite();
 		let pSprite = new PIXI.Graphics();
-		pSprite.beginFill(0xFFCCFF);
-		pSprite.drawRect(0, 0, 4848);
+		pSprite.beginFill(0xFFCCFF, 0.1);
+		pSprite.lineStyle(3, 0xFF3300, 0.5);
+		pSprite.drawRect(0, 0, 48, 48);
 		pSprite.endFill();			
 		tileShine.pixi = pSprite;
 	
 		Sprite.setPixiProps(tileShine);
 		game.containerFor.ui.addChild(pSprite);
-		game.sprites["tileShine"] = tileShine;
+		game.sprites.selectTile = tileShine;
 	}		
 
 	// Create the inventory bar

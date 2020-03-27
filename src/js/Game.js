@@ -138,7 +138,13 @@ Game.getTileInFront = (game, sprite) => {
 	} else if (sprite.dy) {
 		if (sprite.dy>0) r++; else r--;
 	} else if (sprite.animate && sprite.animate.name) {
-		// TODO
+		const an = sprite.animate.name;
+		switch(an) {
+			case "left": c--; break;
+			case "right": c++; break;
+			case "up": r--; break;
+			case "down": r++; break;			
+		}
 	}
 	return {row:r, column:c}
 };

@@ -15,14 +15,9 @@ Game.update = game => {
 	Object.values(game.sprites).forEach(s => updateSprite(s,game));
 
 	// player
-	let player = Game.getPlayer(game);
+	let player = Game.getPlayer(game);	
 	if (player) {
-		let rc = Game.getTileInFront(game, player);
-		// TODO shine!
-		// console.log("Game.getTileInFront", rc);
-		let selectTile = game.sprites.selectTile;
-		if (selectTile) {			
-		}		
+		updatePlayer(game, player);
 	}
 
 	// collisions?
@@ -31,6 +26,25 @@ Game.update = game => {
 
 	// focus on X?
 };
+
+/**
+ * The normal updateSprite has already run!
+ * @param {*} game 
+ * @param {*} player 
+ */
+const updatePlayer = (game, player) => {
+	let rc = Game.getTileInFront(game, player);
+	// TODO shine!
+	// console.log("Game.getTileInFront", rc);
+	let selectTile = game.sprites.selectTile;
+	if (selectTile) {
+		selectTile.x = player.x;
+		selectTile.y = player.y;
+		Sprite.setPixiProps(selectTile);
+	} else {
+		console.warn("huh");
+	}	
+}
 
 /**
  * 
@@ -68,6 +82,8 @@ const updateSprite = (s, game) => {
 };
 
 const updateSheep = (sprite,game) => {
+	// TODO Chase / Fight / Flee
+
 	// mostly no change
 	if (Math.random() < 0.99) return;
 	// pick a direction
