@@ -8,7 +8,7 @@ const Wolf = new KindOfCreature('Wolf');
 
 Wolf.sprites = [SpriteLib.wolf()];
 
-Wolf.speed = 20;
+Wolf.speed = 50;
 
 Wolf.terrains = ['Grass','Earth'];
 

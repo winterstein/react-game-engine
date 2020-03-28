@@ -8,6 +8,7 @@ import Rect from './data/Rect';
 import StopWatch from './StopWatch';
 import {assert} from 'sjtest';
 import Grid from './data/Grid';
+import Tile from './data/Tile';
 
 class Game extends DataClass {
 	/**
@@ -131,8 +132,12 @@ Game.getPlayer = game => {
  * @param {?Number} limit in tiles eg 5. If set, ignore sprites further away than this
  * @returns {?Sprite}
  */
-Game.getNearest = ({sprite, game, types,limit}) => {	
+Game.getNearest = ({sprite, game, types, limit}) => {	
 	let sprites = Object.values(game.sprites).filter(s => types.includes(s.kind) && s !== sprite);
+	
+	// no Tiles
+	sprites = sprites.filter(s => ! Tile.isa(s));
+
 	if (limit) {
 		// in pixels
 		const plimit = limit * Game.grid(game).tileWidth;
