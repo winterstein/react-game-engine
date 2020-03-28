@@ -9,19 +9,29 @@ import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
 import { assMatch, assert } from 'sjtest';
 
+import Sheep from './creatures/Sheep';
+import Fish from './creatures/Fish';
+import Wolf from './creatures/Wolf';
+import Chicken from './creatures/Chicken';
+import Badger from './creatures/Badger';
 
 const DEBUG_FOCUS = false;
 
 /**
  * @param {!Game} game
  * @param {!Sprite} sprite An instance of a sprite
+ * @param {!String} id Unique
  * @returns {Sprite} sprite, having set sprite.pixi
  */
-const makePixiSprite = (game, sprite, name, container) => {
+const makePixiSprite = (game, sprite, id, container) => {
 	Game.assIsa(game);
 	Sprite.assIsa(sprite);
-	assMatch(name, String);
-	assert( ! game.sprites[name], "Duplicate sprite for "+name);
+	assMatch(id, String);
+		
+	assert( ! game.sprites[id], "Duplicate sprite for "+id);
+	game.sprites[id] = sprite;
+	sprite.id = id;
+
 	let psprite = new PIXI.Sprite();	
 	sprite.pixi = psprite;
 
@@ -29,7 +39,6 @@ const makePixiSprite = (game, sprite, name, container) => {
 	
 	if ( ! container) container = game.containerFor.world;
 	container.addChild(psprite);
-	game.sprites[name] = sprite;
 	// let res = texture.res
 	// console.log("Made "+name+" from",sprite,"texture",psprite.texture);
 	return sprite;
@@ -88,23 +97,33 @@ Game.basicPixiSetup = game => {
 	game.containerFor.ui = new PIXI.Container();
 	app.stage.addChild(game.containerFor.ui);
 
-	app.loader
-		.add(SpriteLib.alligator().src)
-		.add(SpriteLib.goat().src)
-		.add(SpriteLib.frog().src)
-		.add(SpriteLib.badger().src)
-		.add(SpriteLib.fish().src)
-		.add(SpriteLib.shark().src)
-		.add(SpriteLib.sheep().src)
-		.add(SpriteLib.wolf().src)
-		.add(SpriteLib.werewolf().src)
-		.add(SpriteLib.chicken().src)
-		.add(SpriteLib.goose().src)
-		.add(SpriteLib.grab().src)
-		.add(SpriteLib.pickAxe().src)
-		.add(SpriteLib.tile("Grass").src)
-		.add(SpriteLib.tile("Water").src)
-		.load(() => setupAfterLoad(game));
+	let srcs = new Set();
+	// creatures
+	let creatures = Game.kinds(game);
+	Object.values(creatures).forEach(c => {
+		if (c.sprites) {
+			c.sprites.forEach(s => srcs.add(s.src));
+		}
+	});
+	// Tiles
+	srcs.add(SpriteLib.alligator().src);
+	srcs.add(SpriteLib.tile("Grass").src);
+	srcs.add(SpriteLib.alligator().src);
+	srcs.add(SpriteLib.goat().src);
+	srcs.add(SpriteLib.frog().src);
+	srcs.add(SpriteLib.badger().src);
+	srcs.add(SpriteLib.shark().src);
+	srcs.add(SpriteLib.werewolf().src);
+	srcs.add(SpriteLib.goose().src);
+	srcs.add(SpriteLib.grab().src);
+	srcs.add(SpriteLib.pickAxe().src);
+	srcs.add(SpriteLib.tile("Grass").src);
+	srcs.add(SpriteLib.tile("Water").src);
+
+	let loader = app.loader;
+	srcs.forEach(src => loader.add(src));
+
+	loader.load(() => setupAfterLoad(game));
 };
 
 const setupAfterLoad = game => {
@@ -157,20 +176,23 @@ const setupAfterLoad2_Player = game => {
 	down.release = () => Game.handleInput({input:'down', on:false})
 };
 
-
+/**
+ * 
+ * @param {!Game} game 
+ */
 const setupAfterLoad2_UI = game => {
 	{	// tile shine
-		let tileShine = new Sprite();
+		let selectTile = new Sprite();
 		let pSprite = new PIXI.Graphics();
 		pSprite.beginFill(0xFFCCFF, 0.1);
 		pSprite.lineStyle(3, 0xFF3300, 0.5);
 		pSprite.drawRect(0, 0, 48, 48);
 		pSprite.endFill();			
-		tileShine.pixi = pSprite;
+		selectTile.pixi = pSprite;
 	
-		Sprite.setPixiProps(tileShine);
+		Sprite.setPixiProps(selectTile);
 		game.containerFor.ui.addChild(pSprite);
-		game.sprites.selectTile = tileShine;
+		game.sprites.selectTile = selectTile;
 	}		
 
 	// Create the inventory bar
@@ -242,9 +264,17 @@ const setupAfterLoad2_UI = game => {
 			let player = game.sprites.player0;
 			// copy from Tile to Sprite, and move it
 			let spawn = new Sprite(iSprite);
+
+			let kind = game.kinds[spawn.kind];
+			if (kind) {
+				spawn.speed = kind.speed; // HACK
+			}
+			
 			spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
-			spawn.x = player.x;
-			spawn.y = player.y;
+			// shine square
+			let birthPlace = game.sprites.selectTile || player;
+			spawn.x = birthPlace.x;
+			spawn.y = birthPlace.y;
 			makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				
 		};
 		psprite.on('mousedown', onDown);
@@ -258,6 +288,13 @@ Game.setup = game => {
 	const grid = Grid.get();
 	grid.width = 30; grid.height = 12;
 	grid.display = '2d';
+
+	// Creatures	
+	Game.addKind(game, Sheep);
+	Game.addKind(game, Chicken);
+	Game.addKind(game, Wolf);
+	Game.addKind(game, Fish);
+	Game.addKind(game, Badger);
 
 	Game.basicPixiSetup(game);
 };

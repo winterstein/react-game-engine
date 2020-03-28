@@ -32,6 +32,11 @@ class Game extends DataClass {
 	
 	height;
 
+	/**
+	 * @type {String : KindOfCreature}
+	 */
+	kinds = {};
+
 	constructor(base) {
 		super(base);
 		Object.assign(this, base);
@@ -123,7 +128,7 @@ Game.getPlayer = game => {
 
 /**
  * @param {!String[]} types
- * @param {?Number} limit in tiles. If set, ignore sprites further away than this
+ * @param {?Number} limit in tiles eg 5. If set, ignore sprites further away than this
  * @returns {?Sprite}
  */
 Game.getNearest = ({sprite, game, types,limit}) => {	
@@ -207,5 +212,33 @@ Game.setTile = ({game, row, column, tile}) => {
 	// game.sprites[tile.name] = tile; Done in makePixiSprite
 };
 
+/**
+ * @param {!Game} game
+ */
+Game.kinds = game => game.kinds;
+
+/**
+ * @param {!Game} game
+ * @param {!KindOfCreature} kind
+ */
+Game.addKind = (game, kind) => {
+	Game.assIsa(game);
+	game.kinds[kind.name] = kind;
+};
+
+Game.removeSprite = (game, sprite) => {
+	console.log("removeSprite", sprite);
+	Sprite.assIsa(sprite);
+	delete game.sprites[sprite.id];
+	// clean up Pixi
+	if (sprite.pixi && sprite.pixi.parent) {		
+		sprite.pixi.parent.removeChild(sprite.pixi);
+	}
+};
+
 window.Game = Game; //debug
 export default Game;
+
+export {
+	dist2
+};

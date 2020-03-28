@@ -276,14 +276,11 @@ Sprite.onOffScreen = sp => {
  */
 Sprite.turnTowards = (sprite, target) => {
 	let x = target.x - sprite.x;
-	// if (x===0) {
-	// 	sprite.theta = Math.PI/2;
-	// } else {
 	let y = target.y - sprite.y;	
+	
 	sprite.theta = Math.atan2(y,x);
-	// }
-	sprite.dx = Math.cos(sprite.theta) * (sprite.speed || 1);
-	sprite.dy = Math.sin(sprite.theta) * (sprite.speed || 1);
+	sprite.dx = Math.cos(sprite.theta) * (sprite.speed || 10);
+	sprite.dy = Math.sin(sprite.theta) * (sprite.speed || 10);
 	return [sprite.dx, sprite.dy];
 };
 
