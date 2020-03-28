@@ -14,6 +14,9 @@ import Fish from './creatures/Fish';
 import Wolf from './creatures/Wolf';
 import Chicken from './creatures/Chicken';
 import Badger from './creatures/Badger';
+import Goat from './creatures/Goat';
+import Werewolf from './creatures/Werewolf';
+import Frog from './creatures/Frog';
 
 const DEBUG_FOCUS = false;
 
@@ -292,8 +295,11 @@ Game.setup = game => {
 	// Creatures	
 	Game.addKind(game, Sheep);
 	Game.addKind(game, Chicken);
+	Game.addKind(game, Goat);
 	Game.addKind(game, Wolf);
+	Game.addKind(game, Werewolf);
 	Game.addKind(game, Fish);
+	Game.addKind(game, Frog);
 	Game.addKind(game, Badger);
 
 	Game.basicPixiSetup(game);

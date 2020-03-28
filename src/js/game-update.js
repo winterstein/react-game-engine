@@ -84,12 +84,14 @@ const updateSprite = (s, game) => {
 	}
 
 	// set animation from dx/dy
-	if (s.dy < 0) Sprite.animate(s, 'up');
-	if (s.dy > 0) Sprite.animate(s, 'down');
-	if (s.dx < 0) Sprite.animate(s, 'left');
-	if (s.dx > 0) Sprite.animate(s, 'right');
-	if ( ! s.dx && ! s.dy) Sprite.animate(s, 'stop');
-
+	let a;
+	if (s.dy < 0) a = 'up';
+	if (s.dy > 0) a= 'down';
+	if (s.dx < 0) a = 'left';
+	if (s.dx > 0) a = 'right';
+	if ( ! s.dx && ! s.dy) a = 'stop';
+	if (a) Sprite.animate(s, a);
+	// animation tick
 	Sprite.updateAnimation(s, game);
 
 	Sprite.setPixiProps(s);
