@@ -3,7 +3,7 @@
 import DataClass, {getType} from '../base/data/DataClass';
 import Rect from './Rect';
 
-class InGameTiles extends Number {};
+class InGameTiles extends Number {}
 
 /** 
  * @typedef {Object} SXY
@@ -22,11 +22,14 @@ class InGameTiles extends Number {};
 class Grid extends DataClass {
 	/** Set x,y = 0 to implement Rect */
 	x=0;
+
 	y=0;
+
 	/**
 	 * @type {InGameTiles} the in-game width in tiles
 	 */
 	width;
+
 	/**
 	 * @type {Number} the in-game height in tiles
 	 */
@@ -57,6 +60,7 @@ class Grid extends DataClass {
 	 * screen pixels
 	 */
 	tileWidth = 48;
+
 	/**
 	 * screen pixels
 	 */

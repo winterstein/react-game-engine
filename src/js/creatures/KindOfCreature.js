@@ -1,10 +1,16 @@
 import Game, { dist2 } from "../Game";
 import SpriteLib from '../data/SpriteLib';
 import Sprite from '../data/Sprite';
+import { nonce } from "../base/data/DataClass";
 
 class KindOfCreature {
 	
 	name;
+
+	/**
+	 * animal|vegetable|mineral
+	 */
+	kingdom;	
 
 	sprites;
 	
@@ -49,7 +55,7 @@ KindOfCreature.updater = ({kind, game, sprite, dt}) => {
 			// close enough to bite?
 			// TODO collision test instead - cos this requires near total overlap
 			if (dist2(sprite,near) < 100) {
-				doBite(sprite,near);
+				KindOfCreature.doBite(sprite,near);
 			}
 
 			return;
@@ -66,11 +72,21 @@ KindOfCreature.updater = ({kind, game, sprite, dt}) => {
 	}
 };
 
-const doBite = (predator, prey) => {
+
+/**
+ * 
+ * @param {*} predator 
+ * @param {!Sprite} prey 
+ */
+KindOfCreature.doBite = (predator, prey) => {
 	if (prey.health===undefined) prey.health = 100;
 	prey.health -= predator.attack || 5;
 	console.log("Bite! "+predator.kind+" "+prey.kind+" -> "+prey.health);
-	if (prey.health < 0) {
+	// TODO show health bar for 1/2 second
+	if (prey.pixi) {
+		// health bar
+	}	
+	if (prey.health <= 0) {
 		if (predator.health < 100) predator.health += 5;
 		doDie(Game.get(), prey);
 	}
@@ -79,6 +95,16 @@ const doBite = (predator, prey) => {
 const doDie = (game, sprite) => {
 	// TODO death sequence - or maybe we replace the sprite with a "dying sprite"
 	Game.removeSprite(game, sprite);
+	let kind = game.kinds[sprite.kind];
+	if ( ! kind) console.warn("No kind? ",sprite);
+	if (kind && kind.kingdom==='animal') {
+		// TODO leave some meat
+		let meat = SpriteLib.icon('Meat');
+		meat.kind = 'Meat';
+		meat.x = sprite.x;
+		meat.y = sprite.y;
+		Game.addSprite({game, sprite:meat});
+	}
 };
 
 // NB: allow no-import use

@@ -4,14 +4,20 @@ import SpriteLib from '../data/SpriteLib';
 import Sprite from '../data/Sprite';
 
 
-const Wolf = new KindOfCreature('Wolf');
+const Creature = new KindOfCreature('Wolf');
 
-Wolf.sprites = [SpriteLib.wolf()];
+Creature.kingdom = 'animal';
 
-Wolf.speed = 50;
+Creature.sprites = [SpriteLib.wolf()];
 
-Wolf.terrains = ['Grass','Earth'];
+Creature.speed = 50;
 
-Wolf.chases = ['Sheep', 'Chicken'];
+Creature.attack = 20;
 
-export default Wolf;
+Creature.terrains = ['Grass','Earth'];
+
+Creature.flees = [];
+
+Creature.chases = ['Meat', 'Sheep', 'Chicken'];
+
+export default Creature;

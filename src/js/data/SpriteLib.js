@@ -3,6 +3,7 @@
  */
 import Sprite from './Sprite';
 import Tile from './Tile';
+import { assert } from 'sjtest';
 
 const SpriteLib = {};
 
@@ -33,12 +34,26 @@ const stdAnimal = (src,n=0,kind,base) => {
 	return sp;
 };
 
-const stdIcon = (src,kind) => {	
+/**
+ * @returns {!Sprite}
+ */
+SpriteLib.icon = name => {	
+	const src = ICONS[name];
+	assert(src, "no icon file "+name);
 	let sp = new Sprite({
-		kind: kind||src,
+		tileSize: [48,48],
+		name,
+		kind: 'Icon',
 		src,
 	});
+	if (name==='Meat') sp.tileSize=[30,30]; // HACK
 	return sp;
+};
+const ICONS = {
+	Grab: '/img/icon/hand-grab.png',
+	PickAxe: '/img/icon/pick-axe.png',
+	Egg: '/img/icon/noun_Egg_3194757.png',
+	Meat: '/img/icon/icons8-meat-30.png',
 };
 
 
@@ -64,10 +79,6 @@ SpriteLib.alligator = n => {
 	// TODO or pixel mask logic for collisions
 	return a;
 };
-
-
-SpriteLib.grab = () => stdIcon('/img/icon/hand-grab.png');
-SpriteLib.pickAxe = () => stdIcon('/img/icon/pick-axe.png');
 
 SpriteLib.shark = () => new Sprite({
 	kind:'Shark',

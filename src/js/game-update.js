@@ -36,16 +36,13 @@ Game.update = game => {
 const updatePlayer = (game, player) => {
 	let rc = Game.getTileInFront(game, player);
 	let grid = Game.grid(game);
-	// TODO shine!
-	// console.log("Game.getTileInFront", rc);
+	// tile shine?
 	let selectTile = game.sprites.selectTile;
 	if (selectTile) {
 		selectTile.x = rc.column * grid.tileWidth;
 		selectTile.y = rc.row * grid.tileHeight;
 		Sprite.setPixiProps(selectTile);
-	} else {
-		console.warn("huh");
-	}	
+	}
 };
 
 /**
@@ -69,7 +66,25 @@ const updateSprite = (s, game) => {
 	
 	s.x += s.dx * dt;
 	s.y += s.dy * dt;
-	s.z += s.dz * dt;	
+	s.z += s.dz * dt;
+
+	// screen wrap?
+	const grid = Game.grid(game);
+	const maxx = grid.width*grid.tileWidth;
+	const maxy = grid.height*grid.tileHeight;
+	if (s.x < - Sprite.width(s)) {		
+		s.x = maxx;
+	}
+	if (s.x > maxx) {		
+		s.x = - Sprite.width(s);
+	}
+	if (s.y < - Sprite.height(s)) {		
+		s.y = maxy;
+	}
+	if (s.y > maxy) {		
+		s.y = - Sprite.height(s);
+	}
+
 	// allowed terrain check
 	let terrains = Kind.terrains;
 	if (terrains) {

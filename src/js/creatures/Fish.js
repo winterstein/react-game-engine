@@ -6,6 +6,8 @@ import Sprite from '../data/Sprite';
 
 const Fish = new KindOfCreature('Fish');
 
+Fish.kingdom = 'animal';
+
 Fish.sprites = [SpriteLib.fish(), SpriteLib.fish(1)];
 
 Fish.speed = 20;

@@ -3,6 +3,7 @@ import DataStore from './base/plumbing/DataStore';
 import {getClass, nonce} from './base/data/DataClass';
 import Grid from './data/Grid';
 import Sprite from './data/Sprite';
+import Tile from './data/Tile';
 import SpriteLib from './data/SpriteLib';
 import Game from './Game';
 import * as PIXI from 'pixi.js';
@@ -17,6 +18,7 @@ import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
 import Frog from './creatures/Frog';
+import KindOfCreature from './creatures/KindOfCreature';
 
 const DEBUG_FOCUS = false;
 
@@ -27,49 +29,7 @@ const DEBUG_FOCUS = false;
  * @returns {Sprite} sprite, having set sprite.pixi
  */
 const makePixiSprite = (game, sprite, id, container) => {
-	Game.assIsa(game);
-	Sprite.assIsa(sprite);
-	assMatch(id, String);
-		
-	assert( ! game.sprites[id], "Duplicate sprite for "+id);
-	game.sprites[id] = sprite;
-	sprite.id = id;
-
-	let psprite = new PIXI.Sprite();	
-	sprite.pixi = psprite;
-
-	Sprite.setPixiProps(sprite);
-	
-	if ( ! container) container = game.containerFor.world;
-	container.addChild(psprite);
-	// let res = texture.res
-	// console.log("Made "+name+" from",sprite,"texture",psprite.texture);
-	return sprite;
-};
-
-/**
- * @param {!Sprite} sprite
- */
-Sprite.setPixiProps = sprite => {
-	const psprite = sprite.pixi;
-	psprite.x = sprite.x;
-	psprite.y = sprite.y;
-	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
-	if ( ! sprite.src) return; // eg drawn Graphics
-
-	// texture width & height
-	// TODO detect no-op for speed??
-	const w = (sprite.tileSize && sprite.tileSize[0]) || 48;
-	const h = (sprite.tileSize && sprite.tileSize[1]) || 48;
-	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
-	let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
-	let pres = app.loader.resources[sprite.src];
-	assert(pres, "Not loaded Pixi resource "+sprite.src);
-	let texture = new PIXI.Texture(pres.texture, tframe);
-	psprite.texture = texture; //let psprite = new PIXI.Sprite(texture);
-	// scale
-	psprite.width = sprite.width;
-	psprite.height = sprite.height;
+	return Game.addSprite({game,sprite,id,container});
 };
 
 /**
@@ -109,17 +69,20 @@ Game.basicPixiSetup = game => {
 		}
 	});
 	// Tiles
-	srcs.add(SpriteLib.alligator().src);
-	srcs.add(SpriteLib.tile("Grass").src);
-	srcs.add(SpriteLib.alligator().src);
+	srcs.add(SpriteLib.alligator().src);	
 	srcs.add(SpriteLib.goat().src);
 	srcs.add(SpriteLib.frog().src);
 	srcs.add(SpriteLib.badger().src);
 	srcs.add(SpriteLib.shark().src);
 	srcs.add(SpriteLib.werewolf().src);
 	srcs.add(SpriteLib.goose().src);
-	srcs.add(SpriteLib.grab().src);
-	srcs.add(SpriteLib.pickAxe().src);
+
+	srcs.add(SpriteLib.icon('Grab').src);
+	srcs.add(SpriteLib.icon('PickAxe').src);
+	srcs.add(SpriteLib.icon('Meat').src);
+	srcs.add(SpriteLib.icon('Egg').src);
+
+	srcs.add(SpriteLib.tile("Earth").src);
 	srcs.add(SpriteLib.tile("Grass").src);
 	srcs.add(SpriteLib.tile("Water").src);
 
@@ -163,6 +126,7 @@ const setupAfterLoad = game => {
 
 const setupAfterLoad2_Player = game => {
 	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
+	sprite.attack = 50;
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);
@@ -184,7 +148,7 @@ const setupAfterLoad2_Player = game => {
  * @param {!Game} game 
  */
 const setupAfterLoad2_UI = game => {
-	{	// tile shine
+	if (false) {	// tile shine - nah
 		let selectTile = new Sprite();
 		let pSprite = new PIXI.Graphics();
 		pSprite.beginFill(0xFFCCFF, 0.1);
@@ -219,72 +183,73 @@ const setupAfterLoad2_UI = game => {
 	inventoryBar.addChild(innerBar);
 
 	// default inventory	
-	let slot = 0;
-	{	// grab FIXME no show?!
-		let grabSprite = new Tile(SpriteLib.grab());
-		grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
-		grabSprite.x = xOffset + slot*slotWidth;
-		Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
+	let slot = 0;	
+	if (false) {	// grab
+		let onClick = e => {console.warn("TODO",e)};
+		setupAfterLoad3_UI2_addIcon({
+			game, icon:SpriteLib.icon('Grab'), inventoryBar, slot, xOffset, slotWidth, onClick
+		});
 		slot++;
-		let psprite = grabSprite.pixi;			
-		psprite.interactive = true;
-		const onDown = e => {
-			console.log("onDown",e, ""+e.target);
-			let player = game.sprites.player0;
-			console.log("TODO what can we grab");
-		};
-		psprite.on('mousedown', onDown);
-		psprite.on('touchstart', onDown);
 	}
-	if (false) {	// weapon - pickaxe
-		let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
-		grabSprite.x = xOffset + slot*slotWidth;
+	{	// hit
+		let onClick = e => {
+			console.log("onClick");
+			let player = game.sprites.player0;
+			let near = Game.getNearest({sprite:player, game, limit:1});
+			if (near) {
+				KindOfCreature.doBite(player, near);
+			} else {
+				console.log("Nothing to hit");
+			}
+		};
+		setupAfterLoad3_UI2_addIcon({
+			game, icon:SpriteLib.icon('PickAxe'), inventoryBar, slot, xOffset, slotWidth, onClick
+		});
 		slot++;
-		let psprite = grabSprite.pixi;
-		psprite.interactive = true;
-		const onDown = e => {
-			console.log("onDown",e, ""+e.target);
-			let player = game.sprites.player0;
-			console.log("TODO what can we hit");
-		};
-		psprite.on('mousedown', onDown);
-		psprite.on('touchstart', onDown);
-	}
+	}	
 	// spawns
 	// NB shark is bigger than 48x48
-	['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {
-		// use Tile so no updates
-		let base = new Tile(SpriteLib[spawnName]());
-		let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
-		// iSprite.animate = null;
-		iSprite.x = xOffset + slot*slotWidth;
-		Sprite.setPixiProps(iSprite); // Tiles dont update so we have to prod the pixi xy
-		slot++;
-		let psprite = iSprite.pixi;
-		psprite.interactive = true;
-		const onDown = e => {
+	['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {		
+		let icon = SpriteLib[spawnName]();
+		const onClick = e => {
 			console.log("onDown",e, ""+e.target);
 			let player = game.sprites.player0;
 			// copy from Tile to Sprite, and move it
-			let spawn = new Sprite(iSprite);
+			let spawn = new Sprite(icon);
 
 			let kind = game.kinds[spawn.kind];
 			if (kind) {
 				spawn.speed = kind.speed; // HACK
+				spawn.attack = kind.attack; // HACK
 			}
 			
 			spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
 			// shine square
-			let birthPlace = game.sprites.selectTile || player;
+			let birthPlace = player;
 			spawn.x = birthPlace.x;
 			spawn.y = birthPlace.y;
-			makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				
+			makePixiSprite(game, spawn, (icon.name||icon.kind)+nonce(), game.containerFor.characters);
 		};
-		psprite.on('mousedown', onDown);
-		psprite.on('touchstart', onDown);
+		setupAfterLoad3_UI2_addIcon({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick});		
+		console.log(spawnName, icon);
+		slot++;
 	});		
 };
 
+
+const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick}) => {
+	// use Tile so no updates
+	if ( ! Tile.isa(icon)) {
+		icon = new Tile(icon);
+	}
+	icon.x = xOffset + slot*slotWidth;
+	Game.addSprite({game, sprite:icon, container:inventoryBar});	
+	// Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
+	let psprite = icon.pixi;			
+	psprite.interactive = true;
+	psprite.on('mousedown', onClick);
+	psprite.on('touchstart', onClick);
+};
 
 Game.setup = game => {
 	// How big is the Stage?
@@ -313,6 +278,8 @@ Game.setup = game => {
 const makeLandPlan = (game, grid) => {
 	let nrows = Math.floor(grid.screenHeight / grid.tileHeight);
 	let ncols = Math.floor(grid.screenWidth / grid.tileWidth);
+	grid.width = ncols;
+	grid.height = nrows;
 	assert(nrows > 1, game);
 	assert(ncols > 1, game);
 	let map = [];

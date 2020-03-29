@@ -5,6 +5,8 @@ import Rect from './Rect';
 import Grid from './Grid';
 import StopWatch from '../StopWatch';
 import { assert } from 'sjtest';
+import * as PIXI from 'pixi.js';
+
 
 class Animate extends DataClass {
 	
@@ -26,6 +28,11 @@ DataClass.register(Animate, 'Animate');
 
 
 /**
+ * 
+ * Should we just use PIXI.Sprite?
+ * No -- this Sprite is almost a json blob (null out pixi and it can be serialised), 
+ * whilst PIXI.Sprite has a lifecycle re loaded resources, which cant be saved.
+ * 
  * id: always a fresh nonce
  * src: {url}
  * x: game-x
@@ -156,6 +163,10 @@ Sprite.initFrames = sp => {
 	if ( ! sp.height) sp.height = sp.tileSize[1];
 };
 
+// paranoia - should be set on new
+Sprite.width = s => s.width || (s.tileSize && s.tileSize[0]) || 48;
+Sprite.height = s => s.height || (s.tileSize && s.tileSize[1]) || 48;
+
 /**
  * @param sprite {!Sprite}
  * @param cmd {!Command}
@@ -258,18 +269,6 @@ Sprite.animate = (sp, a) => {
 };
 
 /**
- * Usually replaced by Player.doCommand etc
- */
-Sprite.doCommand = (sprite, cmd) => {
-	console.warn(cmd, sprite);
-	cmd.done = true;
-};
-
-Sprite.onOffScreen = sp => {
-	// sp.hidden = true;
-};
-
-/**
  * adjust sprite theta, dx, dy to point towards target
  * @param {!Sprite} sprite
  * @param {!Sprite} target
@@ -284,7 +283,34 @@ Sprite.turnTowards = (sprite, target) => {
 	return [sprite.dx, sprite.dy];
 };
 
+
 /**
- * @type {String: Sprite}
+ * @param {!Sprite} sprite
  */
-Sprite.library = {};
+Sprite.setPixiProps = sprite => {
+	Sprite.assIsa(sprite);
+	const psprite = sprite.pixi;
+	if ( ! psprite) {
+		console.warn("No pixi for "+sprite.width, sprite);
+		return;
+	}
+	psprite.x = sprite.x;
+	psprite.y = sprite.y;
+	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
+	if ( ! sprite.src) return; // eg drawn Graphics
+
+	// texture width & height
+	// TODO detect no-op for speed??
+	const w = (sprite.tileSize && sprite.tileSize[0]) || 48;
+	const h = (sprite.tileSize && sprite.tileSize[1]) || 48;
+	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
+	let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
+	const app = Game.get().app;
+	let pres = app.loader.resources[sprite.src];
+	assert(pres, "Not loaded Pixi resource "+sprite.src);
+	let texture = new PIXI.Texture(pres.texture, tframe);
+	psprite.texture = texture; //let psprite = new PIXI.Sprite(texture);
+	// scale
+	psprite.width = Sprite.width(sprite);
+	psprite.height = Sprite.height(sprite);
+};

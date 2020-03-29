@@ -2,13 +2,14 @@
  * Base class for Games
  */
 import DataStore from './base/plumbing/DataStore';
-import DataClass, {getClass} from './base/data/DataClass';
+import DataClass, {getClass, nonce} from './base/data/DataClass';
 import Sprite from './data/Sprite';
 import Rect from './data/Rect';
 import StopWatch from './StopWatch';
-import {assert} from 'sjtest';
+import {assert, assMatch} from 'sjtest';
 import Grid from './data/Grid';
 import Tile from './data/Tile';
+import * as PIXI from 'pixi.js';
 
 class Game extends DataClass {
 	/**
@@ -128,15 +129,18 @@ Game.getPlayer = game => {
 };
 
 /**
- * @param {!String[]} types
+ * @param {?String[]} types
  * @param {?Number} limit in tiles eg 5. If set, ignore sprites further away than this
  * @returns {?Sprite}
  */
 Game.getNearest = ({sprite, game, types, limit}) => {	
-	let sprites = Object.values(game.sprites).filter(s => types.includes(s.kind) && s !== sprite);
-	
+	let sprites = Object.values(game.sprites);
 	// no Tiles
 	sprites = sprites.filter(s => ! Tile.isa(s));
+	// type filter
+	if (types) sprites = sprites.filter(s => types.includes(s.kind));
+	// not self
+	sprites = sprites.filter(s => s !== sprite);	
 
 	if (limit) {
 		// in pixels
@@ -155,6 +159,10 @@ Game.getNearest = ({sprite, game, types, limit}) => {
  */
 const dist2 = (s1, s2) => (s1.x-s2.x)*(s1.x-s2.x) + (s1.y-s2.y)*(s1.y-s2.y);
 
+/**
+ * @param {Game} game
+ * @returns {Grid}
+ */
 Game.grid = game => {
 	return Grid.get(); // just return the default
 };
@@ -231,13 +239,39 @@ Game.addKind = (game, kind) => {
 	game.kinds[kind.name] = kind;
 };
 
+/**
+ * Add a sprite to game, plus make a Pixi sprite and add to container.
+ * @param {?String} id a nonce will be made if blank. Cannot be a duplicate
+ */
+Game.addSprite = ({game, sprite, id, container}) => {
+	Game.assIsa(game);
+	Sprite.assIsa(sprite);
+	if (id) sprite.id = id;
+	if ( ! sprite.id) sprite.id = sprite.kind+nonce();
+		
+	assert( ! game.sprites[sprite.id], "Duplicate sprite for "+sprite.id);
+	game.sprites[sprite.id] = sprite;
+	
+
+	let psprite = new PIXI.Sprite();	
+	sprite.pixi = psprite;
+
+	Sprite.setPixiProps(sprite);
+	
+	if ( ! container) container = game.containerFor.world;
+	container.addChild(psprite);
+	return sprite;
+};
+
 Game.removeSprite = (game, sprite) => {
 	console.log("removeSprite", sprite);
 	Sprite.assIsa(sprite);
 	delete game.sprites[sprite.id];
 	// clean up Pixi
-	if (sprite.pixi && sprite.pixi.parent) {		
-		sprite.pixi.parent.removeChild(sprite.pixi);
+	if (sprite.pixi) {		
+		if (sprite.pixi.parent) sprite.pixi.parent.removeChild(sprite.pixi);
+		sprite.pixi.destroy({children:true});
+		sprite.pixi = null;
 	}
 };
 
