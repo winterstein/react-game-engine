@@ -9,8 +9,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "@types/react": "^16.9.22",
-    "@types/react-dom": "^16.9.5",
     "pixi.js": "^5.2.1",
     "bootstrap": "^4.3.1",
     "font-awesome": "4.7.0",
@@ -30,7 +28,6 @@
     "react-scroll": "^1.7.12",
     "react-spring": "^8.0.27",
     "reactstrap": "^8.1.0",
-    "shelljs": "^0.8.3",
     "sjtest": "^0.4.9",
     "wwutils": "^0.9.4",
     "yargs": "^15.1.0",
@@ -75,8 +72,9 @@
     "jest": "^25.1.0",
     "jest-puppeteer": "^4.4.0",
     "puppeteer": "^2.0.0",
-    "puppet-theatre": "latest",
-    "style-loader": "^0.23.1",
+	"puppet-theatre": "latest",
+	"shelljs": "^0.8.3",
+	"style-loader": "^0.23.1",
     "typescript": "^3.8.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"

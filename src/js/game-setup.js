@@ -276,8 +276,8 @@ Game.setup = game => {
  * @param {Grid} grid 
  */
 const makeLandPlan = (game, grid) => {
-	let nrows = Math.floor(grid.screenHeight / grid.tileHeight);
-	let ncols = Math.floor(grid.screenWidth / grid.tileWidth);
+	let nrows = Math.ceil(grid.screenHeight / grid.tileHeight);
+	let ncols = Math.ceil(grid.screenWidth / grid.tileWidth);
 	grid.width = ncols;
 	grid.height = nrows;
 	assert(nrows > 1, game);
