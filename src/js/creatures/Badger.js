@@ -10,10 +10,10 @@ Badger.kingdom = 'animal';
 
 Badger.sprites = [SpriteLib.badger()];
 
-Badger.speed = 20;
+Badger.speed = 199;
 
 Badger.terrains = ['Grass','Earth','Water'];
 
-Badger.chases = ['Werewolf'];
+Badger.chases = ['Werewolf','Frog','Sheep','Goat','Meat','Chicken','Grass'];
 
 export default Badger;

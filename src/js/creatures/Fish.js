@@ -10,8 +10,12 @@ Fish.kingdom = 'animal';
 
 Fish.sprites = [SpriteLib.fish(), SpriteLib.fish(1)];
 
-Fish.speed = 20;
+Fish.speed = 10;
+
+Fish.attack=1;
 
 Fish.terrains = ['Water'];
 
 export default Fish;
+
+Fish.chases =['Frog','Meat','Goose'];

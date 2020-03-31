@@ -195,9 +195,9 @@ const setupAfterLoad2_UI = game => {
 		let onClick = e => {
 			console.log("onClick");
 			let player = game.sprites.player0;
-			let near = Game.getNearest({sprite:player, game, limit:1});
-			if (near) {
-				KindOfCreature.doBite(player, near);
+			let nearbySprite = Game.getNearest({sprite:player, game, limit:1});
+			if (nearbySprite) {
+				KindOfCreature.doBite(player, nearbySprite);
 			} else {
 				console.log("Nothing to hit");
 			}
