@@ -161,7 +161,7 @@ const dist2 = (s1, s2) => (s1.x-s2.x)*(s1.x-s2.x) + (s1.y-s2.y)*(s1.y-s2.y);
 
 /**
  * @param {Game} game
- * @returns {Grid}
+ * @returns {!Grid}
  */
 Game.grid = game => {
 	return Grid.get(); // just return the default
@@ -257,9 +257,17 @@ Game.addSprite = ({game, sprite, id, container}) => {
 	sprite.pixi = psprite;
 
 	Sprite.setPixiProps(sprite);
-	
+
+	// sprite parts?
+	if (sprite.background && false) {
+		let bgsprite = new PIXI.Sprite();	
+		Sprite.setPixiProps(bgsprite);
+		// TODO add to container
+	}
+
 	if ( ! container) container = game.containerFor.world;
 	container.addChild(psprite);
+
 	return sprite;
 };
 

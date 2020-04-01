@@ -85,6 +85,7 @@ Game.basicPixiSetup = game => {
 	srcs.add(SpriteLib.tile("Earth").src);
 	srcs.add(SpriteLib.tile("Grass").src);
 	srcs.add(SpriteLib.tile("Water").src);
+	srcs.add(SpriteLib.tile("Tree").src);
 
 	let loader = app.loader;
 	srcs.forEach(src => loader.add(src));
@@ -92,6 +93,10 @@ Game.basicPixiSetup = game => {
 	loader.load(() => setupAfterLoad(game));
 };
 
+/**
+ * 
+ * @param {!Game} game 
+ */
 const setupAfterLoad = game => {
 
 	if ( ! DEBUG_FOCUS) {
@@ -118,7 +123,17 @@ const setupAfterLoad = game => {
 				let cell = landPlan[rowi][coli];
 				let tileSprite = SpriteLib.tile(cell);
 				Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
-				makePixiSprite(game, tileSprite, tileSprite.name, game.containerFor.ground);
+				if (cell==='Tree') { // HACK
+					let bg = SpriteLib.tile('Earth');
+					bg.x = tileSprite.x;
+					bg.y = tileSprite.y;
+					bg.width=grid.tileWidth;
+					bg.height=grid.tileHeight;
+					Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:game.containerFor.ground});
+					Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
+				} else {
+					Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
+				}
 			}
 		}
 	}
@@ -289,6 +304,8 @@ const makeLandPlan = (game, grid) => {
 		for(let ci=0; ci<ncols; ci++) {
 			let r = Math.floor(Math.random()*3);
 			let tile = ['Grass','Water','Earth'][r];
+			// a few trees
+			if (tile==='Earth' && Math.random()<0.25) tile='Tree';
 			row.push(tile);
 		}
 	}

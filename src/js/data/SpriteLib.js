@@ -57,6 +57,7 @@ const ICONS = {
 };
 
 
+
 SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n,'Chicken');
 
 SpriteLib.goat = n => stdAnimal('/img/animals/goats.png', n, 'Goat');
@@ -123,6 +124,20 @@ SpriteLib.tile = (tileKind) => {
 			width:size, height:size
 		});	
 	}
+	if (tileKind==='Tree') {
+		let size2=64;
+		fx=3*size2; fy=13*size2 - 10; // HACK - todo allow trees to draw over other tiles
+		return new Tile({
+			kind: tileKind,
+			src:'/img/tiles/iso-64x64-outside.png',
+			tiles: [16,10],
+			frameIndex:0,
+			frames: [[fx,fy]],
+			tileSize: [size2,size2],
+			width:size, height:size,
+			background: SpriteLib.tile('Earth')
+		});	
+	}
 	if (tileKind==='Grass' || true) {
 		return new Tile({
 			kind: tileKind,
@@ -134,8 +149,9 @@ SpriteLib.tile = (tileKind) => {
 			tileSize: [size,size],
 			width:size, height:size
 		});	
-	}	
+	}		
 };
+
 
 /**
  * @returns {Sprite}

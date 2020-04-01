@@ -90,6 +90,11 @@ class Sprite extends DataClass {
 	height;
 
 	/**
+	 * @type {?Sprite} e.g. draw grass under this
+	 */
+	background;
+
+	/**
 	 * @typedef {Command}
 	 */
 	commands = [];
