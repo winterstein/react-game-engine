@@ -12,8 +12,8 @@ Chicken.sprites = [SpriteLib.chicken(), SpriteLib.chicken(1)];
 
 Chicken.speed = 25;
 
-Chicken.terrains = ['Grass','Earth'];
+Chicken.terrains = ['Grass','Earth','Water',];
 
-Chicken.flees = ['Wolf'];
+Chicken.flees = ['Wolf','Badger','Goose'];
 
 export default Chicken;

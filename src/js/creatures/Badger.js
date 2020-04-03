@@ -12,7 +12,7 @@ Badger.sprites = [SpriteLib.badger()];
 
 Badger.speed = 199;
 
-Badger.terrains = ['Grass','Earth','Water'];
+Badger.terrains = ['Grass','Earth','Water','Tree'];
 
 Badger.chases = ['Werewolf','Frog','Sheep','Goat','Meat','Chicken','Wolf'];
 

@@ -14,6 +14,6 @@ Goat.speed = 25;
 
 Goat.terrains = ['Grass','Earth'];
 
-Goat.flees = ['Wolf'];
+Goat.flees = ['Wolf','Goose'];
 
 export default Goat;

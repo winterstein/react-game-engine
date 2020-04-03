@@ -14,7 +14,7 @@ Fish.speed = 10;
 
 Fish.attack=1;
 
-Fish.terrains = ['Water'];
+Fish.terrains = ['Water','Tree'];
 
 export default Fish;
 

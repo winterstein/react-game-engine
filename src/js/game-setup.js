@@ -141,7 +141,7 @@ const setupAfterLoad = game => {
 
 const setupAfterLoad2_Player = game => {
 	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
-	sprite.attack = 50;
+	sprite.attack = 100; // 1 hit kill
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);

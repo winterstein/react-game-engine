@@ -18,7 +18,7 @@ sheep.terrains = ['Grass','Earth'];
 sheep.chases = ['Sheep'];
 
 // Sheep are dumb
-sheep.flees = [];
+sheep.flees = ['Goose'];
 
 /**
  * Add wander behaviour
