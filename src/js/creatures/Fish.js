@@ -19,3 +19,15 @@ Fish.terrains = ['Water'];
 export default Fish;
 
 Fish.chases =['Frog','Meat','Goose'];
+
+Fish.updater = ({sprite,game,dt}) => {
+	// Fish on land die :(
+	const {row,column} = Game.getRowColumn(game, sprite);
+	const tile = Game.getTile({game, row, column});
+	if (tile && tile.kind !== 'Water') {
+		KindOfCreature.doBite({attack:1}, sprite);
+	}
+
+	// basic behaviour, ie flock
+	KindOfCreature.updater({kind:Fish, sprite,game,dt});
+};

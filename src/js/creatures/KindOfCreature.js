@@ -55,7 +55,9 @@ KindOfCreature.updater = ({kind, game, sprite, dt}) => {
 			// close enough to bite?
 			// TODO collision test instead - cos this requires near total overlap
 			if (dist2(sprite,near) < 100) {
-				KindOfCreature.doBite(sprite,near);
+				if (sprite.kind !== near.kind) { // no cannibals
+					KindOfCreature.doBite(sprite,near);
+				}
 			}
 
 			return;
@@ -75,7 +77,7 @@ KindOfCreature.updater = ({kind, game, sprite, dt}) => {
 
 /**
  * 
- * @param {*} predator 
+ * @param {!Sprite} predator 
  * @param {!Sprite} prey 
  */
 KindOfCreature.doBite = (predator, prey) => {

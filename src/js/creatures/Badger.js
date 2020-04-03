@@ -14,6 +14,6 @@ Badger.speed = 199;
 
 Badger.terrains = ['Grass','Earth','Water'];
 
-Badger.chases = ['Werewolf','Frog','Sheep','Goat','Meat','Chicken','Grass'];
+Badger.chases = ['Werewolf','Frog','Sheep','Goat','Meat','Chicken','Wolf'];
 
 export default Badger;
