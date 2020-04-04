@@ -13,6 +13,6 @@ Creature.speed = 15;
 
 Creature.terrains = ['Grass','Earth'];
 
-Creature.chases = ['Meat'];
+Creature.chases = ['Meat','Werewolf'];
 
 export default Creature;

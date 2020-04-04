@@ -9,9 +9,11 @@ Creature.kingdom = 'animal';
 
 Creature.sprites = [SpriteLib.frog()];
 
-Creature.speed = 15;
+Creature.speed = 159;
 
 // frog can go anywhere
-// Creature.terrains = ['Grass','Earth'];
+Creature.terrains = ['Grass','Earth','Tree','Water'];
 
 export default Creature;
+
+Creature.flees = ['Badger','Fish'];

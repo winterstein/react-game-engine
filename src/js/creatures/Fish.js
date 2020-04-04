@@ -14,11 +14,11 @@ Fish.speed = 10;
 
 Fish.attack=1;
 
-Fish.terrains = ['Water','Tree'];
+Fish.terrains = ['Water'];
 
 export default Fish;
 
-Fish.chases =['Frog','Meat','Goose'];
+Fish.chases =['Frog','Meat'];
 
 Fish.updater = ({sprite,game,dt}) => {
 	// Fish on land die :(
