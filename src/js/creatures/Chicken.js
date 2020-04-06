@@ -10,7 +10,7 @@ Chicken.kingdom = 'animal';
 
 Chicken.sprites = [SpriteLib.chicken(), SpriteLib.chicken(1)];
 
-Chicken.speed = 25;
+Chicken.speed = 125;
 
 Chicken.terrains = ['Grass','Earth','Water',];
 
