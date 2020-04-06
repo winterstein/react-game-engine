@@ -16,6 +16,7 @@ import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
 import PixiPage from './PixiPage';
+import HatPage from './HatPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
@@ -28,7 +29,8 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
-	pixi: PixiPage
+	pixi: PixiPage,
+	hat: HatPage
 };
 
 const DEFAULT_PAGE = 'pixi';
