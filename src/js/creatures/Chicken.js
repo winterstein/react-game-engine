@@ -11,4 +11,4 @@ Chicken.terrains = ['Grass','Earth','Water',];
 
 Chicken.flees = ['Wolf','Badger','Goose'];
 
-Game.addKind(game, Chicken);
+Game.addKind(null, Chicken);
