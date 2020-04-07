@@ -19,6 +19,7 @@ import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
 import Frog from './creatures/Frog';
 import KindOfCreature from './creatures/KindOfCreature';
+import { addScript } from 'wwutils';
 
 const DEBUG_FOCUS = false;
 
@@ -110,34 +111,40 @@ const setupAfterLoad = game => {
 
 	// land
 	if (true) {
-		let grid = Game.grid(game);
-		let landPlan = makeLandPlan(game, grid);
-		game.landPlan = landPlan;
-		// // sprites
-		// const w = SpriteLib.tile("water");
-		// w.x = 48; w.y=48;
-		// makePixiSprite(game, w, "water00", game.containerFor.characters);
-		// makePixiSprite(game, SpriteLib.tile("grass"), "grass11", game.containerFor.ground);
-		for(let rowi = 0; rowi<landPlan.length; rowi++) {
-			for(let coli = 0; coli<landPlan[0].length; coli++) {
-				let cell = landPlan[rowi][coli];
-				let tileSprite = SpriteLib.tile(cell);
-				Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
-				if (cell==='Tree') { // HACK
-					let bg = SpriteLib.tile('Earth');
-					bg.x = tileSprite.x;
-					bg.y = tileSprite.y;
-					bg.width=grid.tileWidth;
-					bg.height=grid.tileHeight;
-					Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:game.containerFor.ground});
-					Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
-				} else {
-					Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
-				}
+		setupAfterLoad2_land(game);
+	}
+};
+
+
+const setupAfterLoad2_land = game => {
+	let grid = Game.grid(game);
+	let landPlan = makeLandPlan(game, grid);
+	game.landPlan = landPlan;
+	// // sprites
+	// const w = SpriteLib.tile("water");
+	// w.x = 48; w.y=48;
+	// makePixiSprite(game, w, "water00", game.containerFor.characters);
+	// makePixiSprite(game, SpriteLib.tile("grass"), "grass11", game.containerFor.ground);
+	for(let rowi = 0; rowi<landPlan.length; rowi++) {
+		for(let coli = 0; coli<landPlan[0].length; coli++) {
+			let cell = landPlan[rowi][coli];
+			let tileSprite = SpriteLib.tile(cell);
+			Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
+			if (cell==='Tree') { // HACK
+				let bg = SpriteLib.tile('Earth');
+				bg.x = tileSprite.x;
+				bg.y = tileSprite.y;
+				bg.width=grid.tileWidth;
+				bg.height=grid.tileHeight;
+				Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:game.containerFor.ground});
+				Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
+			} else {
+				Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
 			}
 		}
 	}
 };
+
 
 const setupAfterLoad2_Player = game => {
 	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
@@ -272,6 +279,18 @@ Game.setup = game => {
 	grid.width = 30; grid.height = 12;
 	grid.display = '2d';
 
+	// Load from github?
+	// from github fails addScript("https://raw.githubusercontent.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js", {});
+	// works but slow addScript("https://raw.githack.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js", {});
+
+	fetch("https://raw.githubusercontent.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js")
+	.then(res => {
+		console.warn("res",res);
+		res.text().then(txt => {
+			Function(txt)();
+		});
+	});
+	
 	// Creatures	
 	Game.addKind(game, Sheep);
 	Game.addKind(game, Chicken);

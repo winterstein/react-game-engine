@@ -235,6 +235,7 @@ Game.kinds = game => game.kinds;
  * @param {!KindOfCreature} kind
  */
 Game.addKind = (game, kind) => {
+	if ( ! game) game = Game.get();
 	Game.assIsa(game);
 	game.kinds[kind.name] = kind;
 };
