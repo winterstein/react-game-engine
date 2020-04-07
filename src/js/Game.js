@@ -10,6 +10,7 @@ import {assert, assMatch} from 'sjtest';
 import Grid from './data/Grid';
 import Tile from './data/Tile';
 import * as PIXI from 'pixi.js';
+import { randomPick } from './base/utils/miscutils';
 
 class Game extends DataClass {
 	/**
@@ -238,6 +239,27 @@ Game.addKind = (game, kind) => {
 	if ( ! game) game = Game.get();
 	Game.assIsa(game);
 	game.kinds[kind.name] = kind;
+};
+
+/**
+ * Easy way to make a sprite
+ */
+Game.make = (spriteName, spriteSettings={}) => {
+	const game = Game.get();
+	const kind = game.kinds[spriteName];
+	if ( ! kind) {
+		throw new Error("Cannot make "+spriteName+" - kind unknown");
+	}	
+	let sprite = new Sprite(randomPick(kind.sprites));
+	sprite.speed = kind.speed; // HACK
+	sprite.attack = kind.attack; // HACK
+	const id = spriteName+nonce();
+	// special settings? often x and y
+	if (spriteSettings) {
+		sprite = Object.assign(sprite, spriteSettings);
+	}
+	Game.addSprite({game, sprite, id, container:game.containerFor.characters});
+	return sprite;
 };
 
 /**

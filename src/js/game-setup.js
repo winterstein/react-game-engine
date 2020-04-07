@@ -118,13 +118,10 @@ const setupAfterLoad = game => {
 
 const setupAfterLoad2_land = game => {
 	let grid = Game.grid(game);
+	// pick the tiles
 	let landPlan = makeLandPlan(game, grid);
 	game.landPlan = landPlan;
-	// // sprites
-	// const w = SpriteLib.tile("water");
-	// w.x = 48; w.y=48;
-	// makePixiSprite(game, w, "water00", game.containerFor.characters);
-	// makePixiSprite(game, SpriteLib.tile("grass"), "grass11", game.containerFor.ground);
+	// add the tiles to the game
 	for(let rowi = 0; rowi<landPlan.length; rowi++) {
 		for(let coli = 0; coli<landPlan[0].length; coli++) {
 			let cell = landPlan[rowi][coli];
@@ -140,6 +137,12 @@ const setupAfterLoad2_land = game => {
 				Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
 			} else {
 				Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
+			}
+
+			if (cell==='Water') {				
+				let fish = Game.make('Fish');
+				fish.x = tileSprite.x;
+				fish.y = tileSprite.y;
 			}
 		}
 	}
@@ -158,11 +161,25 @@ const setupAfterLoad2_Player = game => {
 	right.press = () => Game.handleInput({input:'right', on:true});
 	right.release = () => Game.handleInput({input:'right', on:false});
 	left.press = () => Game.handleInput({input:'left', on:true});
-	left.release = () => Game.handleInput({input:'left', on:false})
+	left.release = () => Game.handleInput({input:'left', on:false});
 	up.press = () => Game.handleInput({input:'up', on:true});
-	up.release = () => Game.handleInput({input:'up', on:false})
+	up.release = () => Game.handleInput({input:'up', on:false});
 	down.press = () => Game.handleInput({input:'down', on:true});
-	down.release = () => Game.handleInput({input:'down', on:false})
+	down.release = () => Game.handleInput({input:'down', on:false});
+
+	let space = new Key(" ");
+	space.press = playerAttack;
+};
+
+const playerAttack = () => {
+	const game = Game.get();
+	let player = game.sprites.player0;
+	let nearbySprite = Game.getNearest({sprite:player, game, limit:1});
+	if (nearbySprite) {
+		KindOfCreature.doBite(player, nearbySprite);
+	} else {
+		console.log("Nothing to hit");
+	}
 };
 
 /**
@@ -214,16 +231,7 @@ const setupAfterLoad2_UI = game => {
 		slot++;
 	}
 	{	// hit
-		let onClick = e => {
-			console.log("onClick");
-			let player = game.sprites.player0;
-			let nearbySprite = Game.getNearest({sprite:player, game, limit:1});
-			if (nearbySprite) {
-				KindOfCreature.doBite(player, nearbySprite);
-			} else {
-				console.log("Nothing to hit");
-			}
-		};
+		let onClick = playerAttack;
 		setupAfterLoad3_UI2_addIcon({
 			game, icon:SpriteLib.icon('PickAxe'), inventoryBar, slot, xOffset, slotWidth, onClick
 		});
@@ -237,20 +245,12 @@ const setupAfterLoad2_UI = game => {
 			console.log("onDown",e, ""+e.target);
 			let player = game.sprites.player0;
 			// copy from Tile to Sprite, and move it
-			let spawn = new Sprite(icon);
-
-			let kind = game.kinds[spawn.kind];
-			if (kind) {
-				spawn.speed = kind.speed; // HACK
-				spawn.attack = kind.attack; // HACK
-			}
-			
-			spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
+			let spawn = Game.make(icon.kind);			
+			// spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
 			// shine square
 			let birthPlace = player;
 			spawn.x = birthPlace.x;
 			spawn.y = birthPlace.y;
-			makePixiSprite(game, spawn, (icon.name||icon.kind)+nonce(), game.containerFor.characters);
 		};
 		setupAfterLoad3_UI2_addIcon({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick});		
 		console.log(spawnName, icon);
@@ -283,13 +283,13 @@ Game.setup = game => {
 	// from github fails addScript("https://raw.githubusercontent.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js", {});
 	// works but slow addScript("https://raw.githack.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js", {});
 
-	fetch("https://raw.githubusercontent.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js")
-	.then(res => {
-		console.warn("res",res);
-		res.text().then(txt => {
-			Function(txt)();
-		});
-	});
+	// fetch("https://raw.githubusercontent.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js")
+	// .then(res => {
+	// 	console.warn("res",res);
+	// 	res.text().then(txt => {
+	// 		Function(txt)();
+	// 	});
+	// });
 	
 	// Creatures	
 	Game.addKind(game, Sheep);
