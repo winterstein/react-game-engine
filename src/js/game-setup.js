@@ -41,6 +41,8 @@ Game.basicPixiSetup = game => {
 		let grid = Game.grid(game);
 		grid.screenWidth = window.innerWidth; // ??how to manage the browser address bar and UI blocking part of the screen??
 		grid.screenHeight = window.innerHeight;
+		grid.vw = grid.screenWidth/100;
+		grid.vh = grid.screenHeight/100;
 		console.log("app size "+window.innerWidth+" x "+window.innerHeight);
 		game.app = new PIXI.Application({width: grid.screenWidth, height:grid.screenHeight});
 		window.app = game.app;
@@ -124,27 +126,32 @@ const setupAfterLoad2_land = game => {
 	// add the tiles to the game
 	for(let rowi = 0; rowi<landPlan.length; rowi++) {
 		for(let coli = 0; coli<landPlan[0].length; coli++) {
-			let cell = landPlan[rowi][coli];
-			let tileSprite = SpriteLib.tile(cell);
-			Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
-			if (cell==='Tree') { // HACK
-				let bg = SpriteLib.tile('Earth');
-				bg.x = tileSprite.x;
-				bg.y = tileSprite.y;
-				bg.width=grid.tileWidth;
-				bg.height=grid.tileHeight;
-				Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:game.containerFor.ground});
-				Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
-			} else {
-				Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
-			}
-
-			if (cell==='Water') {				
-				let fish = Game.make('Fish');
-				fish.x = tileSprite.x;
-				fish.y = tileSprite.y;
-			}
+			setupLandTile({landPlan,rowi,coli,game,grid});
 		}
+	}
+};
+
+const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
+	let cell = landPlan[rowi][coli];
+	let tileSprite = SpriteLib.tile(cell);
+	Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
+	if (cell==='Tree') { // HACK
+		let bg = SpriteLib.tile('Earth');
+		bg.x = tileSprite.x;
+		bg.y = tileSprite.y;
+		bg.width=grid.tileWidth;
+		bg.height=grid.tileHeight;
+		Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:game.containerFor.ground});
+		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
+	} else {
+		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
+	}
+
+	// make creatures to roam the land?
+	if (cell==='Water') {				
+		let fish = Game.make('Fish');
+		fish.x = tileSprite.x;
+		fish.y = tileSprite.y;
 	}
 };
 
@@ -177,6 +184,7 @@ const playerAttack = () => {
 	let nearbySprite = Game.getNearest({sprite:player, game, limit:1});
 	if (nearbySprite) {
 		KindOfCreature.doBite(player, nearbySprite);
+		// TODO a sparkle effect on the pickaxe
 	} else {
 		console.log("Nothing to hit");
 	}
@@ -219,6 +227,7 @@ const setupAfterLoad2_UI = game => {
 	innerBar.beginFill(0xCCFFFF);
 	innerBar.drawRoundedRect(0, 0, width, 50, 10);
 	innerBar.endFill();
+	innerBar.calculateBounds();
 	inventoryBar.addChild(innerBar);
 
 	// default inventory	
@@ -256,6 +265,45 @@ const setupAfterLoad2_UI = game => {
 		console.log(spawnName, icon);
 		slot++;
 	});		
+
+	// control ring
+	if (true) {
+		const joyRing = new PIXI.Container();
+		joyRing.name = "joyRing";
+		let h = grid.vh*10;
+		const offset = 5*grid.vh;
+		const top = grid.screenHeight - h - offset;
+		joyRing.position.set(offset, top);
+		game.containerFor.ui.addChild(joyRing);
+
+		//Create the graphics
+		let pg = new PIXI.Graphics();
+		pg.name = 'joyRing > pg';
+		pg.lineStyle(3, 0xFF3300, 1);
+		pg.drawCircle(h/2, h/2, h/2 + 5);
+		pg.drawCircle(h/2, h/2, h/4 - 5);
+		
+		let path = [0,h/2, h/4,5*h/8 , h/4,3*h/8];
+		pg.drawPolygon(path);
+		path = [h,h/2, 3*h/4,5*h/8 , 3*h/4,3*h/8];
+		pg.drawPolygon(path);
+		path = [h/2,0, 5*h/8,h/4, 3*h/8,h/4];
+		pg.drawPolygon(path);
+		path = [h/2,h, 5*h/8,3*h/4, 3*h/8,3*h/4];
+		pg.drawPolygon(path);
+
+		pg.calculateBounds();
+		joyRing.addChild(pg);
+
+		// controls
+		pg.interactive = true;
+		const lxy = ({x,y}) => [x-offset, y-top];
+		pg.on('mousedown', e => console.log(e.type,pg,e));
+		pg.on('mousemove', e => console.log(e.type, lxy(e.data.global), JSON.stringify(e.data.global), e));		
+		pg.on('touchstart', e => console.log(e.type, pg, e));
+		pg.on('touchmove', e => console.log(e.type, pg, e));
+		pg.on('touchend', e => console.log(e.type, pg, e));
+	}
 };
 
 

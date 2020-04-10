@@ -232,7 +232,7 @@ Game.setTile = ({game, row, column, tile}) => {
 Game.kinds = game => game.kinds;
 
 /**
- * @param {!Game} game
+ * @param {?Game} game
  * @param {!KindOfCreature} kind
  */
 Game.addKind = (game, kind) => {
