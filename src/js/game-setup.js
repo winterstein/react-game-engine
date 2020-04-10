@@ -298,11 +298,25 @@ const setupAfterLoad2_UI = game => {
 		// controls
 		pg.interactive = true;
 		const lxy = ({x,y}) => [x-offset, y-top];
+		const onStop = e => {
+			Game.handleInput({input:'dxdy', on:false});
+		};
+		const onMove = e => {
+			// e.stopPropagation(); TODO
+			let [x,y] = lxy(e);
+			if (x>h || y>h || x<0 || y<0) {
+				onStop(e);
+				return;
+			}
+			let dx = x - h/2;
+			let dy = y - h/2;
+			Game.handleInput({input:'dxdy', dx, dy, on:true});
+		};
 		pg.on('mousedown', e => console.log(e.type,pg,e));
 		pg.on('mousemove', e => console.log(e.type, lxy(e.data.global), JSON.stringify(e.data.global), e));		
 		pg.on('touchstart', e => console.log(e.type, pg, e));
-		pg.on('touchmove', e => console.log(e.type, pg, e));
-		pg.on('touchend', e => console.log(e.type, pg, e));
+		pg.on('touchmove', onMove);
+		pg.on('touchend', onStop);
 	}
 };
 

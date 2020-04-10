@@ -88,7 +88,7 @@ Game.init = () => {
  * @param {!String} input e.g. "up"
  * @param {?Boolean} on if false the input is being switched off - eg key-up
  */
-Game.handleInput = ({sprite, input, on}) => {
+Game.handleInput = ({sprite, input, dx, dy, on}) => {
 	if ( ! sprite) {
 		sprite = Game.get().sprites.player0;
 	}
@@ -117,6 +117,21 @@ Game.handleInput = ({sprite, input, on}) => {
 			sprite.dx = v;
 		}
 		if ( ! on && sprite.dx > 0) sprite.dx = 0;
+		break;
+	case 'dxdy':
+		if (on) {
+			if (Math.abs(dx)<10 && Math.abs(dy)<10) {
+				on = false;
+			} else {
+				// TODO trig
+				sprite.dx = v*dx/(dx+dy);
+				sprite.dy = v*dy/(dx+dy);
+			}
+		}
+		if ( ! on ) {
+			sprite.dx = 0;
+			sprite.dy = 0;
+		}
 		break;
 	}
 	// console.log(input, on, sprite.dx + " dy: "+sprite.dy, sprite);
