@@ -153,6 +153,12 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 		fish.x = tileSprite.x;
 		fish.y = tileSprite.y;
 	}
+	//make creatures roam the land?
+if (cell==='Tree') {
+let badger = Game.make('Badger');
+badger.x = tileSprite.x;
+badger.y = tileSprite.y;
+}
 };
 
 

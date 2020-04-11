@@ -8,7 +8,7 @@ const sheep = new KindOfCreature('Sheep');
 
 sheep.kingdom = 'animal';
 
-sheep.sprites = [SpriteLib.sheep()];
+sheep.sprites = [SpriteLib.sheep(),SpriteLib.sheep(1),SpriteLib.sheep(2),SpriteLib.sheep(3)];
 
 sheep.speed = 20;
 

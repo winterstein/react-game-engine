@@ -8,12 +8,12 @@ const Badger = new KindOfCreature('Badger');
 
 Badger.kingdom = 'animal';
 
-Badger.sprites = [SpriteLib.badger()];
+Badger.sprites = [SpriteLib.badger(),SpriteLib.badger(1)];
 
 Badger.speed = 199;
 
 Badger.terrains = ['Grass','Earth','Water','Tree'];
 
-Badger.chases = ['Werewolf','Frog','Sheep','Goat','Meat','Chicken','Wolf'];
+Badger.chases = ['Werewolf','Frog','Sheep','Goat','Meat','Chicken','Wolf','Fish'];
 
 export default Badger;
