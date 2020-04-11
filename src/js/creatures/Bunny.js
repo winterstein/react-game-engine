@@ -35,7 +35,7 @@ const maybeBreed = ({sprite,game, dt}) => {
 	if (sprite.unready > 0 || nearbyBunny.unready > 0) return;
 	// hooray - breed	
 	let babyBunny = Game.make('Bunny', {x:sprite.x, y:sprite.y});
-	babyBunny.unready = 20;
+	babyBunny.unready = 15;
 	sprite.unready = 10;
 	nearbyBunny.unready = 10;
 };

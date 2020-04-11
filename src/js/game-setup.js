@@ -157,7 +157,7 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 		fish.x = tileSprite.x;
 		fish.y = tileSprite.y;
 	}
-	if (cell==='Tree') {
+	if (cell==='Tree' && Math.random() < 0.7) {
 		let badger = Game.make('Badger');
 		badger.x = tileSprite.x;
 		badger.y = tileSprite.y;
