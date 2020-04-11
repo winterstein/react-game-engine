@@ -352,7 +352,7 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 	psprite.on('mousedown', onClick);
 	psprite.on('touchstart', onClick);
 	// key tip
-	if (keyTip) {
+	if (keyTip && ! isMobile()) {
 		const style = new PIXI.TextStyle({
 			fontFamily: 'Arial',
 			fontSize: 10,
