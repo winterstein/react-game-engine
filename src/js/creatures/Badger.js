@@ -10,7 +10,7 @@ Badger.kingdom = 'animal';
 
 Badger.sprites = [SpriteLib.badger(),SpriteLib.badger(1)];
 
-Badger.speed = 199;
+Badger.speed = 140;
 
 Badger.terrains = ['Grass','Earth','Water','Tree'];
 
