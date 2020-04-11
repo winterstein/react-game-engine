@@ -21,6 +21,7 @@ import Werewolf from './creatures/Werewolf';
 import Frog from './creatures/Frog';
 import KindOfCreature from './creatures/KindOfCreature';
 import { addScript } from 'wwutils';
+import pJoyRing from './components/pJoyRing';
 
 const DEBUG_FOCUS = false;
 
@@ -226,7 +227,7 @@ const setupAfterLoad2_UI = game => {
 	}		
 
 	// Create the inventory bar
-	let icons = 10;
+	let icons = 11;
 	const xOffset = 10, slotWidth=50; 
 	let width = icons*slotWidth + 2*xOffset;
 	const stage = game.app.stage;
@@ -285,55 +286,7 @@ const setupAfterLoad2_UI = game => {
 
 	// control ring
 	if (isMobile()) {
-		const joyRing = new PIXI.Container();
-		joyRing.name = "joyRing";
-		let h = grid.vh*15;
-		const offset = 5*grid.vh;
-		const top = grid.screenHeight - h - offset;
-		joyRing.position.set(offset, top);
-		game.containerFor.ui.addChild(joyRing);
-
-		//Create the graphics
-		let pg = new PIXI.Graphics();
-		pg.name = 'joyRing > pg';
-		pg.lineStyle(3, 0xFF3300, 1);
-		pg.drawCircle(h/2, h/2, h/2 + 5);
-		pg.drawCircle(h/2, h/2, h/4 - 5);
-		
-		let path = [0,h/2, h/4,5*h/8 , h/4,3*h/8];
-		pg.drawPolygon(path);
-		path = [h,h/2, 3*h/4,5*h/8 , 3*h/4,3*h/8];
-		pg.drawPolygon(path);
-		path = [h/2,0, 5*h/8,h/4, 3*h/8,h/4];
-		pg.drawPolygon(path);
-		path = [h/2,h, 5*h/8,3*h/4, 3*h/8,3*h/4];
-		pg.drawPolygon(path);
-
-		pg.calculateBounds();
-		joyRing.addChild(pg);
-
-		// controls
-		pg.interactive = true;
-		const lxy = ({x,y}) => [x-offset, y-top];
-		const onStop = e => {
-			Game.handleInput({input:'dxdy', on:false});
-		};
-		const onMove = e => {
-			// e.stopPropagation(); TODO
-			let [x,y] = lxy(e.data.global);
-			if (x>h || y>h || x<0 || y<0) {
-				onStop(e);
-				return;
-			}
-			let dx = x - h/2;
-			let dy = y - h/2;
-			Game.handleInput({input:'dxdy', dx, dy, on:true});
-		};
-		pg.on('mousedown', e => console.log(e.type,pg,e));
-		pg.on('mousemove', onMove);
-		pg.on('touchstart', e => console.log(e.type, pg, e));
-		pg.on('touchmove', onMove);
-		pg.on('touchend', onStop);
+		const pjoyRing = pJoyRing({game});
 	}
 };
 
@@ -342,6 +295,10 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 	// use Tile so no updates
 	if ( ! Tile.isa(icon)) {
 		icon = new Tile(icon);
+		Sprite.animate(icon,'right');
+		if (icon.animate && icon.animate.frames) {
+			icon.frameIndex = icon.animate.frames[0];
+		}
 	}
 	icon.x = xOffset + slot*slotWidth;
 	Game.addSprite({game, sprite:icon, container:inventoryBar});	
@@ -369,9 +326,9 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 			// wordWrap: true,
 			// wordWrapWidth: 440,
 		});
-		const basicText = new PIXI.Text(keyTip, style);
-		basicText.x = 10;
-		basicText.y = 46;
+		const basicText = new PIXI.Text('('+keyTip+')', style);
+		basicText.x = 15;
+		basicText.y = 40;
 		psprite.addChild(basicText);
 	}
 };
