@@ -88,6 +88,12 @@ KindOfCreature.doBite = (predator, prey) => {
 	// TODO show health bar for 1/2 second
 	if (prey.pixi) {
 		// health bar
+		// const graphics = new PIXI.Graphics();
+		// graphics.beginFill(prey.health > 50? 0x33FF00 : 0xFF3300);
+		// let hw = 48 * prey.health/100;
+		// graphics.drawRect(0, 44, hw, 4);
+		// graphics.endFill();
+		// psprite.addChild(graphics);
 	}	
 	if (prey.health <= 0) {
 		if (predator.health < 100) predator.health += 5;

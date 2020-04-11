@@ -248,7 +248,7 @@ const setupAfterLoad2_UI = game => {
 
 	// default inventory	
 	let slot = 0;	
-	if (false) {	// grab
+	if (true) {	// grab
 		let onClick = e => {console.warn("TODO",e)};
 		setupAfterLoad3_UI2_addIcon({
 			game, icon:SpriteLib.icon('Grab'), inventoryBar, slot, xOffset, slotWidth, onClick
@@ -258,7 +258,8 @@ const setupAfterLoad2_UI = game => {
 	{	// hit
 		let onClick = playerAttack;
 		setupAfterLoad3_UI2_addIcon({
-			game, icon:SpriteLib.icon('PickAxe'), inventoryBar, slot, xOffset, slotWidth, onClick
+			game, icon:SpriteLib.icon('PickAxe'), inventoryBar, slot, xOffset, slotWidth, onClick,
+			keyTip:'space'
 		});
 		slot++;
 	}	
@@ -337,7 +338,7 @@ const setupAfterLoad2_UI = game => {
 };
 
 
-const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick}) => {
+const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick, keyTip}) => {
 	// use Tile so no updates
 	if ( ! Tile.isa(icon)) {
 		icon = new Tile(icon);
@@ -347,8 +348,32 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 	// Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
 	let psprite = icon.pixi;			
 	psprite.interactive = true;
+	psprite.cursor = 'pointer';
 	psprite.on('mousedown', onClick);
 	psprite.on('touchstart', onClick);
+	// key tip
+	if (keyTip) {
+		const style = new PIXI.TextStyle({
+			fontFamily: 'Arial',
+			fontSize: 10,
+			// fontStyle: 'italic',
+			// fontWeight: 'bold',
+			// fill: ['#ffffff', '#00ff99'], // gradient
+			// stroke: '#333',
+			// strokeThickness: 1,
+			dropShadow: true,
+			dropShadowColor: '#ffffff',
+			dropShadowBlur: 3,
+			// dropShadowAngle: Math.PI / 6,
+			dropShadowDistance: 3,
+			// wordWrap: true,
+			// wordWrapWidth: 440,
+		});
+		const basicText = new PIXI.Text(keyTip, style);
+		basicText.x = 10;
+		basicText.y = 46;
+		psprite.addChild(basicText);
+	}
 };
 
 Game.setup = game => {
