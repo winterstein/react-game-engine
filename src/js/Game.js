@@ -123,9 +123,12 @@ Game.handleInput = ({sprite, input, dx, dy, on}) => {
 			if (Math.abs(dx)<10 && Math.abs(dy)<10) {
 				on = false;
 			} else {
-				// TODO trig
-				sprite.dx = v*dx/(dx+dy);
-				sprite.dy = v*dy/(dx+dy);
+				// normalise
+				const dd = Math.sqrt(dx*dx + dy*dy);
+				dx /= dd;
+				dy /= dd;				
+				sprite.dx = v*dx;
+				sprite.dy = v*dy;
 			}
 		}
 		if ( ! on ) {
@@ -168,6 +171,19 @@ Game.getNearest = ({sprite, game, types, limit}) => {
 	sprites.sort((a,b) => dist2(sprite, a) - dist2(sprite, b));
 	return sprites[0]; // TODO sort and pick!
 };
+
+
+/**
+ * @param {!String} kind
+ * @returns {!Sprite[]}
+ */
+Game.getAllSprites = (kind) => {
+	let game = Game.get();	
+	let sprites = Object.values(game.sprites);
+	sprites = sprites.filter(s => kind === s.kind);
+	return sprites;
+};
+
 /**
  * xy distance squared
  * @param {!Sprite} s1 

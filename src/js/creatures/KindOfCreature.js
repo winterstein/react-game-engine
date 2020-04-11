@@ -31,6 +31,7 @@ class KindOfCreature {
 
 /**
  * Basic updater
+ * @param {!Number} dt
  */
 KindOfCreature.updater = ({kind, game, sprite, dt}) => {
 	// mostly no change

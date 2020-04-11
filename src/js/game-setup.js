@@ -1,6 +1,7 @@
 
 import DataStore from './base/plumbing/DataStore';
 import {getClass, nonce} from './base/data/DataClass';
+import {isMobile} from './base/utils/miscutils';
 import Grid from './data/Grid';
 import Sprite from './data/Sprite';
 import Tile from './data/Tile';
@@ -9,11 +10,11 @@ import Game from './Game';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
 import { assMatch, assert } from 'sjtest';
-
 import Sheep from './creatures/Sheep';
 import Fish from './creatures/Fish';
 import Wolf from './creatures/Wolf';
 import Chicken from './creatures/Chicken';
+import Bunny from './creatures/Bunny';
 import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
@@ -76,6 +77,8 @@ Game.basicPixiSetup = game => {
 	srcs.add(SpriteLib.goat().src);
 	srcs.add(SpriteLib.frog().src);
 	srcs.add(SpriteLib.badger().src);
+	srcs.add(SpriteLib.chicken().src);
+	srcs.add(SpriteLib.bunny().src);
 	srcs.add(SpriteLib.shark().src);
 	srcs.add(SpriteLib.werewolf().src);
 	srcs.add(SpriteLib.goose().src);
@@ -102,12 +105,12 @@ Game.basicPixiSetup = game => {
  */
 const setupAfterLoad = game => {
 
-	if ( ! DEBUG_FOCUS) {
+	if (true) {
 		setupAfterLoad2_Player(game);
 	}
 
 	// UI
-	if ( ! DEBUG_FOCUS) {
+	if (true) {
 		setupAfterLoad2_UI(game);
 	}
 
@@ -147,23 +150,30 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
 	}
 
-	// make creatures to roam the land?
-	if (cell==='Water') {				
+	// make creatures to swim and roam the land?
+	if (cell==='Water' && Math.random() < 0.3) {				
 		let fish = Game.make('Fish');
 		fish.x = tileSprite.x;
 		fish.y = tileSprite.y;
 	}
-	//make creatures roam the land?
-if (cell==='Tree') {
-let badger = Game.make('Badger');
-badger.x = tileSprite.x;
-badger.y = tileSprite.y;
-}
+	if (cell==='Tree') {
+		let badger = Game.make('Badger');
+		badger.x = tileSprite.x;
+		badger.y = tileSprite.y;
+	}
+	if (cell==='Grass' && Math.random() < 0.01) {				
+		let fish = Game.make('Bunny');
+		fish.x = tileSprite.x;
+		fish.y = tileSprite.y;
+	}
 };
 
 
 const setupAfterLoad2_Player = game => {
 	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
+	const grid = Game.grid(game);
+	sprite.x = grid.vw*45;
+	sprite.y = grid.vh*45;
 	sprite.attack = 100; // 1 hit kill
 
 	let right = new Key(KEYS.ArrowRight);
@@ -254,7 +264,7 @@ const setupAfterLoad2_UI = game => {
 	}	
 	// spawns
 	// NB shark is bigger than 48x48
-	['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {		
+	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf'].forEach(spawnName => {		
 		let icon = SpriteLib[spawnName]();
 		const onClick = e => {
 			console.log("onDown",e, ""+e.target);
@@ -273,10 +283,10 @@ const setupAfterLoad2_UI = game => {
 	});		
 
 	// control ring
-	if (true) {
+	if (isMobile()) {
 		const joyRing = new PIXI.Container();
 		joyRing.name = "joyRing";
-		let h = grid.vh*10;
+		let h = grid.vh*15;
 		const offset = 5*grid.vh;
 		const top = grid.screenHeight - h - offset;
 		joyRing.position.set(offset, top);
@@ -309,7 +319,7 @@ const setupAfterLoad2_UI = game => {
 		};
 		const onMove = e => {
 			// e.stopPropagation(); TODO
-			let [x,y] = lxy(e);
+			let [x,y] = lxy(e.data.global);
 			if (x>h || y>h || x<0 || y<0) {
 				onStop(e);
 				return;
@@ -319,7 +329,7 @@ const setupAfterLoad2_UI = game => {
 			Game.handleInput({input:'dxdy', dx, dy, on:true});
 		};
 		pg.on('mousedown', e => console.log(e.type,pg,e));
-		pg.on('mousemove', e => console.log(e.type, lxy(e.data.global), JSON.stringify(e.data.global), e));		
+		pg.on('mousemove', onMove);
 		pg.on('touchstart', e => console.log(e.type, pg, e));
 		pg.on('touchmove', onMove);
 		pg.on('touchend', onStop);
@@ -361,7 +371,8 @@ Game.setup = game => {
 	
 	// Creatures	
 	Game.addKind(game, Sheep);
-	Game.addKind(game, Chicken);
+	Game.addKind(game, Chicken);	
+	Game.addKind(game, Bunny);
 	Game.addKind(game, Goat);
 	Game.addKind(game, Wolf);
 	Game.addKind(game, Werewolf);

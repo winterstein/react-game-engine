@@ -2,6 +2,7 @@
 
 import DataClass, {getType} from '../base/data/DataClass';
 import Rect from './Rect';
+import { assert } from 'sjtest';
 
 class InGameTiles extends Number {}
 
@@ -55,6 +56,14 @@ class Grid extends DataClass {
 	 * @type {Number} screen pixels
 	 */
 	screenHeight;
+	/**
+	 * @type {Number} screen pixels, 1% of width
+	 */
+	vw;
+	/**
+	 * @type {Number} screen pixels, 1% of height
+	 */
+	vh;
 	
 	/**
 	 * screen pixels

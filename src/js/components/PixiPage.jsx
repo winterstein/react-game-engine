@@ -29,7 +29,7 @@ const PixiPage = () => {
 
 	return (<div style={{position:'relative', userSelect:"none"}}>
 		<PixiComponent app={game.app} />
-		<ArrowPad game={game} />		
+		{false? <ArrowPad game={game} /> : null}
 	</div>);
 };
 

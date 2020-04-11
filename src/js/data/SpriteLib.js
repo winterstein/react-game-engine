@@ -60,6 +60,8 @@ const ICONS = {
 
 SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n,'Chicken');
 
+SpriteLib.bunny = n => stdAnimal('/img/animals/bunny.png',n,'Bunny');
+
 SpriteLib.goat = n => stdAnimal('/img/animals/goats.png', n, 'Goat');
 
 SpriteLib.goose = n => stdAnimal('/img/animals/goose.png', n, 'Goose');
