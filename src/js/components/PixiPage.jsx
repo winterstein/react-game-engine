@@ -21,6 +21,7 @@ import StopWatch from '../StopWatch';
 import { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from '../Key';
+import { Alert } from 'reactstrap';
 
 const PixiPage = () => {
 
@@ -28,6 +29,9 @@ const PixiPage = () => {
 	Game.init(game);
 
 	return (<div style={{position:'relative', userSelect:"none"}}>
+		<div className='portrait'>
+			<Alert color='warning'>Please rotate your phone to landscape. Then reload this page.</Alert>
+		</div>
 		<PixiComponent app={game.app} />
 		{false? <ArrowPad game={game} /> : null}
 	</div>);

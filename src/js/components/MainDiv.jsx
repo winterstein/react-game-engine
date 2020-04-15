@@ -20,6 +20,7 @@ import HatPage from './HatPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
+import FullScreenButton from './FullScreenButton';
 
 // DataStore
 C.setupDataStore();
@@ -115,6 +116,7 @@ class MainDiv extends Component {
 					</div>
 				</div>
 				<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />
+				<FullScreenButton />
 			</div>
 		);
 	} // ./render()

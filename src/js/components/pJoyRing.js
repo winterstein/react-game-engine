@@ -44,7 +44,9 @@ const pJoyRing = ({game}) => {
 		Game.handleInput({input:'dxdy', on:false});
 	};
 	const margin=h*0.15;
+
 	const onMove = e => {
+		joyRing.lastInput = new Date().getTime();
 		// e.stopPropagation(); TODO
 		let [x,y] = lxy(e.data.global);
 		if (x > h+margin || y > h+margin || x < -margin || y < -margin) {
@@ -54,6 +56,13 @@ const pJoyRing = ({game}) => {
 		let dx = x - h/2;
 		let dy = y - h/2;
 		Game.handleInput({input:'dxdy', dx, dy, on:true});
+		// HACK fix not stopping reliably bug
+		setTimeout(() => {
+			let dt = new Date().getTime() - joyRing.lastInput;
+			if (dt > 500) {
+				onStop();
+			}
+		}, 500);
 	};
 	// pg.on('mousedown', e => console.log(e.type,pg,e));
 	// pg.on('mousemove', onMove);

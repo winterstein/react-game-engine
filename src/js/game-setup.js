@@ -39,31 +39,42 @@ const makePixiSprite = (game, sprite, id, container) => {
  * @param {!Game} game
  */
 Game.basicPixiSetup = game => {
-	if ( ! game.app) {
-		let grid = Game.grid(game);
-		grid.screenWidth = window.innerWidth; // ??how to manage the browser address bar and UI blocking part of the screen??
-		grid.screenHeight = window.innerHeight;
+	const grid = Game.grid(game);
+	if ( ! game.app) {		
+		let screenWidth = window.innerWidth;
+		let screenHeight = window.innerHeight;
+		// scale?
+		// grid.screenScale = 0.75;
+		if (screenWidth < 1000) {
+			grid.screenScale = 0.75;
+		}
+		grid.screenWidth = screenWidth / grid.screenScale; 
+		grid.screenHeight = screenHeight / grid.screenScale;
+		// ??how to manage the browser address bar and UI blocking part of the screen??
 		grid.vw = grid.screenWidth/100;
 		grid.vh = grid.screenHeight/100;
 		console.log("app size "+window.innerWidth+" x "+window.innerHeight);
-		game.app = new PIXI.Application({width: grid.screenWidth, height:grid.screenHeight});
+		game.app = new PIXI.Application({width: screenWidth, height:screenHeight});
 		window.app = game.app;
 	}
 	
 	const app = game.app;
 	// a handy container for the game world, to separate it from UI
 	const world = new PIXI.Container();
+	world.setTransform(0,0,grid.screenScale,grid.screenScale);
 	app.stage.addChild(world);
 	game.containerFor.world = world;
-
 	// Tiles for the background
 	// NB: ParticleContainer only works with a single source image!
 	game.containerFor.ground = new PIXI.Container();
 	world.addChild(game.containerFor.ground);
+	// Animals
 	game.containerFor.characters = new PIXI.Container();
-	world.addChild(game.containerFor.characters);
+	world.addChild(game.containerFor.characters);	
+	// UI container
 	game.containerFor.ui = new PIXI.Container();
 	app.stage.addChild(game.containerFor.ui);
+	game.containerFor.ui.setTransform(0,0,grid.screenScale,grid.screenScale);
 
 	let srcs = new Set();
 	// creatures
@@ -234,7 +245,7 @@ const setupAfterLoad2_UI = game => {
 	const inventoryBar = new PIXI.Container();
 	inventoryBar.name = "inventoryBar";
 	const grid = Game.grid(game);
-	inventoryBar.position.set((grid.screenWidth - width) / 2, grid.screenHeight - 200);
+	inventoryBar.position.set((grid.screenWidth - width) / 2, grid.screenHeight - 50 - 2*grid.vh);
 	console.log("inventoryBar",inventoryBar);
 	game.containerFor.ui.addChild(inventoryBar);
 
