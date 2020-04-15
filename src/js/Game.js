@@ -306,8 +306,7 @@ Game.addSprite = ({game, sprite, id, container}) => {
 	assert( ! game.sprites[sprite.id], "Duplicate sprite for "+sprite.id);
 	game.sprites[sprite.id] = sprite;
 	
-
-	let psprite = new PIXI.Sprite();	
+	let psprite = new PIXI.Sprite();
 	sprite.pixi = psprite;
 
 	Sprite.setPixiProps(sprite);

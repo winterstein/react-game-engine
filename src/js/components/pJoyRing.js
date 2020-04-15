@@ -14,7 +14,7 @@ const pJoyRing = ({game}) => {
 	const grid = Game.grid(game);
 	let h = grid.vh*15;
 	const offset = 5*grid.vh;
-	const top = grid.screenHeight*grid.screenScale - h - offset;
+	const top = grid.screenHeight - h - offset;
 	joyRing.position.set(offset, top);
 	game.containerFor.ui.addChild(joyRing);
 
@@ -39,7 +39,7 @@ const pJoyRing = ({game}) => {
 
 	// controls
 	pg.interactive = true;
-	const lxy = ({x,y}) => [x-offset, y-top];
+	const lxy = ({x,y}) => [x/grid.screenScale - offset, y/grid.screenScale - top];
 	const onStop = e => {
 		Game.handleInput({input:'dxdy', on:false});
 	};
@@ -57,12 +57,12 @@ const pJoyRing = ({game}) => {
 		let dy = y - h/2;
 		Game.handleInput({input:'dxdy', dx, dy, on:true});
 		// HACK fix not stopping reliably bug
-		// setTimeout(() => {
-		// 	let dt = new Date().getTime() - joyRing.lastInput;
-		// 	if (dt > 500) {
-		// 		onStop();
-		// 	}
-		// }, 500);
+		setTimeout(() => {
+			let dt = new Date().getTime() - joyRing.lastInput;
+			if (dt > 500) {
+				onStop();
+			}
+		}, 500);
 	};
 	// pg.on('mousedown', e => console.log(e.type,pg,e));
 	// pg.on('mousemove', onMove);

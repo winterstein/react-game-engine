@@ -217,6 +217,13 @@ const playerAttack = () => {
 	}
 };
 
+const playerUse = () => {
+	const game = Game.get();
+	let player = game.sprites.player0;
+	let nearbySprite = Game.getNearest({sprite:player, game, filter:s => s.carry, limit:1});
+	// TDODO
+};
+
 /**
  * 
  * @param {!Game} game 
@@ -237,7 +244,7 @@ const setupAfterLoad2_UI = game => {
 	}		
 
 	// Create the inventory bar
-	let icons = 11;
+	let icons = 12;
 	const xOffset = 10, slotWidth=50; 
 	let width = icons*slotWidth + 2*xOffset;
 	const stage = game.app.stage;
@@ -260,7 +267,7 @@ const setupAfterLoad2_UI = game => {
 	// default inventory	
 	let slot = 0;	
 	if (true) {	// grab
-		let onClick = e => {console.warn("TODO",e)};
+		let onClick = playerUse;
 		setupAfterLoad3_UI2_addIcon({
 			game, icon:SpriteLib.icon('Grab'), inventoryBar, slot, xOffset, slotWidth, onClick
 		});
@@ -273,7 +280,20 @@ const setupAfterLoad2_UI = game => {
 			keyTip:'space'
 		});
 		slot++;
-	}	
+	}
+	{	// hit
+		let onClick = () => {};
+		// gear &#x2699;
+		// next page &#x2398;
+		setupAfterLoad3_UI2_addIcon({
+			game, icon:SpriteLib.textAsIcon('>'), inventoryBar, slot, xOffset, slotWidth, onClick,
+			keyTip:'shift'
+		});
+		let tab = new Key("Shift"); //	"	");
+		tab.press = () => console.warn("x");	
+		slot++;
+	}
+	// let rotatingToolBar = new PIXI.Container();	
 	// spawns
 	// NB shark is bigger than 48x48
 	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf'].forEach(spawnName => {		
@@ -281,18 +301,16 @@ const setupAfterLoad2_UI = game => {
 		const onClick = e => {
 			console.log("onDown",e, ""+e.target);
 			let player = game.sprites.player0;
-			// copy from Tile to Sprite, and move it
-			let spawn = Game.make(icon.kind);			
-			// spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
-			// shine square
 			let birthPlace = player;
-			spawn.x = birthPlace.x;
-			spawn.y = birthPlace.y;
+			// copy from Tile to Sprite, and move it
+			let spawn = Game.make(icon.kind, {x:birthPlace.x, y:birthPlace.y});			
 		};
-		setupAfterLoad3_UI2_addIcon({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick});		
+		setupAfterLoad3_UI2_addIcon({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick});
 		console.log(spawnName, icon);
 		slot++;
-	});		
+	});
+	// rotatingToolBar.calculateBounds();
+	// inventoryBar.addChild(rotatingToolBar);
 
 	// control ring
 	if (isMobile()) {

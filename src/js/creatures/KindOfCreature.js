@@ -109,6 +109,7 @@ const doDie = (game, sprite) => {
 	if (kind && kind.kingdom==='animal') {
 		// TODO leave some meat
 		let meat = SpriteLib.icon('Meat');
+		meat.carry = true;
 		meat.kind = 'Meat';
 		meat.x = sprite.x;
 		meat.y = sprite.y;

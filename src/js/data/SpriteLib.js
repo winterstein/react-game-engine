@@ -4,6 +4,7 @@
 import Sprite from './Sprite';
 import Tile from './Tile';
 import { assert } from 'sjtest';
+import * as PIXI from 'pixi.js';
 
 const SpriteLib = {};
 
@@ -56,6 +57,42 @@ const ICONS = {
 	Meat: '/img/icon/icons8-meat-30.png',
 };
 
+/**
+ * Make an icon from some text
+ */
+SpriteLib.textAsIcon = ({name, text}) => {
+	let sp = new Tile({	// NB: Tile so it doesnt get updates, or copied into a Tile by game-setup
+		tileSize: [48,48],
+		name,
+		kind: 'Icon',		
+	});
+	// wire to pixi
+	let psprite = new PIXI.Container();
+	sp.pixi = psprite;
+	
+	const style = new PIXI.TextStyle({
+		fontFamily: 'Arial',
+		fontSize: 16,
+		// fontStyle: 'italic',
+		fontWeight: 'bold',
+		// fill: ['#ffffff', '#00ff99'], // gradient
+		// stroke: '#333',
+		// strokeThickness: 1,
+		dropShadow: true,
+		dropShadowColor: '#ffffff',
+		dropShadowBlur: 5,
+		// dropShadowAngle: Math.PI / 6,
+		dropShadowDistance: 5,
+		// wordWrap: true,
+		// wordWrapWidth: 440,
+	});
+	const basicText = new PIXI.Text(text, style);
+	basicText.x = 5;
+	basicText.y = 5;
+	psprite.addChild(basicText);
+
+	return sp;
+};
 
 
 SpriteLib.chicken = n => stdAnimal('/img/animals/chicken_large.png',n,'Chicken');
