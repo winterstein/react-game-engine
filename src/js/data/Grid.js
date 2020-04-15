@@ -56,6 +56,13 @@ class Grid extends DataClass {
 	 * @type {Number} screen pixels
 	 */
 	screenHeight;
+
+	/**
+	 * @type {Number} HACK: scaling factor applied to shrink graphics / grow the screen on mobile.
+	 * The true device screen width is screenWidth*screenScale.
+	 */
+	screenScale = 1;
+
 	/**
 	 * @type {Number} screen pixels, 1% of width
 	 */

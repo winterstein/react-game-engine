@@ -44,7 +44,6 @@ Game.basicPixiSetup = game => {
 		let screenWidth = window.innerWidth;
 		let screenHeight = window.innerHeight;
 		// scale?
-		// grid.screenScale = 0.75;
 		if (screenWidth < 1000) {
 			grid.screenScale = 0.75;
 		}
