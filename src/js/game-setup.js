@@ -153,7 +153,7 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 	// make creatures to swim and roam the land?
 	let critter = null;
 	if (cell==='Water' && Math.random() < 0.2) {				
-		if (Math.random() < 0.7) critter = 'Fish';
+		if (Math.random() < 0.75) critter = 'Fish';
 		else critter = 'Frog';
 	}
 	if (cell==='Tree' && Math.random() < 0.20) {
