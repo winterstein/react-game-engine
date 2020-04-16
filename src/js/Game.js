@@ -152,12 +152,16 @@ Game.getPlayer = game => {
  * @param {?Number} limit in tiles eg 5. If set, ignore sprites further away than this
  * @returns {?Sprite}
  */
-Game.getNearest = ({sprite, game, types, limit}) => {	
+Game.getNearest = ({sprite, game, types, limit, tile=false, filter}) => {	
 	let sprites = Object.values(game.sprites);
 	// no Tiles
-	sprites = sprites.filter(s => ! Tile.isa(s));
+	if ( ! tile) {
+		sprites = sprites.filter(s => ! Tile.isa(s));
+	}
 	// type filter
 	if (types) sprites = sprites.filter(s => types.includes(s.kind));
+	// ad-hoc filter
+	if (filter) sprites = sprites.filter(filter);
 	// not self
 	sprites = sprites.filter(s => s !== sprite);	
 
@@ -254,7 +258,7 @@ Game.setTile = ({game, row, column, tile}) => {
 	tile.width = tileWidth;
 	tile.height = tileHeight;
 	tile.name = "row"+row+"_col"+column;	
-	// game.sprites[tile.name] = tile; Done in makePixiSprite
+	// game.sprites[tile.name] = tile; Done in Game.addSprite
 };
 
 /**
@@ -274,17 +278,22 @@ Game.addKind = (game, kind) => {
 
 /**
  * Easy way to make a sprite
+ * @param kindName {!String} name of a KindOfCreature
  */
-Game.make = (spriteName, spriteSettings={}) => {
+Game.make = (kindName, spriteSettings={}) => {
 	const game = Game.get();
-	const kind = game.kinds[spriteName];
+	const kind = game.kinds[kindName];
 	if ( ! kind) {
-		throw new Error("Cannot make "+spriteName+" - kind unknown");
+		throw new Error("Cannot make "+kindName+" - kind unknown");
 	}	
-	let sprite = new Sprite(randomPick(kind.sprites));
+	let base = randomPick(kind.sprites) || {};
+	// TODO (but: bugs) copy in Kind props - but early, so the end object is a Sprite 
+	base = Object.assign(base, kind);
+	let sprite = new Sprite(base);	
+	sprite['@type'] = 'Sprite';
 	sprite.speed = kind.speed; // HACK
 	sprite.attack = kind.attack; // HACK
-	const id = spriteName+nonce();
+	const id = kindName+nonce();
 	// special settings? often x and y
 	if (spriteSettings) {
 		sprite = Object.assign(sprite, spriteSettings);

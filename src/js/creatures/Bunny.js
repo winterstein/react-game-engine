@@ -30,7 +30,7 @@ const maybeBreed = ({sprite,game, dt}) => {
 	let nearbyBunny = Game.getNearest({sprite, game, types:['Bunny'], limit:1});
 	if ( ! nearbyBunny) return;
 	// too many already?
-	if (Game.getAllSprites('Bunny').length > 1000) return;
+	if (Game.getAllSprites('Bunny').length > 100) return;
 	// are these bunnies ready?
 	if (sprite.unready > 0 || nearbyBunny.unready > 0) return;
 	// hooray - breed	

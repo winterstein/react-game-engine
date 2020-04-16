@@ -18,22 +18,15 @@ import Bunny from './creatures/Bunny';
 import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
+import Wood from './creatures/Wood';
+import Tree from './creatures/Tree';
 import Frog from './creatures/Frog';
+import Player from './creatures/Player';
 import KindOfCreature from './creatures/KindOfCreature';
 import { addScript } from 'wwutils';
 import pJoyRing from './components/pJoyRing';
 
 const DEBUG_FOCUS = false;
-
-/**
- * @param {!Game} game
- * @param {!Sprite} sprite An instance of a sprite
- * @param {!String} id Unique
- * @returns {Sprite} sprite, having set sprite.pixi
- */
-const makePixiSprite = (game, sprite, id, container) => {
-	return Game.addSprite({game,sprite,id,container});
-};
 
 /**
  * @param {!Game} game
@@ -85,18 +78,14 @@ Game.basicPixiSetup = game => {
 	});
 	// Tiles
 	srcs.add(SpriteLib.alligator().src);	
-	srcs.add(SpriteLib.goat().src);
-	srcs.add(SpriteLib.frog().src);
-	srcs.add(SpriteLib.badger().src);
-	srcs.add(SpriteLib.chicken().src);
-	srcs.add(SpriteLib.bunny().src);
 	srcs.add(SpriteLib.shark().src);
-	srcs.add(SpriteLib.werewolf().src);
-	srcs.add(SpriteLib.goose().src);
+	// srcs.add(SpriteLib.goose().src);
 
 	srcs.add(SpriteLib.icon('Grab').src);
 	srcs.add(SpriteLib.icon('PickAxe').src);
+	srcs.add(SpriteLib.icon('Switch').src);
 	srcs.add(SpriteLib.icon('Meat').src);
+	srcs.add(SpriteLib.icon('Wood').src);
 	srcs.add(SpriteLib.icon('Egg').src);
 
 	srcs.add(SpriteLib.tile("Earth").src);
@@ -181,7 +170,7 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 
 
 const setupAfterLoad2_Player = game => {
-	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
+	let sprite = Game.addSprite({game, sprite:SpriteLib.goose(), id:"player0", container:game.characters});
 	const grid = Game.grid(game);
 	sprite.x = grid.vw*45;
 	sprite.y = grid.vh*45;
@@ -202,26 +191,9 @@ const setupAfterLoad2_Player = game => {
 	down.release = () => Game.handleInput({input:'down', on:false});
 
 	let space = new Key(" ");
-	space.press = playerAttack;
-};
-
-const playerAttack = () => {
-	const game = Game.get();
-	let player = game.sprites.player0;
-	let nearbySprite = Game.getNearest({sprite:player, game, limit:1});
-	if (nearbySprite) {
-		KindOfCreature.doBite(player, nearbySprite);
-		// TODO a sparkle effect on the pickaxe
-	} else {
-		console.log("Nothing to hit");
-	}
-};
-
-const playerUse = () => {
-	const game = Game.get();
-	let player = game.sprites.player0;
-	let nearbySprite = Game.getNearest({sprite:player, game, filter:s => s.carry, limit:1});
-	// TDODO
+	space.press = Player.doAttack;
+	let u = new Key("u");
+	u.press = Player.doUse;
 };
 
 /**
@@ -244,7 +216,7 @@ const setupAfterLoad2_UI = game => {
 	}		
 
 	// Create the inventory bar
-	let icons = 12;
+	let icons = 10;
 	const xOffset = 10, slotWidth=50; 
 	let width = icons*slotWidth + 2*xOffset;
 	const stage = game.app.stage;
@@ -266,36 +238,41 @@ const setupAfterLoad2_UI = game => {
 
 	// default inventory	
 	let slot = 0;	
-	if (true) {	// grab
-		let onClick = playerUse;
+	if (false) {	// grab
+		let onClick = Player.doUse;
 		setupAfterLoad3_UI2_addIcon({
-			game, icon:SpriteLib.icon('Grab'), inventoryBar, slot, xOffset, slotWidth, onClick
+			game, icon:SpriteLib.icon('Grab'), inventoryBar, slot, xOffset, slotWidth, onClick, keyTip:'u'
 		});
 		slot++;
 	}
 	{	// hit
-		let onClick = playerAttack;
+		let onClick = Player.doAttack;
 		setupAfterLoad3_UI2_addIcon({
 			game, icon:SpriteLib.icon('PickAxe'), inventoryBar, slot, xOffset, slotWidth, onClick,
 			keyTip:'space'
 		});
 		slot++;
 	}
-	{	// hit
+	if (false) {	// hit
 		let onClick = () => {};
 		// gear &#x2699;
 		// next page &#x2398;
 		setupAfterLoad3_UI2_addIcon({
-			game, icon:SpriteLib.textAsIcon('>'), inventoryBar, slot, xOffset, slotWidth, onClick,
+			game, icon:SpriteLib.icon('Switch'), inventoryBar, slot, xOffset, slotWidth, onClick,
 			keyTip:'shift'
 		});
 		let tab = new Key("Shift"); //	"	");
 		tab.press = () => console.warn("x");	
 		slot++;
 	}
-	// let rotatingToolBar = new PIXI.Container();	
+
+	let rotatingToolBar1 = new PIXI.Container();	
+	rotatingToolBar1.name = 'rotatingToolBar1';
+	rotatingToolBar1.x = xOffset + slot*slotWidth;
+	inventoryBar.addChild(rotatingToolBar1);
 	// spawns
 	// NB shark is bigger than 48x48
+	let rslot = 0;
 	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf'].forEach(spawnName => {		
 		let icon = SpriteLib[spawnName]();
 		const onClick = e => {
@@ -305,12 +282,33 @@ const setupAfterLoad2_UI = game => {
 			// copy from Tile to Sprite, and move it
 			let spawn = Game.make(icon.kind, {x:birthPlace.x, y:birthPlace.y});			
 		};
-		setupAfterLoad3_UI2_addIcon({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick});
+		setupAfterLoad3_UI2_addIcon({icon, xOffset:2, slot:rslot, slotWidth, game, inventoryBar:rotatingToolBar1, onClick});
 		console.log(spawnName, icon);
-		slot++;
+		rslot++;
 	});
-	// rotatingToolBar.calculateBounds();
-	// inventoryBar.addChild(rotatingToolBar);
+	rotatingToolBar1.calculateBounds();
+
+	if (false) {
+		let rotatingToolBar2 = new PIXI.Container();	
+		rotatingToolBar2.name = 'rotatingToolBar2';
+		rotatingToolBar2.x = rotatingToolBar1.x;
+		inventoryBar.addChild(rotatingToolBar2);
+		rslot = 0;
+		['Grass','Earth','Water','Tree'].forEach(spawnName => {		
+			let icon = SpriteLib.tile(spawnName);
+			const onClick = e => {
+				console.log("onDown",e, ""+e.target);
+				let player = game.sprites.player0;
+				let birthPlace = player;
+				// copy from Tile to Sprite, and move it
+				let spawn = Game.make(icon.kind, {x:birthPlace.x, y:birthPlace.y});			
+			};
+			setupAfterLoad3_UI2_addIcon({icon, xOffset:2, slot:rslot, slotWidth, game, inventoryBar:rotatingToolBar2, onClick});
+			console.log(spawnName, icon);
+			rslot++;
+		});
+		rotatingToolBar1.calculateBounds();
+	}
 
 	// control ring
 	if (isMobile()) {
@@ -380,15 +378,18 @@ Game.setup = game => {
 	// });
 	
 	// Creatures	
-	Game.addKind(game, Sheep);
-	Game.addKind(game, Chicken);	
-	Game.addKind(game, Bunny);
-	Game.addKind(game, Goat);
-	Game.addKind(game, Wolf);
-	Game.addKind(game, Werewolf);
-	Game.addKind(game, Fish);
-	Game.addKind(game, Frog);
-	Game.addKind(game, Badger);
+	// Game.addKind(game, Sheep);
+	// Game.addKind(game, Chicken);
+	// Game.addKind(game, Bunny);
+	// Game.addKind(game, Goat);
+	// Game.addKind(game, Wolf);
+	// Game.addKind(game, Werewolf);
+	// Game.addKind(game, Fish);
+	// Game.addKind(game, Frog);
+	// Game.addKind(game, Badger);
+
+	// Game.addKind(game, Tree);
+	// Game.addKind(game, Wood);
 
 	Game.basicPixiSetup(game);
 };

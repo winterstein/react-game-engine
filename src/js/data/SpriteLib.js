@@ -1,5 +1,7 @@
 /**
  * Let's define some nice sprites for easy use :)
+ * 
+ * Better (faster rendering, cleaner code) would be to have a sprites json file. But making that is a faff, and it lacks flexibility.
  */
 import Sprite from './Sprite';
 import Tile from './Tile';
@@ -48,13 +50,16 @@ SpriteLib.icon = name => {
 		src,
 	});
 	if (name==='Meat') sp.tileSize=[30,30]; // HACK
+	if (name==='Wood') sp.tileSize=[32,32]; // HACK
 	return sp;
 };
 const ICONS = {
 	Grab: '/img/icon/hand-grab.png',
 	PickAxe: '/img/icon/pick-axe.png',
+	Switch: '/img/icon/icons8-switch-50.png',
 	Egg: '/img/icon/noun_Egg_3194757.png',
 	Meat: '/img/icon/icons8-meat-30.png',
+	Wood: '/img/icon/icons8-wood-32.png'
 };
 
 /**

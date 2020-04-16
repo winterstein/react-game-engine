@@ -3,6 +3,9 @@ import KindOfCreature from './KindOfCreature';
 import SpriteLib from '../data/SpriteLib';
 import Sprite from '../data/Sprite';
 
+class Frog extends KindOfCreature {
+	
+}
 const Creature = new KindOfCreature('Frog');
 
 Creature.kingdom = 'animal';

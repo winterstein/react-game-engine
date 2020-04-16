@@ -1,15 +1,13 @@
 import Game, { dist2 } from "../Game";
 import SpriteLib from '../data/SpriteLib';
 import Sprite from '../data/Sprite';
-import { nonce } from "../base/data/DataClass";
+import DataClass, { nonce } from "../base/data/DataClass";
+import { assMatch } from "sjtest";
 
-class KindOfCreature {
+class KindOfCreature extends DataClass {
 	
 	name;
-
-	/**
-	 * animal|vegetable|mineral
-	 */
+	
 	kingdom;	
 
 	sprites;
@@ -25,9 +23,13 @@ class KindOfCreature {
 	updater = KindOfCreature.updater;
 
 	constructor(name) {
+		super({});
+		assMatch(name, String);
 		this.name = name;
+		Game.addKind(null, this);
 	}
 }
+DataClass.register(KindOfCreature, 'KindOfCreature');
 
 /**
  * Basic updater
@@ -105,9 +107,12 @@ const doDie = (game, sprite) => {
 	// TODO death sequence - or maybe we replace the sprite with a "dying sprite"
 	Game.removeSprite(game, sprite);
 	let kind = game.kinds[sprite.kind];
-	if ( ! kind) console.warn("No kind? ",sprite);
-	if (kind && kind.kingdom==='animal') {
-		// TODO leave some meat
+	if ( ! kind) {
+		console.warn("No kind? ",sprite);
+		return;
+	}
+	if (kind.kingdom==='animal') {
+		// leave some meat
 		let meat = SpriteLib.icon('Meat');
 		meat.carry = true;
 		meat.kind = 'Meat';
@@ -115,6 +120,10 @@ const doDie = (game, sprite) => {
 		meat.y = sprite.y;
 		Game.addSprite({game, sprite:meat});
 	}
+	if (kind.name==='Tree') {
+		// leave some wood
+		let wood = Game.make('Wood', {x:sprite.x, y:sprite.y});
+	}	
 };
 
 // NB: allow no-import use
