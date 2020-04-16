@@ -151,20 +151,19 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 	}
 
 	// make creatures to swim and roam the land?
-	if (cell==='Water' && Math.random() < 0.3) {				
-		let fish = Game.make('Fish');
-		fish.x = tileSprite.x;
-		fish.y = tileSprite.y;
+	let critter = null;
+	if (cell==='Water' && Math.random() < 0.2) {				
+		if (Math.random() < 0.7) critter = 'Fish';
+		else critter = 'Frog';
 	}
-	if (cell==='Tree' && Math.random() < 0.70) {
-		let badger = Game.make('Badger');
-		badger.x = tileSprite.x;
-		badger.y = tileSprite.y;
+	if (cell==='Tree' && Math.random() < 0.20) {
+		critter = 'Badger';
 	}
 	if (cell==='Grass' && Math.random() < 0.01) {				
-		let fish = Game.make('Bunny');
-		fish.x = tileSprite.x;
-		fish.y = tileSprite.y;
+		critter = 'Bunny';
+	}
+	if (critter) {
+		let c = Game.make(critter, {x:tileSprite.x, y:tileSprite.y});
 	}
 };
 
