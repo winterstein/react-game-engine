@@ -15,6 +15,8 @@ import Pixies, { containerFor, setPSpriteFor, getPSpriteFor } from './components
 
 class Game extends DataClass {
 
+	id = nonce();
+	
 	/**
 	 * String to Sprite
 	 */
@@ -43,6 +45,38 @@ class Game extends DataClass {
 } // ./Game
 DataClass.register(Game, 'Game');
 
+const doSave = game => {
+	console.log("saving... "+game.id);
+	let json = JSON.stringify(game);
+	let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
+	if ( ! gameIds.includes(game.id)) {
+		gameIds.push(game.id);
+		window.localStorage.setItem("gameIds", JSON.stringify(gameIds));
+	}
+	window.localStorage.setItem("game"+game.id, json);
+};
+
+const doLoad = gameId => {
+	console.log("loading... "+gameId);
+	if ( ! gameId) {
+		let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
+		if ( ! gameIds || ! gameIds.length) return null;
+		gameId = gameIds[gameIds.length-1];
+	}
+	let json = window.localStorage.getItem("game"+gameId);
+	if ( ! json) return null;
+	return JSON.parse(json);
+};
+
+Game.setAutoSave = onOff => {
+	if ( ! onOff) {
+		return;
+	}
+	let huh = setInterval(() => {
+		doSave(Game.get());
+	}, 5000);
+	console.warn("autosave", huh);
+};
 
 Game.init = () => {
 	// game object, if not already made
@@ -339,5 +373,6 @@ window.Game = Game; //debug
 export default Game;
 
 export {
-	dist2
+	dist2,
+	doSave, doLoad
 };

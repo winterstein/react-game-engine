@@ -125,8 +125,8 @@ const setupAfterLoad = game => {
 
 const setupAfterLoad2_land = game => {
 	let grid = Game.grid(game);
-	// pick the tiles
-	let landPlan = makeLandPlan(game, grid);
+	// pick the tiles (unless this is a loaded game)
+	let landPlan = game.landplan || makeLandPlan(game, grid);
 	game.landPlan = landPlan;
 	// add the tiles to the game
 	for(let rowi = 0; rowi<landPlan.length; rowi++) {
@@ -378,20 +378,6 @@ Game.setup = game => {
 	// 	});
 	// });
 	
-	// Creatures	
-	// Game.addKind(game, Sheep);
-	// Game.addKind(game, Chicken);
-	// Game.addKind(game, Bunny);
-	// Game.addKind(game, Goat);
-	// Game.addKind(game, Wolf);
-	// Game.addKind(game, Werewolf);
-	// Game.addKind(game, Fish);
-	// Game.addKind(game, Frog);
-	// Game.addKind(game, Badger);
-
-	// Game.addKind(game, Tree);
-	// Game.addKind(game, Wood);
-
 	Game.basicPixiSetup(game);
 };
 
