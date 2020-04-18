@@ -6,6 +6,7 @@ import Grid from './Grid';
 import StopWatch from '../StopWatch';
 import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
+import { getPSpriteFor, getPApp } from '../components/Pixies';
 
 
 class Animate extends DataClass {
@@ -44,9 +45,6 @@ class Sprite extends DataClass {
 
 	/** @type {String} e.g. "Chicken" */
 	kind;
-
-	/** @type {PIXI.Sprite} */
-	pixi;
 
 	/**
 	 * @type {?Number} index into frames for the current frame
@@ -294,7 +292,7 @@ Sprite.turnTowards = (sprite, target) => {
  */
 Sprite.setPixiProps = sprite => {
 	Sprite.assIsa(sprite);
-	const psprite = sprite.pixi;
+	const psprite = getPSpriteFor(sprite);
 	if ( ! psprite) {
 		console.warn("No pixi for "+sprite.width, sprite);
 		return;
@@ -310,7 +308,7 @@ Sprite.setPixiProps = sprite => {
 	const h = (sprite.tileSize && sprite.tileSize[1]) || 48;
 	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
 	let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
-	const app = Game.get().app;
+	const app = getPApp();
 	let pres = app.loader.resources[sprite.src];
 	assert(pres, "Not loaded Pixi resource "+sprite.src);
 	let texture = new PIXI.Texture(pres.texture, tframe);

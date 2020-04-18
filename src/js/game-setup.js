@@ -25,6 +25,7 @@ import Player from './creatures/Player';
 import KindOfCreature from './creatures/KindOfCreature';
 import { addScript } from 'wwutils';
 import pJoyRing from './components/pJoyRing';
+import {containerFor, setPApp, setPSpriteFor, getPSpriteFor, getPApp} from './components/Pixies';
 
 const DEBUG_FOCUS = false;
 
@@ -33,7 +34,8 @@ const DEBUG_FOCUS = false;
  */
 Game.basicPixiSetup = game => {
 	const grid = Game.grid(game);
-	if ( ! game.app) {		
+	let papp = getPApp();
+	if ( ! papp) {		
 		let screenWidth = window.innerWidth;
 		let screenHeight = window.innerHeight;
 		// scale?
@@ -46,27 +48,27 @@ Game.basicPixiSetup = game => {
 		grid.vw = grid.screenWidth/100;
 		grid.vh = grid.screenHeight/100;
 		console.log("app size "+window.innerWidth+" x "+window.innerHeight);
-		game.app = new PIXI.Application({width: screenWidth, height:screenHeight});
-		window.app = game.app;
+		papp = new PIXI.Application({width: screenWidth, height:screenHeight});
+		setPApp(papp);
+		window.app = papp;
 	}
-	
-	const app = game.app;
+
 	// a handy container for the game world, to separate it from UI
 	const world = new PIXI.Container();
 	world.setTransform(0,0,grid.screenScale,grid.screenScale);
-	app.stage.addChild(world);
-	game.containerFor.world = world;
+	papp.stage.addChild(world);
+	containerFor.world = world;
 	// Tiles for the background
 	// NB: ParticleContainer only works with a single source image!
-	game.containerFor.ground = new PIXI.Container();
-	world.addChild(game.containerFor.ground);
+	containerFor.ground = new PIXI.Container();
+	world.addChild(containerFor.ground);
 	// Animals
-	game.containerFor.characters = new PIXI.Container();
-	world.addChild(game.containerFor.characters);	
+	containerFor.characters = new PIXI.Container();
+	world.addChild(containerFor.characters);	
 	// UI container
-	game.containerFor.ui = new PIXI.Container();
-	app.stage.addChild(game.containerFor.ui);
-	game.containerFor.ui.setTransform(0,0,grid.screenScale,grid.screenScale);
+	containerFor.ui = new PIXI.Container();
+	papp.stage.addChild(containerFor.ui);
+	containerFor.ui.setTransform(0,0,grid.screenScale,grid.screenScale);
 
 	let srcs = new Set();
 	// creatures
@@ -93,7 +95,7 @@ Game.basicPixiSetup = game => {
 	srcs.add(SpriteLib.tile("Water").src);
 	srcs.add(SpriteLib.tile("Tree").src);
 
-	let loader = app.loader;
+	let loader = papp.loader;
 	srcs.forEach(src => loader.add(src));
 
 	loader.load(() => setupAfterLoad(game));
@@ -144,10 +146,10 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 		bg.y = tileSprite.y;
 		bg.width=grid.tileWidth;
 		bg.height=grid.tileHeight;
-		Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:game.containerFor.ground});
-		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.characters});
+		Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:containerFor.ground});
+		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:containerFor.characters});
 	} else {
-		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:game.containerFor.ground});
+		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:containerFor.ground});
 	}
 
 	// make creatures to swim and roam the land?
@@ -207,10 +209,10 @@ const setupAfterLoad2_UI = game => {
 		pSprite.lineStyle(3, 0xFF3300, 0.5);
 		pSprite.drawRect(0, 0, 48, 48);
 		pSprite.endFill();			
-		selectTile.pixi = pSprite;
+		setPSpriteFor(selectTile, pSprite);
 	
 		Sprite.setPixiProps(selectTile);
-		game.containerFor.ui.addChild(pSprite);
+		containerFor.ui.addChild(pSprite);
 		game.sprites.selectTile = selectTile;
 	}		
 
@@ -218,13 +220,13 @@ const setupAfterLoad2_UI = game => {
 	let icons = 10;
 	const xOffset = 10, slotWidth=50; 
 	let width = icons*slotWidth + 2*xOffset;
-	const stage = game.app.stage;
+	const stage = getPApp().stage;
 	const inventoryBar = new PIXI.Container();
 	inventoryBar.name = "inventoryBar";
 	const grid = Game.grid(game);
 	inventoryBar.position.set((grid.screenWidth - width) / 2, grid.screenHeight - 50 - 2*grid.vh);
 	console.log("inventoryBar",inventoryBar);
-	game.containerFor.ui.addChild(inventoryBar);
+	containerFor.ui.addChild(inventoryBar);
 
 	//Create the black background rectangle
 	let innerBar = new PIXI.Graphics();
@@ -328,7 +330,7 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 	icon.x = xOffset + slot*slotWidth;
 	Game.addSprite({game, sprite:icon, container:inventoryBar});	
 	// Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
-	let psprite = icon.pixi;			
+	const psprite = getPSpriteFor(icon);
 	psprite.interactive = true;
 	psprite.cursor = 'pointer';
 	psprite.on('mousedown', onClick);

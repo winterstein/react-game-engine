@@ -3,6 +3,7 @@ import SpriteLib from '../data/SpriteLib';
 import Sprite from '../data/Sprite';
 import DataClass, { nonce } from "../base/data/DataClass";
 import { assMatch } from "sjtest";
+import { getPSpriteFor } from "../components/Pixies";
 
 class KindOfCreature extends DataClass {
 	
@@ -85,10 +86,10 @@ KindOfCreature.updater = ({kind, game, sprite, dt}) => {
  */
 KindOfCreature.doBite = (predator, prey) => {
 	if (prey.health===undefined) prey.health = 100;
-	prey.health -= predator.attack || 5;
-	console.log("Bite! "+predator.kind+" "+prey.kind+" -> "+prey.health);
+	prey.health -= predator.attack || 10;
+	// console.log("Bite! "+predator.kind+" "+prey.kind+" -> "+prey.health);
 	// TODO show health bar for 1/2 second
-	if (prey.pixi) {
+	if (getPSpriteFor(prey)) {
 		// health bar
 		// const graphics = new PIXI.Graphics();
 		// graphics.beginFill(prey.health > 50? 0x33FF00 : 0xFF3300);

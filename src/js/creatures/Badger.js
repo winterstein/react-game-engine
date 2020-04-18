@@ -8,8 +8,9 @@ const Badger = new KindOfCreature('Badger');
 
 Badger.kingdom = 'animal';
 
-Badger.sprites = [SpriteLib.badger(),SpriteLib.badger(1)];
+Badger.sprites = [SpriteLib.badger(), SpriteLib.badger(1)];
 
+Badger.attack = 10;
 Badger.speed = 140;
 
 Badger.terrains = ['Grass','Earth','Water','Tree'];

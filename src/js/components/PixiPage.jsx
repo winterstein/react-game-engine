@@ -22,47 +22,21 @@ import { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from '../Key';
 import { Alert } from 'reactstrap';
+import { getPApp } from './Pixies';
 
 const PixiPage = () => {
 
 	const game = Game.get();
 	Game.init(game);
+	const papp = getPApp();
 
 	return (<div style={{position:'relative', userSelect:"none"}}>
 		<div className='portrait'>
 			<Alert color='warning'>Please rotate your phone to landscape. Then reload this page.</Alert>
 		</div>
-		<PixiComponent app={game.app} />
-		{false? <ArrowPad game={game} /> : null}
+		<PixiComponent app={papp} />
 	</div>);
 };
 
-const ArrowPad = ({game}) => {
-	return <div style={{position:'absolute',bottom:'100px',left:'50px',color:'red'}}>
-		<center><Arrow dirn='up' game={game} /></center>
-		<div><Arrow dirn='left' game={game} /> &nbsp;&nbsp; <Arrow dirn='right' game={game} /></div>
-		<center><Arrow dirn='down' game={game} /></center>
-	</div>
-		
-};
-const Arrow = ({dirn, game}) => {
-	let c = {
-		up: '&#x25B2;',
-		left: '&#x25C0', right: '&#x25B6',
-		down: "&#x25BC"
-	};
-
-	// onMouseDown={ e => Game.handleInput({input:dirn, on:true}) }
-	// onMouseUp={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
-	// onMouseOut={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
-
-	// onClick={ e => Game.handleInput({input:dirn, on:true}) } 
-	return <span style={{cursor:'pointer',fontSize:'300%'}} 
-		onTouchStart={ e => Game.handleInput({input:dirn, on:true}) }
-		onTouchCancel={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
-		onTouchEnd={ e => {console.log(e); Game.handleInput({input:dirn, on:false});} }  
-
-		dangerouslySetInnerHTML={{__html:c[dirn]}}></span>;
-}
 
 export default PixiPage;

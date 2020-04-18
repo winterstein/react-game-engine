@@ -7,6 +7,8 @@ import Sprite from './Sprite';
 import Tile from './Tile';
 import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
+import { setPSpriteFor } from '../components/Pixies';
+import { nonce } from '../base/data/DataClass';
 
 const SpriteLib = {};
 
@@ -69,11 +71,12 @@ SpriteLib.textAsIcon = ({name, text}) => {
 	let sp = new Tile({	// NB: Tile so it doesnt get updates, or copied into a Tile by game-setup
 		tileSize: [48,48],
 		name,
-		kind: 'Icon',		
+		kind: 'Icon',
+		id: 'icon'+name+nonce()	
 	});
 	// wire to pixi
 	let psprite = new PIXI.Container();
-	sp.pixi = psprite;
+	setPSpriteFor(sp, psprite);
 	
 	const style = new PIXI.TextStyle({
 		fontFamily: 'Arial',

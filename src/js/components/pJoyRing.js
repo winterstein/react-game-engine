@@ -3,6 +3,7 @@ import Grid from '../data/Grid';
 import Game from '../Game';
 import * as PIXI from 'pixi.js';
 import { assMatch, assert } from 'sjtest';
+import {containerFor} from './Pixies';
 
 /**
  * 
@@ -16,7 +17,7 @@ const pJoyRing = ({game}) => {
 	const offset = 5*grid.vh;
 	const top = grid.screenHeight - h - offset;
 	joyRing.position.set(offset, top);
-	game.containerFor.ui.addChild(joyRing);
+	containerFor.ui.addChild(joyRing);
 
 	//Create the graphics
 	let pg = new PIXI.Graphics();

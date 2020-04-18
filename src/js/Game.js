@@ -11,12 +11,9 @@ import Grid from './data/Grid';
 import Tile from './data/Tile';
 import * as PIXI from 'pixi.js';
 import { randomPick } from './base/utils/miscutils';
+import Pixies, { containerFor, setPSpriteFor, getPSpriteFor } from './components/Pixies';
 
 class Game extends DataClass {
-	/**
-	 * {String: PIXI.Container} world | ui | ground | characters
-	 */
-	containerFor = {};
 
 	/**
 	 * String to Sprite
@@ -25,15 +22,6 @@ class Game extends DataClass {
 
 	/** @type {StopWatch}  */
 	ticker = new StopWatch();
-
-	/**
-	 * @type {PIXI.Application}
-	 */
-	app;
-
-	width;
-	
-	height;
 
 	/**
 	 * @type {String : KindOfCreature}
@@ -288,8 +276,9 @@ Game.make = (kindName, spriteSettings={}) => {
 	}	
 	let base = randomPick(kind.sprites) || {};
 	// TODO (but: bugs) copy in Kind props - but early, so the end object is a Sprite 
-	base = Object.assign(base, kind);
-	let sprite = new Sprite(base);	
+	const freshBase = Object.assign({}, base, kind);
+	let sprite = new Sprite(freshBase);
+	delete sprite.sprites; // keep our sprite a json blob - no circular refs
 	sprite['@type'] = 'Sprite';
 	sprite.speed = kind.speed; // HACK
 	sprite.attack = kind.attack; // HACK
@@ -298,7 +287,7 @@ Game.make = (kindName, spriteSettings={}) => {
 	if (spriteSettings) {
 		sprite = Object.assign(sprite, spriteSettings);
 	}
-	Game.addSprite({game, sprite, id, container:game.containerFor.characters});
+	Game.addSprite({game, sprite, id, container:containerFor.characters});
 	return sprite;
 };
 
@@ -316,7 +305,7 @@ Game.addSprite = ({game, sprite, id, container}) => {
 	game.sprites[sprite.id] = sprite;
 	
 	let psprite = new PIXI.Sprite();
-	sprite.pixi = psprite;
+	setPSpriteFor(sprite, psprite);
 
 	Sprite.setPixiProps(sprite);
 
@@ -327,21 +316,22 @@ Game.addSprite = ({game, sprite, id, container}) => {
 		// TODO add to container
 	}
 
-	if ( ! container) container = game.containerFor.world;
+	if ( ! container) container = containerFor.world;
 	container.addChild(psprite);
 
 	return sprite;
 };
 
 Game.removeSprite = (game, sprite) => {
-	console.log("removeSprite", sprite);
+	// console.log("removeSprite", sprite);
 	Sprite.assIsa(sprite);
 	delete game.sprites[sprite.id];
 	// clean up Pixi
-	if (sprite.pixi) {		
-		if (sprite.pixi.parent) sprite.pixi.parent.removeChild(sprite.pixi);
-		sprite.pixi.destroy({children:true});
-		sprite.pixi = null;
+	const psprite = getPSpriteFor(sprite);
+	if (psprite) {		
+		if (psprite.parent) psprite.parent.removeChild(psprite);
+		psprite.destroy({children:true});
+		setPSpriteFor(sprite, null);
 	}
 };
 
