@@ -18,6 +18,7 @@ import Bunny from './creatures/Bunny';
 import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
+import Trex from './creatures/Trex';
 import Wood from './creatures/Wood';
 import Tree from './creatures/Tree';
 import Frog from './creatures/Frog';
@@ -274,7 +275,7 @@ const setupAfterLoad2_UI = game => {
 	// spawns
 	// NB shark is bigger than 48x48
 	let rslot = 0;
-	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf'].forEach(spawnName => {		
+	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf','trex'].forEach(spawnName => {		
 		let icon = SpriteLib[spawnName]();
 		const onClick = e => {
 			console.log("onDown",e, ""+e.target);

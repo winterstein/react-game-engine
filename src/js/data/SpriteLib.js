@@ -118,6 +118,12 @@ SpriteLib.werewolf = n => {
 	let ww = stdAnimal('/img/Mythological animals/wolfbeast.png', n, "Werewolf", {tileSize:[48,52]});
 	return ww;
 };
+SpriteLib.trex = n => {
+	// a bit taller
+	let ww = stdAnimal('/img/animals/trex-r.png', n, "Trex", {tileSize:[64,70]});
+	return ww;
+};
+
 
 SpriteLib.frog = n => stdAnimal('/img/animals/largefrog.png', n, "Frog");
 
