@@ -18,7 +18,8 @@ import Bunny from './creatures/Bunny';
 import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
-import Trex from './creatures/Trex';
+import Allosaurus from './creatures/Allosaurus';
+import Beaver from './creatures/Beaver';
 import Wood from './creatures/Wood';
 import Tree from './creatures/Tree';
 import Frog from './creatures/Frog';
@@ -154,6 +155,7 @@ const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
 	}
 
 	// make creatures to swim and roam the land?
+	// return; // off for debug
 	let critter = null;
 	if (cell==='Water' && Math.random() < 0.2) {				
 		if (Math.random() < 0.75) critter = 'Fish';
@@ -275,7 +277,7 @@ const setupAfterLoad2_UI = game => {
 	// spawns
 	// NB shark is bigger than 48x48
 	let rslot = 0;
-	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf','trex'].forEach(spawnName => {		
+	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf','allosaurus','beaver'].forEach(spawnName => {		
 		let icon = SpriteLib[spawnName]();
 		const onClick = e => {
 			console.log("onDown",e, ""+e.target);

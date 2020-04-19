@@ -313,6 +313,7 @@ Game.make = (kindName, spriteSettings={}) => {
 	const freshBase = Object.assign({}, base, kind);
 	let sprite = new Sprite(freshBase);
 	delete sprite.sprites; // keep our sprite a json blob - no circular refs
+	sprite.kind = kindName;
 	sprite['@type'] = 'Sprite';
 	sprite.speed = kind.speed; // HACK
 	sprite.attack = kind.attack; // HACK
