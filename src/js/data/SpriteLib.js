@@ -118,10 +118,25 @@ SpriteLib.werewolf = n => {
 	let ww = stdAnimal('/img/Mythological animals/wolfbeast.png', n, "Werewolf", {tileSize:[48,52]});
 	return ww;
 };
-SpriteLib.trex = n => {
+SpriteLib.trex = () => {
 	// a bit taller
-	let ww = stdAnimal('/img/animals/trex-r.png', n, "Trex", {tileSize:[64,70]});
-	return ww;
+	let sbase = {
+		kind: 'Trex',
+		src: '/img/animals/trex-r.png',
+		tiles: [1,1],
+		tileSize: [64,70],
+		animations: {
+			// left: {frames:[12+n*3,13+n*3,14+n*3,13+n*3]}, 
+			right: {frames:[0]}, 
+			// up: {frames:[36+n*3,37+n*3,38+n*3]}, 
+			// down: {frames:[0+n*3,1+n*3,2+n*3]} 
+		},
+	};
+	let sp = new Sprite(sbase);
+	// ??starting animation??
+	Sprite.initFrames(sp);
+	Sprite.animate(sp, 'right');
+	return sp;
 };
 
 
