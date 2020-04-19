@@ -220,7 +220,7 @@ const setupAfterLoad2_UI = game => {
 	}		
 
 	// Create the inventory bar
-	let icons = 11;
+	let icons = 12;
 	const xOffset = 10, slotWidth=50; 
 	let width = icons*slotWidth + 2*xOffset;
 	const stage = getPApp().stage;
