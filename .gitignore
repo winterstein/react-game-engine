@@ -7,3 +7,4 @@ boblog
 web/privacy-policy.html
 .vscode
 package-lock.json
+/bin/

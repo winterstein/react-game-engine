@@ -15,7 +15,7 @@ class StopWatch extends DataClass {
 	tick;
 
 	/**
-	 * TODO Amount of time which has been used up by pauses.
+	 * @type {Boolean}
 	 */
 	paused;
 	
@@ -36,7 +36,7 @@ class StopWatch extends DataClass {
 		Object.assign(this, base);
 		delete this.status;
 	}
-};
+}
 DataClass.register(StopWatch, "StopWatch");
 
 /**
@@ -58,8 +58,9 @@ StopWatch.dt = sw => {
 	 *         any pauses.
 	 */
 StopWatch.time = sw => {
-	if (sw.paused)
+	if (sw.paused) {
 		return (sw.pauseStart||0) - sw.startTime - (sw.pauseTime||0);
+	}
 	return new Date().getTime() - sw.startTime - (sw.pauseTime||0);
 };
 

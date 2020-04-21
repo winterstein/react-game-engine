@@ -8,11 +8,10 @@ export default C;
  * app config
  */
 C.app = {
-	name: "the My-Loop Portal",
-	service: "good-loop",
-	logo: "/img/logo.png",
-	website: "https://good-loop.com",
-	facebookAppId: "320927325010346", // https://developers.facebook.com/apps/320927325010346/dashboard/
+	name: "Goose",
+	service: "game",
+	logo: "/img/icon/goose-icon.png",
+	// website: "https://good-loop.com",
 	privacyPolicy: "https://doc.good-loop.com/privacy-policy.html",
 	tsncs: "",
 };

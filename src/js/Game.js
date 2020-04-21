@@ -15,7 +15,7 @@ import Pixies, { containerFor, setPSpriteFor, getPSpriteFor } from './components
 
 class Game extends DataClass {
 
-	id = nonce();
+	id = nonce(4);
 	
 	/**
 	 * String to Sprite
@@ -48,6 +48,7 @@ DataClass.register(Game, 'Game');
 const doSave = game => {
 	console.log("saving... "+game.id);
 	let json = JSON.stringify(game);
+	// TODO remote stash	
 	let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
 	if ( ! gameIds.includes(game.id)) {
 		gameIds.push(game.id);
@@ -74,7 +75,7 @@ Game.setAutoSave = onOff => {
 	}
 	let huh = setInterval(() => {
 		doSave(Game.get());
-	}, 5000);
+	}, 20000); // 20 seconds
 	console.warn("autosave", huh);
 };
 

@@ -54,7 +54,7 @@ const doSyndicateIfRoom = (data, conn) => {
 };
 
 let initFlag = false;
-const pid = 'hat-'+nonce(4).toLowerCase();
+const pid = nonce(4).toLowerCase();
 const peer = new Peer(pid);
 const init = () => {
 	if (initFlag) return;
