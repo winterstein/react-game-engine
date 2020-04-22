@@ -24,7 +24,7 @@ import Key, {KEYS} from '../Key';
 import { Alert, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { getPApp } from './Pixies';
 import { nonce } from '../base/data/DataClass';
-import {getPeerId, doJoin} from '../plumbing/peering';
+import {getPeerId, doJoin, startAudioCall, getConnections} from '../plumbing/peering';
 
 const doNewWorld = () => {
 	const game = Game.get();
@@ -99,7 +99,13 @@ const GameAdmin = ({world}) => {
 			</ModalHeader>
 			<ModalBody>							
 				<div className='container'>
-					<h4>This Device is known as: {getPeerId()}</h4>
+					<h4>This Device is known as: 
+						<a 
+							data-sharetext='Join my goose' data-sharetitle='Join my goose'
+							href={window.location+'&join='+getPeerId()} 
+							onClick={e => doShare(e, this)}
+						>{getPeerId()}</a>
+					</h4>
 					<h4>This World is known as: {world}</h4>
 					<div><Button onClick={doNewWorld}>New World</Button></div>
 					<div><Button onClick={doLoadWorld}>Load World</Button></div>
@@ -107,9 +113,31 @@ const GameAdmin = ({world}) => {
 						<PropControl prop='join' path={['widget','admin']} />
 						<Button onClick={doJoinWorld}>Join a Friends World</Button>
 					</div>
+					<button onClick={doCall}>Call</button>
 				</div>
 			</ModalBody>
 		</Modal></>);
+};
+
+
+const doCall = () => {
+	startAudioCall();
+};
+
+/**
+ * 
+ * @param {React.MouseEvent} e 
+ * @param {*} $a 
+ */
+const doShare = (e,$a) => {
+	if (navigator.share) {
+		let shareUrl = $a.getAttribute('href');
+		let shareTitle = $a.getAttribute('data-sharetitle');
+		let shareText = $a.getAttribute('data-sharetext');
+		navigator.share({url:shareUrl,title:shareTitle,text:shareText});
+		e.stopPropagation();
+		e.preventDefault();
+	}
 };
 
 const doJoinWorld = () => {
