@@ -4,7 +4,7 @@
  */
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import _ from 'lodash';
 import SJTest, {assert} from 'sjtest';
 import Login from 'you-again';
 import DataStore from '../base/plumbing/DataStore';
@@ -87,10 +87,10 @@ const GameAdmin = ({world}) => {
 	if ( ! showAdmin && ticker.paused) StopWatch.start(ticker);
 
 	const toggle = () => DataStore.setShow('admin', ! showAdmin);
-	let conns = Object.values(getConnections());
+	let conns = _.flatten(Object.values(getConnections()));
 
 	return (<>
-		<div style={{position:'fixed',top:0,right:'1vh',color:'#ccc',fontSize:'3vh'}} onClick={() => DataStore.setShow('admin', true)}>&#x2699;</div>
+		<div style={{position:'fixed',top:0,right:'1vh',color:'#ccc',fontSize:'16pt'}} onClick={() => DataStore.setShow('admin', true)}>&#x2699;</div>
 		<Modal isOpen={showAdmin}
 			className="login-modal"
 			toggle={toggle}
@@ -114,7 +114,7 @@ const GameAdmin = ({world}) => {
 						<PropControl prop='join' path={['widget','admin']} />
 						<Button onClick={doJoinWorld}>Join a Friends World</Button>
 					</div>
-					{conns.map(c => <ConnectionInfo connection={c} />)}
+					{conns.map((c,i) => <ConnectionInfo key={i} connection={c} />)}
 					<button onClick={startAudioCall}>Call</button>
 				</div>
 			</ModalBody>
@@ -124,7 +124,7 @@ const GameAdmin = ({world}) => {
 
 const ConnectionInfo = ({connection}) => {
 	console.log("connection", connection);
-	return <div><pre>{JSON.stringify(connection.metadata)}</pre></div>;
+	return <div>Open: {""+connection.open} {JSON.stringify(connection.metadata)}</div>;
 };
 
 
