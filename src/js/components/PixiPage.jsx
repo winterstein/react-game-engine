@@ -87,6 +87,7 @@ const GameAdmin = ({world}) => {
 	if ( ! showAdmin && ticker.paused) StopWatch.start(ticker);
 
 	const toggle = () => DataStore.setShow('admin', ! showAdmin);
+	let conns = Object.values(getConnections());
 
 	return (<>
 		<div style={{position:'fixed',top:0,right:'1vh',color:'#ccc',fontSize:'3vh'}} onClick={() => DataStore.setShow('admin', true)}>&#x2699;</div>
@@ -113,16 +114,19 @@ const GameAdmin = ({world}) => {
 						<PropControl prop='join' path={['widget','admin']} />
 						<Button onClick={doJoinWorld}>Join a Friends World</Button>
 					</div>
-					<button onClick={doCall}>Call</button>
+					{conns.map(c => <ConnectionInfo connection={c} />)}
+					<button onClick={startAudioCall}>Call</button>
 				</div>
 			</ModalBody>
 		</Modal></>);
 };
 
 
-const doCall = () => {
-	startAudioCall();
+const ConnectionInfo = ({connection}) => {
+	console.log("connection", connection);
+	return <div><pre>{JSON.stringify(connection.metadata)}</pre></div>;
 };
+
 
 /**
  * 

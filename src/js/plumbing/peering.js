@@ -101,7 +101,8 @@ const startAudioCall = (toPeerId) => {
 
 const getPeerId = () => pid;
 const getRoomId = () => currentRoom;
+const getConnections = () => peer.connections;
 
 export {
-	getPeerId, doJoin, startAudioCall, getRoomId
+	getPeerId, doJoin, startAudioCall, getRoomId, getConnectionTo, getConnections
 };
