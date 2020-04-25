@@ -58,6 +58,11 @@ class Grid extends DataClass {
 	screenHeight;
 
 	/**
+	 * @type {Rect}
+	 */
+	screen;
+
+	/**
 	 * @type {Number} HACK: scaling factor applied to shrink graphics / grow the screen on mobile.
 	 * The true device screen width is screenWidth*screenScale.
 	 */
@@ -97,6 +102,16 @@ const defaultGrid = new Grid();
  * @returns {!Grid}
  */
 Grid.get = () => defaultGrid;
+/**
+ * @param {Grid} grid
+ * @returns {Rect}
+ */
+Grid.screen = grid => {
+	if ( ! grid.screen) {
+		grid.screen = new Rect({x:0,y:0,width:grid.screenWidth,height:grid.screenHeight});
+	}
+	return grid.screen;
+};
 
 const RT2 = Math.sqrt(2);
 

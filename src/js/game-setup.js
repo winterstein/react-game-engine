@@ -330,6 +330,7 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 			icon.frameIndex = icon.animate.frames[0];
 		}
 	}
+	icon.ui = true; // mark it as UI
 	icon.x = xOffset + slot*slotWidth;
 	Game.addSprite({game, sprite:icon, container:inventoryBar});	
 	// Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
@@ -390,8 +391,9 @@ Game.setup = game => {
  * @param {Grid} grid 
  */
 const makeLandPlan = (game, grid) => {
-	let nrows = Math.ceil(grid.screenHeight / grid.tileHeight);
-	let ncols = Math.ceil(grid.screenWidth / grid.tileWidth);
+	// FIXME large maps need sprite management
+	let nrows = 100; //Math.ceil(grid.screenHeight / grid.tileHeight);
+	let ncols = 100; //Math.ceil(grid.screenWidth / grid.tileWidth);
 	grid.width = ncols;
 	grid.height = nrows;
 	assert(nrows > 1, game);

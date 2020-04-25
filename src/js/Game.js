@@ -12,6 +12,7 @@ import Tile from './data/Tile';
 import * as PIXI from 'pixi.js';
 import { randomPick } from './base/utils/miscutils';
 import Pixies, { containerFor, setPSpriteFor, getPSpriteFor } from './components/Pixies';
+import ServerIO from './base/plumbing/ServerIOBase';
 
 class Game extends DataClass {
 
@@ -46,28 +47,40 @@ class Game extends DataClass {
 DataClass.register(Game, 'Game');
 
 const doSave = game => {
+	if (true) return;
 	console.log("saving... "+game.id);
 	let json = JSON.stringify(game);
-	// TODO remote stash	
+	let data = {
+		json
+	};
+	ServerIO.post('https://calstat.good-loop.com/stash/game/'+game.id, {data});
+	
 	let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
 	if ( ! gameIds.includes(game.id)) {
 		gameIds.push(game.id);
 		window.localStorage.setItem("gameIds", JSON.stringify(gameIds));
 	}
-	window.localStorage.setItem("game"+game.id, json);
+	// can get too big
+	// window.localStorage.setItem("game"+game.id, json);
 };
 
 const doLoad = gameId => {
+	if (true) return;
 	console.log("loading... "+gameId);
 	if ( ! gameId) {
 		let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
 		if ( ! gameIds || ! gameIds.length) return null;
 		gameId = gameIds[gameIds.length-1];
 	}
-	let json = window.localStorage.getItem("game"+gameId);
-	if ( ! json) return null;
-	return JSON.parse(json);
+	let pLoad = ServerIO.load('https://calstat.good-loop.com/stash/game/'+gameId);
+	pLoad.then((res) => {
+		console.warn("Loaded",res);
+	});
+	// let json = window.localStorage.getItem("game"+gameId);
+	// if ( ! json) return null;
+	// return JSON.parse(json);
 };
+window.doLoad = doLoad; // debug
 
 Game.setAutoSave = onOff => {
 	if ( ! onOff) {

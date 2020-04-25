@@ -70,7 +70,7 @@ const PixiPage = () => {
 		doJoin(world);
 	}
 	
-	return (<div style={{position:'relative', userSelect:"none"}}>
+	return (<div style={{position:'relative', userSelect:"none", overflow:"hidden"}}>
 		<div className='portrait'>
 			<Alert color='warning'>Please rotate your phone to landscape. Then reload this page.</Alert>
 		</div>		

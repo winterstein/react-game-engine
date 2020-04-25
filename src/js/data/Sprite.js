@@ -294,7 +294,10 @@ Sprite.setPixiProps = sprite => {
 	Sprite.assIsa(sprite);
 	const psprite = getPSpriteFor(sprite);
 	if ( ! psprite) {
-		console.warn("No pixi for "+sprite.width, sprite);
+		// console.warn("No pixi for "+sprite.width, sprite);
+		return;
+	}
+	if ( ! psprite.visible) {
 		return;
 	}
 	psprite.x = sprite.x;
