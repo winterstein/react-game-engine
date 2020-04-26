@@ -25,6 +25,8 @@ const rectRect = (r1, r2) =>
 		r1.y <= r2.y + (r2.height || 1)
 	);
 
+// TODO Polygons! https://github.com/gameofbombs/pixi-heaven
+
 export {
 	collision
 };

@@ -37,7 +37,7 @@ DataClass.register(KindOfCreature, 'KindOfCreature');
  * @param {!Number} dt
  */
 KindOfCreature.updater = ({kind, game, sprite, dt}) => {
-	if (kind.kingdom === 'mineral') {
+	if (kind.kingdom === 'mineral' || kind.kingdom === 'vegetable') {
 		return; // no update for dead stuff
 	}
 	// mostly no change
@@ -75,7 +75,8 @@ KindOfCreature.updater = ({kind, game, sprite, dt}) => {
 	if (Math.random() <	0.1) {
 		// pick a direction	
 		sprite.theta = Math.random()*Math.PI*2;
-		let speed = (sprite.speed || kind.speed || 10); // TODO respect 0
+		let speed = sprite.speed || kind.speed;
+		if ( ! speed && speed !== 0) speed = 10; // TODO respect 0
 		sprite.dx = Math.cos(sprite.theta) * speed;
 		sprite.dy = Math.sin(sprite.theta) * speed;
 		return;

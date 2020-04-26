@@ -14,7 +14,7 @@ Creature.speed = 50;
 
 Creature.attack = 20;
 
-Creature.terrains = ['Grass','Earth'];
+Creature.terrains = ['Grass','Earth','Tree'];
 
 Creature.flees = [];
 

@@ -40,20 +40,23 @@ class Game extends DataClass {
 	 * @return {Game} game object -- never null even pre-init. Will create if unset.
 	 */
 	static get() {
-		return DataStore.getValue('data', 'Game') || DataStore.setValue(['data','Game'], new Game(), false);
+		return DataStore.getValue('data', 'Game') || doReset();
 	}
 
 } // ./Game
 DataClass.register(Game, 'Game');
 
+const doReset = () => {
+	let g = new Game();
+	DataStore.setValue(['data','Game'], g, false);	
+	return g;
+};
+
 const doSave = game => {
-	if (true) return;
 	console.log("saving... "+game.id);
 	let json = JSON.stringify(game);
-	let data = {
-		json
-	};
-	ServerIO.post('https://calstat.good-loop.com/stash/game/'+game.id, {data});
+	let data = json; // send a string as post body??
+	let pSave = ServerIO.post('https://calstat.good-loop.com/stash/game/'+game.id, {data});
 	
 	let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
 	if ( ! gameIds.includes(game.id)) {
@@ -62,10 +65,10 @@ const doSave = game => {
 	}
 	// can get too big
 	// window.localStorage.setItem("game"+game.id, json);
+	return pSave;
 };
 
 const doLoad = gameId => {
-	if (true) return;
 	console.log("loading... "+gameId);
 	if ( ! gameId) {
 		let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
@@ -190,16 +193,20 @@ Game.getPlayer = game => {
  */
 Game.getNearest = ({sprite, game, types, limit, tile=false, filter}) => {	
 	let sprites = Object.values(game.sprites);
-	// no Tiles
-	if ( ! tile) {
-		sprites = sprites.filter(s => ! Tile.isa(s));
-	}
-	// type filter
-	if (types) sprites = sprites.filter(s => types.includes(s.kind));
-	// ad-hoc filter
-	if (filter) sprites = sprites.filter(filter);
-	// not self
-	sprites = sprites.filter(s => s !== sprite);	
+	let bigFilter = s => {
+		// type filter
+		if (types && ! types.includes(s.kind)) return false;
+		// ad-hoc filter
+		if (filter && ! filter(s)) return false;
+		// No invisibles
+		if (s.visible === false) return false;
+		// no Tiles
+		if ( ! tile && Tile.isa(s)) return false;
+		// not self
+		if (s === sprite) return false;
+		return true;
+	};
+	sprites = sprites.filter(bigFilter);
 
 	if (limit) {
 		// in pixels
@@ -293,7 +300,13 @@ Game.setTile = ({game, row, column, tile}) => {
 	tile.y = row * tileHeight;
 	tile.width = tileWidth;
 	tile.height = tileHeight;
-	tile.name = "row"+row+"_col"+column;	
+	tile.name = "row"+row+"_col"+column;//deprecated
+	tile.id = "row"+row+"_col"+column;	
+	// remove any existing sprite
+	let old = game.sprites[tile.id];
+	if (old) {
+		Game.removeSprite(game, old);
+	}
 	// game.sprites[tile.name] = tile; Done in Game.addSprite
 };
 
@@ -389,5 +402,5 @@ export default Game;
 
 export {
 	dist2,
-	doSave, doLoad
+	doSave, doLoad, doReset
 };

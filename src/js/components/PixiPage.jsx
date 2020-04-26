@@ -9,7 +9,7 @@ import SJTest, {assert} from 'sjtest';
 import Login from 'you-again';
 import DataStore from '../base/plumbing/DataStore';
 import C from '../C';
-import Game, { doLoad } from '../Game';
+import Game, { doLoad, doSave, doReset } from '../Game';
 import _setup from '../game-setup';
 import _update from '../game-update';
 import Misc from '../base/components/Misc';
@@ -27,12 +27,12 @@ import { nonce } from '../base/data/DataClass';
 import {getPeerId, doJoin, startAudioCall, getConnections} from '../plumbing/peering';
 
 const doNewWorld = () => {
+	doReset();
 	const game = Game.get();
 	Game.init(game);
 	game.id = getPeerId();
 	let world = game.id;
 	DataStore.setUrlValue("world", world);
-	Game.setAutoSave(true);
 	DataStore.setShow('admin', false);
 };
 
@@ -41,9 +41,9 @@ const doLoadWorld = () => {
 	Game.init(game);
 	let world = game.id;
 	DataStore.setUrlValue("world", world);
-	Game.setAutoSave(true);
-	DataStore.setShow('admin', false);
+	DataStore.setShow('admin', false);	
 };
+
 
 const PixiPage = () => {
 	let world = DataStore.getUrlValue("world");
@@ -60,7 +60,6 @@ const PixiPage = () => {
 		if ( ! papp) {
 			let game = doLoad(world);
 			Game.init(game);
-			Game.setAutoSave(true);
 			papp = getPApp();
 			assert(papp);
 		}		
@@ -79,6 +78,9 @@ const PixiPage = () => {
 	</div>);
 };
 
+/**
+ * @param {String} world
+ */
 const GameAdmin = ({world}) => {
 	// pause game
 	const showAdmin = DataStore.getShow('admin');	
@@ -108,6 +110,7 @@ const GameAdmin = ({world}) => {
 						>{getPeerId()}</a>
 					</h4>
 					<h4>This World is known as: {world}</h4>
+					<div><Button onClick={() => doSave(Game.get())}>Save World</Button></div>
 					<div><Button onClick={doNewWorld}>New World</Button></div>
 					<div><Button onClick={doLoadWorld}>Load World</Button></div>
 					<div className='form-inline'>

@@ -10,6 +10,7 @@ import Game from './Game';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
 import { assMatch, assert } from 'sjtest';
+import KindOfCreature from './creatures/KindOfCreature';
 import Sheep from './creatures/Sheep';
 import Fish from './creatures/Fish';
 import Wolf from './creatures/Wolf';
@@ -21,10 +22,12 @@ import Werewolf from './creatures/Werewolf';
 import Allosaurus from './creatures/Allosaurus';
 import Beaver from './creatures/Beaver';
 import Wood from './creatures/Wood';
-import Tree from './creatures/Tree';
 import Frog from './creatures/Frog';
 import Player from './creatures/Player';
-import KindOfCreature from './creatures/KindOfCreature';
+
+import Grass from './creatures/Grass';
+import Tree from './creatures/Tree';
+
 import { addScript } from 'wwutils';
 import pJoyRing from './components/pJoyRing';
 import {containerFor, setPApp, setPSpriteFor, getPSpriteFor, getPApp} from './components/Pixies';
@@ -107,7 +110,10 @@ Game.basicPixiSetup = game => {
  * 
  * @param {!Game} game 
  */
-const setupAfterLoad = game => {
+const setupAfterLoad = game => {	
+	// mark as loaded
+	const papp = getPApp();
+	papp.loadFlag = true;
 
 	if (true) {
 		setupAfterLoad2_Player(game);
@@ -133,38 +139,40 @@ const setupAfterLoad2_land = game => {
 	// add the tiles to the game
 	for(let rowi = 0; rowi<landPlan.length; rowi++) {
 		for(let coli = 0; coli<landPlan[0].length; coli++) {
-			setupLandTile({landPlan,rowi,coli,game,grid});
+			setupLandTile({rowi,coli,game,grid,infested:true});
 		}
 	}
 };
 
-const setupLandTile = ({landPlan, rowi, coli, game, grid}) => {
-	let cell = landPlan[rowi][coli];
-	let tileSprite = SpriteLib.tile(cell);
+const setupLandTile = ({rowi, coli, game, grid, infested}) => {
+	let kindName = game.landPlan[rowi][coli];
+
+	let tileSprite = SpriteLib.tile(kindName);
 	Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
-	if (cell==='Tree') { // HACK
+	if (kindName==='Tree') { // HACK
 		let bg = SpriteLib.tile('Earth');
 		bg.x = tileSprite.x;
 		bg.y = tileSprite.y;
 		bg.width=grid.tileWidth;
 		bg.height=grid.tileHeight;
 		Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:containerFor.ground});
-		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:containerFor.characters});
+		Game.addSprite({game, sprite:tileSprite, id:tileSprite.id, container:containerFor.characters});
 	} else {
-		Game.addSprite({game, sprite:tileSprite, id:tileSprite.name, container:containerFor.ground});
+		Game.addSprite({game, sprite:tileSprite, id:tileSprite.id, container:containerFor.ground});
 	}
 
 	// make creatures to swim and roam the land?
 	// return; // off for debug
+	if ( ! infested) return;
 	let critter = null;
-	if (cell==='Water' && Math.random() < 0.2) {				
+	if (kindName==='Water' && Math.random() < 0.2) {				
 		if (Math.random() < 0.75) critter = 'Fish';
 		else critter = 'Frog';
 	}
-	if (cell==='Tree' && Math.random() < 0.20) {
+	if (kindName==='Tree' && Math.random() < 0.20) {
 		critter = 'Badger';
 	}
-	if (cell==='Grass' && Math.random() < 0.01) {				
+	if (kindName==='Grass' && Math.random() < 0.01) {				
 		critter = 'Bunny';
 	}
 	if (critter) {
@@ -220,7 +228,7 @@ const setupAfterLoad2_UI = game => {
 	}		
 
 	// Create the inventory bar
-	let icons = 12;
+	let icons = 13;
 	const xOffset = 10, slotWidth=50; 
 	let width = icons*slotWidth + 2*xOffset;
 	const stage = getPApp().stage;
@@ -257,16 +265,30 @@ const setupAfterLoad2_UI = game => {
 		});
 		slot++;
 	}
-	if (false) {	// hit
-		let onClick = () => {};
+
+	/**
+	 * @type {PIXI.Container[]}
+	 * the last one is the active one.
+	 * the first is the next in line
+	 */
+	const pToolbars = [];
+	if (true) {	// hit
+		let doSwitchTools = () => {
+			// rotate ptoolbars
+			const ptoolbar = pToolbars.shift();
+			pToolbars.forEach(pt => pt.visible = false);
+			ptoolbar.visible = true;
+			ptoolbar.alpha = 1; // TODO animate
+			pToolbars.push(ptoolbar);
+		};
 		// gear &#x2699;
 		// next page &#x2398;
 		setupAfterLoad3_UI2_addIcon({
-			game, icon:SpriteLib.icon('Switch'), inventoryBar, slot, xOffset, slotWidth, onClick,
+			game, icon:SpriteLib.icon('Switch'), inventoryBar, slot, xOffset, slotWidth, onClick: doSwitchTools,
 			keyTip:'shift'
 		});
 		let tab = new Key("Shift"); //	"	");
-		tab.press = () => console.warn("x");	
+		tab.press = doSwitchTools;	
 		slot++;
 	}
 
@@ -274,6 +296,7 @@ const setupAfterLoad2_UI = game => {
 	rotatingToolBar1.name = 'rotatingToolBar1';
 	rotatingToolBar1.x = xOffset + slot*slotWidth;
 	inventoryBar.addChild(rotatingToolBar1);
+	pToolbars.push(rotatingToolBar1);
 	// spawns
 	// NB shark is bigger than 48x48
 	let rslot = 0;
@@ -292,10 +315,11 @@ const setupAfterLoad2_UI = game => {
 	});
 	rotatingToolBar1.calculateBounds();
 
-	if (false) {
+	if (true) {
 		let rotatingToolBar2 = new PIXI.Container();	
 		rotatingToolBar2.name = 'rotatingToolBar2';
 		rotatingToolBar2.x = rotatingToolBar1.x;
+		rotatingToolBar2.y = 5;
 		inventoryBar.addChild(rotatingToolBar2);
 		rslot = 0;
 		['Grass','Earth','Water','Tree'].forEach(spawnName => {		
@@ -303,16 +327,22 @@ const setupAfterLoad2_UI = game => {
 			const onClick = e => {
 				console.log("onDown",e, ""+e.target);
 				let player = game.sprites.player0;
-				let birthPlace = player;
-				// copy from Tile to Sprite, and move it
-				let spawn = Game.make(icon.kind, {x:birthPlace.x, y:birthPlace.y});			
+				let {row,column} = Game.getRowColumn(game, player);
+				game.landPlan[row][column] = icon.kind;
+				setupLandTile({rowi:row,coli:column,game,grid,infested:false});
 			};
 			setupAfterLoad3_UI2_addIcon({icon, xOffset:2, slot:rslot, slotWidth, game, inventoryBar:rotatingToolBar2, onClick});
 			console.log(spawnName, icon);
 			rslot++;
 		});
-		rotatingToolBar1.calculateBounds();
+		rotatingToolBar2.calculateBounds();
+		rotatingToolBar2.visible = false;
+		rotatingToolBar2.alpha = 0;
+		pToolbars.push(rotatingToolBar2);
 	}
+	// rotate once to reflect start setup
+	let p1 = pToolbars.shift();
+	pToolbars.push(p1);
 
 	// control ring
 	if (isMobile()) {
@@ -391,7 +421,6 @@ Game.setup = game => {
  * @param {Grid} grid 
  */
 const makeLandPlan = (game, grid) => {
-	// FIXME large maps need sprite management
 	let nrows = 100; //Math.ceil(grid.screenHeight / grid.tileHeight);
 	let ncols = 100; //Math.ceil(grid.screenWidth / grid.tileWidth);
 	grid.width = ncols;

@@ -4,7 +4,7 @@ import Grid from './data/Grid';
 import StopWatch from './StopWatch';
 import Sprite from './data/Sprite';
 import Tile from './data/Tile';
-import { getPSpriteFor, containerFor } from './components/Pixies';
+import { getPSpriteFor, containerFor, getPApp } from './components/Pixies';
 import { collision } from './components/Collision';
 import * as PIXI from 'pixi.js';
 
@@ -16,6 +16,13 @@ Game.update = game => {
 	if ( ! StopWatch.update(game.ticker)) {
 		return;
 	}	
+
+	// pixi ready?
+	const papp = getPApp();
+	if ( ! papp || ! papp.loadFlag) {
+		return;
+	}
+
 	// TODO update stage and sprites
 	Object.values(game.sprites).forEach(s => updateSprite(s,game));
 
@@ -77,8 +84,10 @@ const updateSprite = (s, game) => {
 	if ( ! s.ui && psprite) {
 		if (collision(s, screen)) {
 			psprite.visible = true;
+			s.visible = true;
 		} else {
 			psprite.visible = false;
+			s.visible = false;
 			// HACK - for speed no updates
 			return;
 		}
