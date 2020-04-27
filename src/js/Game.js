@@ -56,7 +56,10 @@ const doSave = game => {
 	console.log("saving... "+game.id);
 	let json = JSON.stringify(game);
 	let data = json; // send a string as post body??
-	let pSave = ServerIO.post('https://calstat.good-loop.com/stash/game/'+game.id, {data});
+	let pSave = ServerIO.post('https://calstat.good-loop.com/stash/game/'+game.id, {
+		data,
+		contentType: 'application/json',
+	});
 	
 	let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
 	if ( ! gameIds.includes(game.id)) {

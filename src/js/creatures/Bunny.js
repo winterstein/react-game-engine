@@ -12,6 +12,8 @@ Bunny.speed = 50;
 
 Bunny.terrains = ['Grass','Earth'];
 
+Bunny.chases = ['Fish'];
+
 Bunny.flees = ['Wolf','Badger'];
 
 

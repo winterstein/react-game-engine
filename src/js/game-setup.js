@@ -25,7 +25,9 @@ import Wood from './creatures/Wood';
 import Frog from './creatures/Frog';
 import Player from './creatures/Player';
 
+import Earth from './creatures/Earth';
 import Grass from './creatures/Grass';
+import Water from './creatures/Water';
 import Tree from './creatures/Tree';
 
 import { addScript } from 'wwutils';
@@ -285,10 +287,8 @@ const setupAfterLoad2_UI = game => {
 		// next page &#x2398;
 		setupAfterLoad3_UI2_addIcon({
 			game, icon:SpriteLib.icon('Switch'), inventoryBar, slot, xOffset, slotWidth, onClick: doSwitchTools,
-			keyTip:'shift'
+			key:'shift'
 		});
-		let tab = new Key("Shift"); //	"	");
-		tab.press = doSwitchTools;	
 		slot++;
 	}
 
@@ -325,13 +325,13 @@ const setupAfterLoad2_UI = game => {
 		['Grass','Earth','Water','Tree'].forEach(spawnName => {		
 			let icon = SpriteLib.tile(spawnName);
 			const onClick = e => {
-				console.log("onDown",e, ""+e.target);
+				// console.log("onDown",e, ""+e.target);
 				let player = game.sprites.player0;
 				let {row,column} = Game.getRowColumn(game, player);
 				game.landPlan[row][column] = icon.kind;
 				setupLandTile({rowi:row,coli:column,game,grid,infested:false});
 			};
-			setupAfterLoad3_UI2_addIcon({icon, xOffset:2, slot:rslot, slotWidth, game, inventoryBar:rotatingToolBar2, onClick});
+			setupAfterLoad3_UI2_addIcon({icon, xOffset:2, slot:rslot, slotWidth, game, inventoryBar:rotatingToolBar2, onClick, key:""+(rslot+1)});
 			console.log(spawnName, icon);
 			rslot++;
 		});
@@ -351,7 +351,7 @@ const setupAfterLoad2_UI = game => {
 };
 
 
-const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick, keyTip}) => {
+const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inventoryBar, onClick, key, keyTip}) => {
 	// use Tile so no updates
 	if ( ! Tile.isa(icon)) {
 		icon = new Tile(icon);
@@ -370,6 +370,11 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 	psprite.on('mousedown', onClick);
 	psprite.on('touchstart', onClick);
 	// key tip
+	if (key) {
+		let k = new Key(key);
+		k.press = onClick;
+		if ( ! keyTip) keyTip = key.toLowerCase();
+	}
 	if (keyTip && ! isMobile()) {
 		const style = new PIXI.TextStyle({
 			fontFamily: 'Arial',

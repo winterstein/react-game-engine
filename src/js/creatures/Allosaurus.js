@@ -14,7 +14,9 @@ Creature.attack = 25;
 
 Creature.terrains = ['Grass','Earth','Water','Tree'];
 
-Creature.chases = ['Meat','Werewolf'];
+Creature.chases = ['Meat','Werewolf','Fish'];
+
+Creature.flees = ['Allosaurus','Frog'];
 
 Creature.updater = 	({sprite, game, dt}) => {
 	// big dinosaurs knock over trees!

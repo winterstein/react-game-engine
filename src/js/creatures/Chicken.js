@@ -4,14 +4,12 @@ const Chicken = new KindOfCreature('Chicken');
 
 Chicken.kingdom = 'animal';
 
-Chicken.sprites = [SpriteLib.chicken(), SpriteLib.chicken(1), SpriteLib.chicken(2)];
+Chicken.sprites = [SpriteLib.chicken(), SpriteLib.chicken(1), SpriteLib.chicken(2),SpriteLib.chicken(3)];
 
 Chicken.speed = 125;
 
-Chicken.terrains = ['Grass','Earth','Water',];
+Chicken.terrains = ['Grass','Earth','Water','Tree'];
 
 Chicken.flees = ['Wolf','Badger','Goose'];
-
-Game.addKind(null, Chicken);
 
 export default Chicken;
