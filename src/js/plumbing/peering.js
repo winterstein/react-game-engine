@@ -27,12 +27,12 @@ const doProcessData = (data, conn) => {
 	// update	
 	DataStore.update();	
 	// syndicate?
-	doSyndicateIfRoom(data,conn);
+	doSyndicateIfHost(data,conn);
 };
 
-const doSyndicateIfRoom = (data, conn) => {
-	let isRoom = ! conn || (conn && conn.metadata.room === pid);
-	if ( ! isRoom) return;
+const doSyndicateIfHost = (data, conn) => {
+	let isHost = ! conn || (conn && conn.metadata.host === pid);
+	if ( ! isHost) return;
 	let conns = peer.connections || {};
 	const conlist = _.flatten(Object.values(conns));
 	conlist.forEach(c => {
@@ -40,24 +40,24 @@ const doSyndicateIfRoom = (data, conn) => {
 	});
 };
 
-let currentRoom = null;
+let currentHost = null;
 /**
  * Idempotent
- * @param {String} room 
+ * @param {String} host 
  */
-const doJoin = (room) => {
-	if (getConnectionTo(room) != null) {
+const doJoin = (host) => {
+	if (getConnectionTo(host) != null) {
 		return;
 	}
-	const metadata = {from:pid, to:room, room, fromxid:Login.getId()};
-	const conn = peer.connect(room, {metadata});
+	const metadata = {from:pid, to:host, host, fromxid:Login.getId()};
+	const conn = peer.connect(host, {metadata});
 	window.myconn = conn;
 	console.log("conn", conn);		
 	conn.on('data', data => doProcessData(data, conn));
 	conn.on('open', () => {
 		DataStore.update();
 	});
-	currentRoom = room;
+	currentHost = host;
 };
 
 
@@ -83,7 +83,7 @@ let callInProgress = null;
  */
 const startAudioCall = (toPeerId) => {
 	if ( ! toPeerId) {
-		toPeerId = currentRoom;
+		toPeerId = currentHost;
 	}
 	if ( ! toPeerId) {
 		notifyUser({type:'error', text:"No destination given"});
@@ -100,9 +100,9 @@ const startAudioCall = (toPeerId) => {
 };
 
 const getPeerId = () => pid;
-const getRoomId = () => currentRoom;
+const getHostId = () => currentHost;
 const getConnections = () => peer.connections;
 
 export {
-	getPeerId, doJoin, startAudioCall, getRoomId, getConnectionTo, getConnections
+	getPeerId, doJoin, startAudioCall, getHostId, getConnectionTo, getConnections
 };

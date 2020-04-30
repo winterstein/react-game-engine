@@ -1,12 +1,14 @@
 
-import Game from './Game';
+import Game, {dist2} from './Game';
 import Grid from './data/Grid';
 import StopWatch from './StopWatch';
 import Sprite from './data/Sprite';
+import KindOfCreature from './creatures/KindOfCreature';
 import Tile from './data/Tile';
 import { getPSpriteFor, containerFor, getPApp } from './components/Pixies';
 import { collision } from './components/Collision';
 import * as PIXI from 'pixi.js';
+import SpriteLib from './data/SpriteLib';
 
 /**
  * @param {!Game} game
@@ -38,6 +40,8 @@ Game.update = game => {
 
 	// focus on X?
 };
+
+
 
 /**
  * The normal updateSprite has already run!

@@ -5,6 +5,13 @@ import DataClass, { nonce } from "../base/data/DataClass";
 import { assMatch } from "sjtest";
 import { getPSpriteFor } from "../components/Pixies";
 
+/**
+ * TODO Provide a shared storage of common info across same-type sprites.
+ *  -- this will make game states much smaller!
+	// TODO move kind, frames, src, etc into here
+*/
+
+
 class KindOfCreature extends DataClass {
 	
 	name;
@@ -27,12 +34,16 @@ class KindOfCreature extends DataClass {
 		super({});
 		assMatch(name, String);
 		this.name = name;
-		Game.addKind(null, this);
+		// Game.addKind(null, this); gets lost on reset, so do it explicitly in setup :(
 	}
 }
 DataClass.register(KindOfCreature, 'KindOfCreature');
 
+
+
 /**
+ * NB: If this fn is set later, then Kinds might not get it as their super.
+ * 
  * Basic updater
  * @param {!Number} dt
  */
@@ -131,6 +142,7 @@ const doDie = (game, sprite) => {
 		let wood = Game.make('Wood', {x:sprite.x, y:sprite.y});
 	}	
 };
+
 
 // NB: allow no-import use
 window.KindOfCreature = KindOfCreature;

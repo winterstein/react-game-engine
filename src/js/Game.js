@@ -320,7 +320,7 @@ Game.kinds = game => game.kinds;
 
 /**
  * @param {?Game} game
- * @param {!KindOfCreature} kind
+ * @param {!KindOfCreature} kind NB: Can be called repeatedly
  */
 Game.addKind = (game, kind) => {
 	if ( ! game) game = Game.get();
@@ -338,7 +338,9 @@ Game.make = (kindName, spriteSettings={}) => {
 	if ( ! kind) {
 		throw new Error("Cannot make "+kindName+" - kind unknown");
 	}	
-	let base = randomPick(kind.sprites) || {};
+	// TODO
+	let v = Math.floor(kind.sprites.length*Math.random());
+	let base = kind.sprites[v] || {}; // TODO store v instead so we can save / ship states?? 
 	// TODO (but: bugs) copy in Kind props - but early, so the end object is a Sprite 
 	const freshBase = Object.assign({}, base, kind);
 	let sprite = new Sprite(freshBase);

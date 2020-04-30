@@ -59,23 +59,33 @@ Game.basicPixiSetup = game => {
 		setPApp(papp);
 		window.app = papp;
 	}
+	
+	if (true) { 
+		// Is repeating this a memory leak?? If so, how should we dispose of old worlds??
+		// Standard containers
+		// a handy container for the game world, to separate it from UI
+		const world = new PIXI.Container();
+		world.setTransform(0,0,grid.screenScale,grid.screenScale);
+		papp.stage.addChild(world);
+		containerFor.world = world;
+		// Tiles for the background
+		// NB: ParticleContainer only works with a single source image!
+		containerFor.ground = new PIXI.Container();
+		world.addChild(containerFor.ground);
+		// Animals
+		containerFor.characters = new PIXI.Container();
+		world.addChild(containerFor.characters);	
+		// UI container
+		containerFor.ui = new PIXI.Container();
+		papp.stage.addChild(containerFor.ui);
+		containerFor.ui.setTransform(0,0,grid.screenScale,grid.screenScale);
+	}
 
-	// a handy container for the game world, to separate it from UI
-	const world = new PIXI.Container();
-	world.setTransform(0,0,grid.screenScale,grid.screenScale);
-	papp.stage.addChild(world);
-	containerFor.world = world;
-	// Tiles for the background
-	// NB: ParticleContainer only works with a single source image!
-	containerFor.ground = new PIXI.Container();
-	world.addChild(containerFor.ground);
-	// Animals
-	containerFor.characters = new PIXI.Container();
-	world.addChild(containerFor.characters);	
-	// UI container
-	containerFor.ui = new PIXI.Container();
-	papp.stage.addChild(containerFor.ui);
-	containerFor.ui.setTransform(0,0,grid.screenScale,grid.screenScale);
+	if (papp.loadFlag) {
+		// e.g. reset world
+		setupAfterLoad(game);
+		return;
+	}
 
 	let srcs = new Set();
 	// creatures
@@ -404,6 +414,27 @@ Game.setup = game => {
 	const grid = Grid.get();
 	grid.width = 30; grid.height = 12;
 	grid.display = '2d';
+
+	// Kinds (needed here for resets)
+	Game.addKind(game, Sheep);
+	Game.addKind(game, Fish);
+	Game.addKind(game, Wolf);
+	Game.addKind(game, Chicken);
+	Game.addKind(game, Bunny);
+	Game.addKind(game, Badger);
+	Game.addKind(game, Goat);
+	Game.addKind(game, Werewolf);
+	Game.addKind(game, Allosaurus);
+	Game.addKind(game, Beaver);
+	Game.addKind(game, Wood);
+	Game.addKind(game, Frog);
+	Game.addKind(game, Player);
+	
+	Game.addKind(game, Earth);
+	Game.addKind(game, Grass);
+	Game.addKind(game, Water);
+	Game.addKind(game, Tree);
+	
 
 	// Load from github?
 	// from github fails addScript("https://raw.githubusercontent.com/winterstein/react-game-engine/master/src/js/creatures/Chicken.js", {});
