@@ -25,7 +25,7 @@ Fish.updater = ({sprite,game,dt}) => {
 	const {row,column} = Game.getRowColumn(game, sprite);
 	const tile = Game.getTile({game, row, column});
 	if (tile && tile.kind !== 'Water') {
-		KindOfCreature.doBite({attack:1}, sprite);
+		KindOfCreature.doBite(Fish, {attack:1}, sprite);
 	}
 
 	// basic behaviour, ie flock

@@ -22,13 +22,13 @@ Player.doAttack = () => {
 	let player = game.sprites.player0;
 	let nearbySprite = Game.getNearest({sprite:player, game, limit:1});
 	if (nearbySprite) {
-		KindOfCreature.doBite(player, nearbySprite);
+		KindOfCreature.doBite(Player, player, nearbySprite);
 		// TODO a sparkle effect on the pickaxe
 	}
 	// chop a tree?
 	let nearbyTile = Game.getNearest({sprite:player, game, types:['Tree'], tile:true, limit:1});
 	if (nearbyTile) {
-		KindOfCreature.doBite(player, nearbyTile);
+		KindOfCreature.doBite(Player, player, nearbyTile);
 	}
 };
 

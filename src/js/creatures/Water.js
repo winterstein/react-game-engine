@@ -6,6 +6,8 @@ import Sprite from '../data/Sprite';
 
 const Water = new KindOfCreature('Water');
 
+Water.bg = true;
+ 
 Water.kingdom = 'mineral';
 
 Water.sprites = [SpriteLib.tile('Water')];

@@ -23,7 +23,7 @@ Creature.updater = 	({sprite, game, dt}) => {
 	const {row,column} = Game.getRowColumn(game, sprite);
 	const tile = Game.getTile({game, row, column});
 	if (tile && tile.kind==='Tree') {
-		KindOfCreature.doBite(sprite, tile);
+		KindOfCreature.doBite(Creature, sprite, tile);
 	}
 	// basic behaviour
 	KindOfCreature.updater({kind:Creature, sprite, game, dt});

@@ -7,6 +7,7 @@ import StopWatch from '../StopWatch';
 import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
 import { getPSpriteFor, getPApp } from '../components/Pixies';
+import KindOfCreature from '../creatures/KindOfCreature';
 
 
 class Animate extends DataClass {
@@ -93,9 +94,9 @@ class Sprite extends DataClass {
 	background;
 
 	/**
-	 * @typedef {Command}
+	 * @typedef {Command[]}
 	 */
-	commands = [];
+	commands;
 
 	/**
 	 * Use with tileSize and tileMargin to populate frames from a sprite-sheet
@@ -114,7 +115,7 @@ class Sprite extends DataClass {
 	/**
 	 * @type {String : Animate} name -> Animate
 	 */
-	animations = {};
+	animations; // = {};
 
 	/**
 	 * @type {Animate}
@@ -261,12 +262,13 @@ Sprite.animate = (sp, a) => {
 		return;	
 	}
 	if (sp.animate && sp.animate.name === a) return;
-	if ( ! sp.animations || ! sp.animations[a]) {
+	const tsp = t(sp);
+	if ( ! tsp.animations || ! tsp.animations[a]) {
 		console.warn("animate() - No animation "+a, sp);
 		return;
 	}
 
-	sp.animate = Object.assign({name:a}, sp.animations[a]); // safety copy
+	sp.animate = Object.assign({name:a}, tsp.animations[a]); // safety copy
 	sp.frame = 0;
 	// console.log("set animation", a, sp, sp.animations[a]);
 };
@@ -303,20 +305,51 @@ Sprite.setPixiProps = sprite => {
 	psprite.x = sprite.x;
 	psprite.y = sprite.y;
 	// set texture - NB: copy otherwise sprites share data and conflict if frame is modified
-	if ( ! sprite.src) return; // eg drawn Graphics
+	const tsprite = t(sprite);
+	if ( ! tsprite.src) return; // eg drawn Graphics
 
 	// texture width & height
 	// TODO detect no-op for speed??
-	const w = (sprite.tileSize && sprite.tileSize[0]) || 48;
-	const h = (sprite.tileSize && sprite.tileSize[1]) || 48;
-	let frame = sprite.frames && sprite.frames[sprite.frameIndex];
+	const w = Sprite.tileWidth(tsprite);
+	const h = Sprite.tileHeight(tsprite);
+	let frame = Sprite.frame(sprite);
 	let tframe = frame? new PIXI.Rectangle(frame[0],frame[1],w,h) : new PIXI.Rectangle(0,0,w,h);
 	const app = getPApp();
-	let pres = app.loader.resources[sprite.src];
-	assert(pres, "Not loaded Pixi resource "+sprite.src);
+	let pres = app.loader.resources[tsprite.src];
+	assert(pres, "Not loaded Pixi resource "+tsprite.src);
 	let texture = new PIXI.Texture(pres.texture, tframe);
 	psprite.texture = texture; //let psprite = new PIXI.Sprite(texture);
 	// scale
 	psprite.width = Sprite.width(sprite);
 	psprite.height = Sprite.height(sprite);
+};
+
+/**
+ * @param {!Sprite} sprite
+ */
+Sprite.tileWidth = sprite => (sprite.tileSize && sprite.tileSize[0]) || 48;
+/**
+ * @param {!Sprite} sprite
+ */
+Sprite.tileHeight = sprite => (sprite.tileSize && sprite.tileSize[1]) || 48;
+/**
+ * @param {!Sprite} sprite
+ */
+Sprite.frame = sprite => {
+	const tsprite = t(sprite);
+	return tsprite.frames && tsprite.frames[sprite.frameIndex];
+};
+
+/**
+ * Get template
+ * @param {Sprite} sprite 
+ * @param {Sprite}
+ */
+const t = sprite => {
+	if ( ! sprite.kind) return sprite;
+	const k = KindOfCreature.kinds[sprite.kind];
+	if ( ! k || ! k.sprites) return sprite;
+	const v = sprite.variant || 0;
+	const template = k.sprites[v];	
+	return template || sprite;
 };

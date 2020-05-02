@@ -1,6 +1,7 @@
 /**
  * Base class for Games
  */
+import pako from 'pako';
 import DataStore from './base/plumbing/DataStore';
 import DataClass, {getClass, nonce} from './base/data/DataClass';
 import Sprite from './data/Sprite';
@@ -13,6 +14,8 @@ import * as PIXI from 'pixi.js';
 import { randomPick } from './base/utils/miscutils';
 import Pixies, { containerFor, setPSpriteFor, getPSpriteFor } from './components/Pixies';
 import ServerIO from './base/plumbing/ServerIOBase';
+import KindOfCreature from './creatures/KindOfCreature';
+
 
 class Game extends DataClass {
 
@@ -25,11 +28,6 @@ class Game extends DataClass {
 
 	/** @type {StopWatch}  */
 	ticker = new StopWatch();
-
-	/**
-	 * @type {String : KindOfCreature}
-	 */
-	kinds = {};
 
 	constructor(base) {
 		super(base);
@@ -55,10 +53,19 @@ const doReset = () => {
 const doSave = game => {
 	console.log("saving... "+game.id);
 	let json = JSON.stringify(game);
-	let data = json; // send a string as post body??
+	console.log("20k",json.substring(0,20000));
+	console.warn("SAVE SIZE: "+(json.length/512)+"k");
+
+	var binaryString = pako.deflate(json, { to: 'string' });
+	let data = binaryString; // send a string as post body??
+	console.warn("BINARY SAVE SIZE: "+(data.length/512)+"k");
+// //
+// // Here you can do base64 encode, make xhr requests and so on.
+// //
+
 	let pSave = ServerIO.post('https://calstat.good-loop.com/stash/game/'+game.id, {
 		data,
-		contentType: 'application/json',
+		// contentType: 'application/json',
 	});
 	
 	let gameIds = JSON.parse(window.localStorage.getItem("gameIds") || "[]");
@@ -81,10 +88,8 @@ const doLoad = gameId => {
 	let pLoad = ServerIO.load('https://calstat.good-loop.com/stash/game/'+gameId);
 	pLoad.then((res) => {
 		console.warn("Loaded",res);
+		// var restored = JSON.parse(pako.inflate(binaryString, { to: 'string' }));
 	});
-	// let json = window.localStorage.getItem("game"+gameId);
-	// if ( ! json) return null;
-	// return JSON.parse(json);
 };
 window.doLoad = doLoad; // debug
 
@@ -110,8 +115,6 @@ Game.init = () => {
 	Game.setup(game);
 
 	// // update loop - use request ani frame
-	// let updater = setInterval(() => { Game.update(); }, game.ticker.tickLength/4); // target 1 tick
-
 	let gameLoop = () => {
 		if (game.isStopped) {
 			return;
@@ -292,9 +295,62 @@ Game.getTile = ({game, row, column}) => {
 };
 
 /**
- * Does NOT include making a PIXI sprite, or setting game.sprites
+ * @deprecated no-op really given Kind constructor does this
+ * @param {?Game} game
+ * @param {!KindOfCreature} kind NB: Can be called repeatedly
  */
-Game.setTile = ({game, row, column, tile}) => {
+Game.addKind = (game, kind) => {
+	if ( ! game) game = Game.get();
+	Game.assIsa(game);
+	KindOfCreature.kinds[kind.name] = kind;
+};
+
+/**
+ * Easy way to make a sprite
+ * @param kindName {!String} name of a KindOfCreature
+ */
+Game.make = (kindName, spriteSettings={}, container) => {
+	const game = Game.get();
+	const kind = KindOfCreature.kinds[kindName];
+	if ( ! kind) {
+		throw new Error("Cannot make "+kindName+" - kind unknown");
+	}
+	
+	let variant = Math.floor(kind.sprites.length*Math.random());
+	let base = kind.sprites[variant] || {}; // TODO store v instead so we can save / ship states?? 	
+	const freshBase = Object.assign({}, base);
+	let sprite = kind.bg? new Tile(freshBase) : new Sprite(freshBase);
+	delete sprite.sprites; // keep our sprite a json blob - no circular refs
+	sprite.kind = kindName;
+	if (variant) sprite.variant = variant; // no need to store most 0s
+	// sprite['@type'] = kind.bg? 'Tile' : 'Sprite';
+	sprite.speed = kind.speed; // HACK
+
+	if (kind.bg) {
+		let {row, column} = spriteSettings;
+		// NB: sets a row_col id
+		Game.make2_Tile({game, row, column, tile:sprite});
+	} else {
+		sprite.id = kindName+nonce();
+	}
+
+	// dont duplicate template stuff
+	delete sprite.frames;
+	delete sprite.animations;
+	delete sprite.src;
+	
+	// special settings? often x and y
+	if (spriteSettings) {
+		sprite = Object.assign(sprite, spriteSettings);
+	}
+	if ( ! container) {
+		container = kind.bg? containerFor.ground : containerFor.characters;
+	}
+	Game.make2_addSprite({game, sprite, container});
+	return sprite;
+};
+
+Game.make2_Tile = ({game, row, column, tile}) => {
 	Sprite.assIsa(tile);
 	const grid = Game.grid(game);
 	const tileWidth = grid.tileWidth;
@@ -310,59 +366,14 @@ Game.setTile = ({game, row, column, tile}) => {
 	if (old) {
 		Game.removeSprite(game, old);
 	}
-	// game.sprites[tile.name] = tile; Done in Game.addSprite
 };
 
-/**
- * @param {!Game} game
- */
-Game.kinds = game => game.kinds;
-
-/**
- * @param {?Game} game
- * @param {!KindOfCreature} kind NB: Can be called repeatedly
- */
-Game.addKind = (game, kind) => {
-	if ( ! game) game = Game.get();
-	Game.assIsa(game);
-	game.kinds[kind.name] = kind;
-};
-
-/**
- * Easy way to make a sprite
- * @param kindName {!String} name of a KindOfCreature
- */
-Game.make = (kindName, spriteSettings={}) => {
-	const game = Game.get();
-	const kind = game.kinds[kindName];
-	if ( ! kind) {
-		throw new Error("Cannot make "+kindName+" - kind unknown");
-	}	
-	// TODO
-	let v = Math.floor(kind.sprites.length*Math.random());
-	let base = kind.sprites[v] || {}; // TODO store v instead so we can save / ship states?? 
-	// TODO (but: bugs) copy in Kind props - but early, so the end object is a Sprite 
-	const freshBase = Object.assign({}, base, kind);
-	let sprite = new Sprite(freshBase);
-	delete sprite.sprites; // keep our sprite a json blob - no circular refs
-	sprite.kind = kindName;
-	sprite['@type'] = 'Sprite';
-	sprite.speed = kind.speed; // HACK
-	sprite.attack = kind.attack; // HACK
-	const id = kindName+nonce();
-	// special settings? often x and y
-	if (spriteSettings) {
-		sprite = Object.assign(sprite, spriteSettings);
-	}
-	Game.addSprite({game, sprite, id, container:containerFor.characters});
-	return sprite;
-};
 
 /**
  * Add a sprite to game, plus make a Pixi sprite and add to container.
  * @param {?String} id a nonce will be made if blank. Cannot be a duplicate
  */
-Game.addSprite = ({game, sprite, id, container}) => {
+Game.make2_addSprite = ({game, sprite, id, container}) => {
 	Game.assIsa(game);
 	Sprite.assIsa(sprite);
 	if (id) sprite.id = id;

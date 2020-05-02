@@ -57,7 +57,7 @@ const GameAdmin = ({world}) => {
 							onClick={e => doShare(e, this)}
 						>{getPeerId()}</a>
 					</h4>
-					<h4>This World is known as: {world}</h4>
+					<h4>This World is known as: {world} {Game.get().id}</h4>
 					<div><Button onClick={() => doSave(Game.get())}>Save World</Button></div>
 					<div><Button onClick={doNewWorld}>New World</Button></div>
 					<div><Button onClick={doLoadWorld}>Load World</Button></div>

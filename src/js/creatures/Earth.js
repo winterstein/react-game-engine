@@ -5,7 +5,7 @@ import Sprite from '../data/Sprite';
 
 
 const Earth = new KindOfCreature('Earth');
-
+Earth.bg = true;
 Earth.kingdom = 'mineral';
 
 Earth.sprites = [SpriteLib.tile('Earth')];

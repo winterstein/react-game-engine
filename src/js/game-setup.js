@@ -22,6 +22,7 @@ import Werewolf from './creatures/Werewolf';
 import Allosaurus from './creatures/Allosaurus';
 import Beaver from './creatures/Beaver';
 import Wood from './creatures/Wood';
+import Meat from './creatures/Meat';
 import Frog from './creatures/Frog';
 import Player from './creatures/Player';
 
@@ -89,7 +90,7 @@ Game.basicPixiSetup = game => {
 
 	let srcs = new Set();
 	// creatures
-	let creatures = Game.kinds(game);
+	let creatures = KindOfCreature.kinds;
 	Object.values(creatures).forEach(c => {
 		if (c.sprites) {
 			c.sprites.forEach(s => srcs.add(s.src));
@@ -158,19 +159,12 @@ const setupAfterLoad2_land = game => {
 
 const setupLandTile = ({rowi, coli, game, grid, infested}) => {
 	let kindName = game.landPlan[rowi][coli];
-
-	let tileSprite = SpriteLib.tile(kindName);
-	Game.setTile({game, row:rowi, column:coli, tile:tileSprite});
+	let tileSprite;
 	if (kindName==='Tree') { // HACK
-		let bg = SpriteLib.tile('Earth');
-		bg.x = tileSprite.x;
-		bg.y = tileSprite.y;
-		bg.width=grid.tileWidth;
-		bg.height=grid.tileHeight;
-		Game.addSprite({game, sprite:bg, id:'bg'+nonce(), container:containerFor.ground});
-		Game.addSprite({game, sprite:tileSprite, id:tileSprite.id, container:containerFor.characters});
+		tileSprite = Game.make('Earth', {row:rowi, column:coli});
+		let treeSprite = Game.make('Tree', {x:tileSprite.x, y:tileSprite.y});
 	} else {
-		Game.addSprite({game, sprite:tileSprite, id:tileSprite.id, container:containerFor.ground});
+		tileSprite = Game.make(kindName, {row:rowi, column:coli});
 	}
 
 	// make creatures to swim and roam the land?
@@ -194,11 +188,11 @@ const setupLandTile = ({rowi, coli, game, grid, infested}) => {
 
 
 const setupAfterLoad2_Player = game => {
-	let sprite = Game.addSprite({game, sprite:SpriteLib.goose(), id:"player0", container:game.characters});
+	let sprite = Game.make('Player', {id:"player0"});
+	assert(sprite.id === "player0", sprite);
 	const grid = Game.grid(game);
 	sprite.x = grid.vw*45;
 	sprite.y = grid.vh*45;
-	sprite.attack = 100; // 1 hit kill
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);
@@ -371,8 +365,10 @@ const setupAfterLoad3_UI2_addIcon = ({icon, xOffset, slot, slotWidth, game, inve
 		}
 	}
 	icon.ui = true; // mark it as UI
-	icon.x = xOffset + slot*slotWidth;
-	Game.addSprite({game, sprite:icon, container:inventoryBar});	
+	icon.x = xOffset + slot*slotWidth;	
+	Game.make2_addSprite({game, sprite:icon, container:inventoryBar});	
+	delete icon.frames;
+	delete icon.animations;
 	// Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
 	const psprite = getPSpriteFor(icon);
 	psprite.interactive = true;

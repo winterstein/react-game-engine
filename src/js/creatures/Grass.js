@@ -5,7 +5,7 @@ import Sprite from '../data/Sprite';
 
 
 const Grass = new KindOfCreature('Grass');
-
+Grass.bg = true;
 Grass.kingdom = 'vegetable';
 
 Grass.sprites = [SpriteLib.tile('Grass')];
