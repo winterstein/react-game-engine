@@ -21,6 +21,7 @@ import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
 import FullScreenButton from './FullScreenButton';
+import ConsequencesPage from './ConsequencesPage';
 
 // DataStore
 C.setupDataStore();
@@ -31,6 +32,7 @@ const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
 	pixi: PixiPage,
+	consequences: ConsequencesPage,
 	hat: HatPage
 };
 
