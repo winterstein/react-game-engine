@@ -1,12 +1,18 @@
 
 import Peer from 'peerjs';
 import Login from 'you-again';
+import _ from 'lodash';
 import DataStore from '../base/plumbing/DataStore';
-import { nonce } from '../base/data/DataClass';
+import { nonce, getType } from '../base/data/DataClass';
 import { notifyUser } from '../base/plumbing/Messaging';
 
 
 class Room {
+
+	constructor() {
+		this['@type'] = 'Room';
+	}
+
 	/**
 	 * @type {String}
 	 */
@@ -16,22 +22,50 @@ class Room {
 	 */	
 	host;
 	/**
-	 * @type {{peerId}[]}
+	 * @type {String[]}
 	 */
-	members;
+	memberIds = [];
 
-	chat;
+	members = [];
+
+	chats = [];
+
+	open;
 	
 	state = {};
 }
+window.Room = Room;
+
+class Chat {
+	from;
+	text;
+}
+
 
 Room.create = () => {	
 	let room = new Room();
 	room.id = getPeerId();
+	room.open = true;
 	let u = getUser();
+	room.memberIds = [getPeerId()];
 	room.members = [u];
 	console.log("Room.create", room);
+
+	peer.on('connection', connb => {			
+		console.log("connection", connb);
+		window.myconnb = connb;
+		wireUpConnection(connb, room);
+	});
+
+	roomUpdate(room);
+
 	return room;
+};
+
+const roomUpdate = room => {
+	if ( ! room.open) return;
+	doSyndicate(room);
+	setTimeout(() => roomUpdate(room), 5000);
 };
 
 const getUser = () => {
@@ -40,24 +74,35 @@ const getUser = () => {
 	return u;
 };
 
-Room.update = ({room, state}) => {
+Room.updateState = (room, state) => {
 	room.state = Object.assign(room.state, state);
 	if (Room.isHost()) {
-		let conns = peer.connections || {};
-		const conlist = _.flatten(Object.values(conns));
-		conlist.forEach(c => {
-			sendData(c, state);
-		});	
+		doSyndicate(room);
 		return;
 	}
 	let conn = getConnectionTo(room.host);
 	sendData(conn, state);
 };
+
+Room.sendChat = (room, text) => {
+	const chat = new Chat();
+	chat.text = text;
+	chat.from = getPeerId();
+	
+	room.chats.push(chat);
+
+	if (Room.isHost()) {
+		doSyndicate(room);
+		return;
+	}
+
+	let conn = getConnectionTo(room.host);
+	sendData(conn, chat);
+};
+
 Room.enter = id => {	
-	let room = new Room();
-	room.id = id;
 	console.log("Room.enter", id, room);
-	doJoin(id);
+	let room = doJoin(id);
 	return room;
 };
 Room.exit = room => {
@@ -76,7 +121,8 @@ Room.setOnChange = (room, fn) => oncForRoomId[room.id] = fn;
 
 const sendData = (c, data) => {
 	console.log("send", data, "to", c.metadata); 
-	c.send(data);
+	let d = Object.assign({}, data); // non-object eg Room causes bug??
+	c.send(d);
 };
 
 /**
@@ -95,34 +141,52 @@ const getConnectionTo = (pid) => {
 	return consToPid[0];
 };
 
-const doProcessData = (data, conn) => {
+const doProcessData = (data, conn, room) => {
 	// Will print 'hi!'
 	console.log("YEH data!", data, "from", conn && conn.metadata);
-	if (data.type === 'chat') {
-		let chats = DataStore.getValue(['misc','chat','history']) || [];
-		chats.push(data);
-		DataStore.setValue(['misc','chat','history'], chats);
+	const dtype = getType(data);
+	if (dtype === 'Room') {
+		if ( ! Room.isHost()) {
+			Object.assign(room, data);
+		}
 	}
-	if (onData) onData(data, conn);
+	if (dtype === 'chat') {
+		if ( ! room.chats) room.chats = [];
+		room.chats.push(data);
+	}
 	// update	
 	DataStore.update();	
 	// syndicate?
-	doSyndicateIfHost(data,conn);
+	if (Room.isHost(room)) {
+		doSyndicate(data);
+	}
 };
 
-let onData = null;
-const setOnData = fn => onData=fn;
-let onConnect = null;
-const setOnConnect = fn => onConnect=fn;
+/**
+ * 
+ * @param {*} conn 
+ * @param {Room} room 
+ */
+const onConnect = (conn, room) => {
+	console.log("onConnect", conn, room);
+	let m = conn.peer;
+	if ( ! room.memberIds.includes(m)) {
+		room.memberIds.push(m);
+	}
+};
+const onError = (e, conn) => {
+	console.error("error", e, conn);
+};
+const onClose = conn => {
+	console.error(conn);
+};
 
 
-const doSyndicateIfHost = (data, conn) => {
-	let isHost = ! conn || (conn && conn.metadata.host === pid);
-	if ( ! isHost) return;
+const doSyndicate = data => {
 	let conns = peer.connections || {};
 	const conlist = _.flatten(Object.values(conns));
 	conlist.forEach(c => {
-		c.send(data);
+		sendData(c, data);
 	});
 };
 
@@ -135,34 +199,27 @@ const doJoin = (host) => {
 	if (getConnectionTo(host) != null) {
 		return;
 	}
+	let room = new Room();
+	room.id = host;
 	const metadata = {from:pid, to:host, host, fromxid:Login.getId()};
 	const conn = peer.connect(host, {metadata});
 	window.myconn = conn;
-	console.log("conn", conn);		
-	conn.on('data', data => doProcessData(data, conn));
-	conn.on('open', () => {
-		if (onConnect) onConnect(conn);
-		DataStore.update();
-	});
+	console.log("conn", conn);
+	wireUpConnection(conn, room);
 	currentHost = host;
+	return room;
+};
+
+const wireUpConnection = (conn, room) => {
+	conn.on('data', data => doProcessData(data, conn, room));
+	conn.on('open', () => onConnect(conn, room));
+	conn.on('close', () => onClose(conn, room));
+	conn.on('error', e => onError(e, conn, room));
 };
 
 
-let initFlag = false;
 const pid = nonce(4).toLowerCase();
 const peer = new Peer(pid);
-const init = () => {
-	if (initFlag) return;
-	initFlag = true;		
-	peer.on('connection', connb => {			
-		console.log("connection", connb);
-		window.myconnb = connb;
-		if (onConnect) onConnect(connb);
-		connb.on('data', data => doProcessData(data, connb));
-		connb.send("yes?");
-	});
-};
-init();
 
 let callInProgress = null;
 /**
@@ -203,6 +260,5 @@ const getConnectionsList = () => {
 
 export {
 	Room,
-	getPeerId, doJoin, startAudioCall, getHostId, getConnectionTo, getConnections, getConnectionsList,
-	setOnData, setOnConnect
+	getPeerId, doJoin, startAudioCall, getHostId, getConnectionTo, getConnections, getConnectionsList
 };

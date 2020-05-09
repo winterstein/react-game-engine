@@ -21,14 +21,13 @@ import StopWatch from '../StopWatch';
 import PropControl, { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody } from 'reactstrap';
+import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container } from 'reactstrap';
 import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
 import {Room,getPeerId} from '../plumbing/peering';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 
 // Game states: Name -> Create / Join -> Start -> Enter -> Deliver stories
-let theRoom;
 
 /**
  * @param {String} world
@@ -36,13 +35,21 @@ let theRoom;
 const ConsequencesPage = () => {
 	let wpath = ['misc','consequences'];
 	let pid = getPeerId();	
+	let join = DataStore.getUrlValue('join');
+	let roomId = DataStore.getValue('misc','roomId');
 
-	if ( ! theRoom) {
-		return <Entrance />;
+	let theRoom = roomId? DataStore.getValue('data','Room',roomId) : null;
+
+	if ( ! theRoom) {		
+		if (join) {
+			theRoom = joinRoom(join);
+		} else {
+			return <Entrance />;
+		}
 	}
 
-	if ( ! theRoom.state.stage || theRoom.state.stage === 'open') {
-		return <RoomOpen />;
+	if ( ! theRoom.state || ! theRoom.state.stage || theRoom.state.stage === 'lobby') {
+		return <RoomOpen room={theRoom} />;
 	}
 
 	return (<>
@@ -52,29 +59,33 @@ const ConsequencesPage = () => {
 
 const Entrance = () => {
 	return (
-	<><PropControl path={['misc','player']} prop='name' label='Your Name' />
-			
-		<Card>
-			<CardBody>
-				<PropControl prop='room' label='Room ID' />
-				<Button onClick={joinRoom}>Join Room</Button>
-			</CardBody>
-		</Card>
-
-		<Button onClick={createRoom}>Create Room</Button>
-
-		Room: {JSON.stringify(theRoom)}
-		</>);
+		<Container>
+			<PropControl path={['misc','player']} prop='name' label='Your Name' />	
+			<Row>
+				<Col>
+					<Card>
+						<CardBody>
+							<PropControl prop='room' label='Room ID' />
+							<Button onClick={() => joinRoom(DataStore.getUrlValue('room'))}>Join Room</Button>
+						</CardBody>
+					</Card>
+				</Col>
+				<Col>
+					<Button onClick={createRoom}>Create Room</Button>
+				</Col>
+			</Row>	
+		</Container>);
 };
 
-const RoomOpen = ({roomId}) => {
+const RoomOpen = ({room}) => {
+	const roomId = room.id;
 	// onClick={e => doShare(e, this)
 	return 	<><a data-sharetext='Join my goose' data-sharetitle='Join my goose'
-	href={window.location} >Share {roomId}</a>
+	href={window.location+"?join="+roomId} >Share {roomId}</a>
 
-	<h2>{Room.isHost(theRoom)? "Host" : "Guest"}</h2>
+	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
 	
-	Room: {JSON.stringify(theRoom)}
+	Room: {JSON.stringify(room)}
 	</>;
 };
 
@@ -82,11 +93,15 @@ const RoomOpen = ({roomId}) => {
 setInterval(() => DataStore.update({}), 500);
 
 const createRoom = () => {
-	theRoom = Room.create();
+	let theRoom = Room.create();
+	DataStore.setValue(['data','Room', theRoom.id], theRoom);
+	DataStore.setValue(['misc','roomId'], theRoom.id);
 };
-const joinRoom = () => {
-	let roomId = DataStore.getUrlValue('room');
-	theRoom = Room.enter(roomId);
+const joinRoom = (roomId) => {
+	let theRoom = Room.enter(roomId);
+	DataStore.setValue(['data','Room', theRoom.id], theRoom, false);
+	DataStore.setValue(['misc','roomId'], theRoom.id, false);
+	return theRoom;
 };
 
 
