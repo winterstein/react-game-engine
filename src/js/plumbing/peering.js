@@ -96,6 +96,7 @@ const getUser = () => {
 	return u;
 };
 
+
 Room.sendRoomUpdate = room => {
 	assert(room);
 	assert(room.id, "No host?!", room);
@@ -117,15 +118,12 @@ Room.sendRoomUpdate = room => {
 	sendData(conn, room, room);
 };
 
+
 Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);
-	if (Room.isHost(room)) {
-		doSyndicate(room);
-		return;
-	}
-	let conn = getConnectionTo(room.id);
-	sendData(conn, state);
+	Room.sendRoomUpdate(room);
 };
+
 
 Room.sendChat = (room, text) => {
 	assert(room && text, room,text);
@@ -137,21 +135,7 @@ Room.sendChat = (room, text) => {
 
 	room.chats.push(chat);
 
-	if (Room.isHost(room)) {
-		doSyndicate(room);
-		return;
-	}
-
-	let conn = getConnectionTo(room.id);
-	if ( ! conn) {
-		console.warn("No connection to host - try to join...",room);
-		doJoin(room.id);
-		conn = getConnectionTo(room.id);
-		if ( ! conn) {
-			throw new Error("Cannot connect to "+room.id);
-		}
-	}
-	sendData(conn, chat, room);
+	Room.sendRoomUpdate(room);
 };
 
 Room.enter = id => {	
@@ -205,14 +189,15 @@ const getConnectionTo = (pid) => {
 
 const doProcessData = (data, conn, room) => {
 	// Will print 'hi!'
-	console.log("YEH data!", data, "from", conn && conn.metadata);
+	console.log("doProcessData!", data, "from", conn && conn.metadata);
 	const dtype = getType(data);
 	if (dtype === 'Room') {
-		if ( ! Room.isHost(room)) {
-			Object.assign(room, data);
-		}
+		Object.assign(room, data);
+		DataStore.setValue(['data','Room',room.id], room);
+		console.log("...doProcessData Room", data, "from", conn && conn.metadata);
 	}
 	if (dtype === 'Chat') {
+		console.log("...doProcessData Chat", data, "from", conn && conn.metadata);
 		if ( ! room.chats) room.chats = [];
 		room.chats.push(data);
 	}
@@ -246,6 +231,7 @@ const onClose = conn => {
 
 
 const doSyndicate = (data, room) => {
+	console.log("doSyndicate", data);
 	let conns = peer.connections || {};
 	const conlist = _.flatten(Object.values(conns));
 	conlist.forEach(c => {
@@ -262,7 +248,8 @@ const doSyndicate = (data, room) => {
  * @param {String} host 
  */
 const doJoin = (host) => {
-	if (getConnectionTo(host) != null) {
+	const oldCon = getConnectionTo(host);
+	if (oldCon != null && oldCon.open) {
 		return;
 	}
 	let room = new Room();

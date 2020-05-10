@@ -42,7 +42,7 @@ const LobbyPage = () => {
 	let roomId = DataStore.getValue('misc','roomId');
 
 	let room = roomId? DataStore.getValue('data','Room',roomId) : null;
-
+	
 	if ( ! room) {		
 		if (join) {
 			room = joinRoom(join);
@@ -114,6 +114,7 @@ const Peep = ({pid,room}) => {
 
 const doStart = room => {
 	room.state.stage = 'game';
+	Room.sendStateUpdate(room, room.state);
 };
 
 const Chatter = ({room}) => {

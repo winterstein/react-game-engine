@@ -7,7 +7,7 @@ import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import SJTest, {assert} from 'sjtest';
 import Login from 'you-again';
-import DataStore, { getValue } from '../base/plumbing/DataStore';
+import DataStore, { getValue, setValue } from '../base/plumbing/DataStore';
 import C from '../C';
 import Game, { doLoad, doSave, doReset } from '../Game';
 import _setup from '../game-setup';
@@ -30,14 +30,26 @@ import { stopEvent } from '../base/utils/miscutils';
 
 // Game states: Name -> Create / Join -> Start -> Enter -> Deliver stories
 
+
 /**
  * @param {String} world
  */
-const ConsequencesGame = ({room}) => {
+const ConsequencesGame = ({room}) => {	
+	let myId = getPeerId();
+	const statePath = ['data','Room',room.id,'state'];
+	
+	let myAnswersPath = statePath.concat(['answers', myId]);
+	let myAnswers = getValue(myAnswersPath);
+
 	return (<div>
 		<h2>Consequences Game</h2>
+		
+		<div>
+			<PropControl label='He said' path={myAnswersPath} prop={0} />
+		</div>
+
 		TODO
-		</div>);		
+	</div>);		
 };
 
 export default ConsequencesGame;
