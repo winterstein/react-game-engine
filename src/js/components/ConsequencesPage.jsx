@@ -84,7 +84,12 @@ const RoomOpen = ({room}) => {
 	href={window.location+"?join="+roomId} >Share {roomId}</a>
 
 	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
-	
+
+	<PropControl path={['misc','chat']} prop='text' />
+	<Button onClick={() => {
+		Room.sendChat(room, DataStore.getValue('misc','chat','text'));
+	}} >Send</Button>
+
 	Room: {JSON.stringify(room)}
 	</>;
 };

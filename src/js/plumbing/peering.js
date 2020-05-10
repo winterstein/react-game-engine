@@ -76,7 +76,7 @@ const getUser = () => {
 
 Room.updateState = (room, state) => {
 	room.state = Object.assign(room.state, state);
-	if (Room.isHost()) {
+	if (Room.isHost(room)) {
 		doSyndicate(room);
 		return;
 	}
@@ -91,7 +91,7 @@ Room.sendChat = (room, text) => {
 	
 	room.chats.push(chat);
 
-	if (Room.isHost()) {
+	if (Room.isHost(room)) {
 		doSyndicate(room);
 		return;
 	}
@@ -113,7 +113,7 @@ Room.exit = room => {
 	let conn = getConnectionTo(room.host);
 	conn.close();
 };
-Room.isHost = room => room && getPeerId() === room.id;
+Room.isHost = room => getPeerId() === room.id;
 
 const oncForRoomId = {};
 Room.setOnChange = (room, fn) => oncForRoomId[room.id] = fn;
