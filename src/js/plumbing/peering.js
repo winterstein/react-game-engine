@@ -55,12 +55,12 @@ Room.create = () => {
 		wireUpConnection(connb, room);
 	});
 
-	roomUpdate(room);
+	roomUpdateFromHost(room);
 
 	return room;
 };
 
-const roomUpdate = room => {
+const roomUpdateFromHost = room => {
 	if ( ! room.open) return;
 	assert(Room.isHost(room), room);
 	// connection status?
@@ -87,7 +87,7 @@ const roomUpdate = room => {
 		console.log(pid, m, conn);		
 	});
 	doSyndicate(room, room);
-	setTimeout(() => roomUpdate(room), 5000);
+	setTimeout(() => roomUpdateFromHost(room), 5000);
 };
 
 const getUser = () => {
@@ -96,7 +96,28 @@ const getUser = () => {
 	return u;
 };
 
-Room.updateState = (room, state) => {
+Room.sendRoomUpdate = room => {
+	assert(room);
+	assert(room.id, "No host?!", room);
+
+	if (Room.isHost(room)) {
+		doSyndicate(room);
+		return;
+	}
+
+	let conn = getConnectionTo(room.id);
+	if ( ! conn) {
+		console.warn("No connection to host - try to join...",room);
+		doJoin(room.id);
+		conn = getConnectionTo(room.id);
+		if ( ! conn) {
+			throw new Error("Cannot connect to "+room.id);
+		}
+	}
+	sendData(conn, room, room);
+};
+
+Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);
 	if (Room.isHost(room)) {
 		doSyndicate(room);
@@ -151,9 +172,16 @@ Room.isHost = room => getPeerId() === room.id;
 const oncForRoomId = {};
 Room.setOnChange = (room, fn) => oncForRoomId[room.id] = fn;
 
+Room.member = (room, peerId) => {
+	return room.members[peerId];
+};
 
 const sendData = (c, data, room) => {
 	assert(c && data, c,data,room);
+	if ( ! c.open) {
+		doJoin(c.peer);
+		c = getConnectionTo(c.peer);
+	}
 	console.log("send", data, "to", c.metadata); 
 	let d = Object.assign({}, data); // non-object eg Room causes bug?? But what about nested non-objects :(
 	c.send(d);

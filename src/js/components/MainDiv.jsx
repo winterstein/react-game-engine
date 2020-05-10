@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Login from 'you-again';
 import { assert } from 'sjtest';
-import { modifyHash } from 'wwutils';
+import { modifyHash } from '../base/utils/miscutils';
 import _ from 'lodash';
 // Plumbing
 import DataStore from "../base/plumbing/DataStore";
@@ -21,7 +21,7 @@ import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
 import FullScreenButton from './FullScreenButton';
-import ConsequencesPage from './ConsequencesPage';
+import LobbyPage from './LobbyPage';
 
 // DataStore
 C.setupDataStore();
@@ -32,7 +32,7 @@ const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
 	pixi: PixiPage,
-	consequences: ConsequencesPage,
+	consequences: LobbyPage,
 	hat: HatPage
 };
 
