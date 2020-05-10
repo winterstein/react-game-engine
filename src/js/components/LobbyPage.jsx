@@ -67,13 +67,17 @@ const LobbyPage = () => {
 
 
 const Entrance = ({join}) => {
+	if (join) {
+		DataStore.setValue(['widget','Lobby','room'], join);
+	}
+	
 	return (<>
 		<PropControl path={['misc','player']} prop='name' label='Your Name' />	
 		<Row>
 			<Col>
 				<Card>
 					<CardBody>
-						<PropControl path={['widget','Lobby']} prop='room' label='Room ID' value={join} />
+						<PropControl path={['widget','Lobby']} prop='room' label='Room ID' />
 						<Button onClick={() => joinRoom(join || DataStore.getValue('widget','Lobby','room'))}>Join Room</Button>
 					</CardBody>
 				</Card>
