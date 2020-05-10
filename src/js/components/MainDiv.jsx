@@ -16,7 +16,6 @@ import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
 import PixiPage from './PixiPage';
-import HatPage from './HatPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
@@ -33,7 +32,6 @@ const PAGES = {
 	test: TestPage,
 	pixi: PixiPage,
 	consequences: LobbyPage,
-	hat: HatPage
 };
 
 const DEFAULT_PAGE = 'pixi';

@@ -28,6 +28,7 @@ class Room {
 	chats = [];
 
 	open;
+	closed;
 	
 	state = {};
 }
@@ -61,8 +62,13 @@ Room.create = () => {
 };
 
 const roomUpdateFromHost = room => {
-	if ( ! room.open) return;
 	assert(Room.isHost(room), room);
+	if (room.closed) {
+		console.warn("Cancel roomUpdateFromHost! "+room.id,room);
+		return;
+	}
+	// do it again (set early in case of errors below)
+	setTimeout(() => roomUpdateFromHost(room), 5000);	
 	// connection status?
 	room.memberIds.forEach(pid => {
 		let m = room.members[pid];
@@ -74,7 +80,7 @@ const roomUpdateFromHost = room => {
 			m.connection = true; // self!
 			return;
 		}
-		let conn = getConnectionTo(pid);
+		let conn = getExistingConnectionTo(pid);
 		if ( ! conn) {
 			m.connection = false;
 			return;
@@ -86,8 +92,7 @@ const roomUpdateFromHost = room => {
 		m.connection = true;
 		console.log(pid, m, conn);		
 	});
-	doSyndicate(room, room);
-	setTimeout(() => roomUpdateFromHost(room), 5000);
+	doSyndicate(room, room);	
 };
 
 const getUser = () => {
@@ -106,15 +111,7 @@ Room.sendRoomUpdate = room => {
 		return;
 	}
 
-	let conn = getConnectionTo(room.id);
-	if ( ! conn) {
-		console.warn("No connection to host - try to join...",room);
-		doJoin(room.id);
-		conn = getConnectionTo(room.id);
-		if ( ! conn) {
-			throw new Error("Cannot connect to "+room.id);
-		}
-	}
+	let conn = getExistingConnectionTo(room.id);	
 	sendData(conn, room, room);
 };
 
@@ -138,9 +135,9 @@ Room.sendChat = (room, text) => {
 	Room.sendRoomUpdate(room);
 };
 
-Room.enter = id => {	
+Room.enter = (id, user) => {	
 	console.log("Room.enter", id, room);
-	let room = doJoin(id);
+	let room = doJoin(id, user);
 	return room;
 };
 Room.exit = room => {
@@ -148,23 +145,28 @@ Room.exit = room => {
 		// ?
 		return; 
 	}
-	let conn = getConnectionTo(room.id);
+	let conn = getExistingConnectionTo(room.id);
 	conn.close();
 };
 Room.isHost = room => getPeerId() === room.id;
-
-const oncForRoomId = {};
-Room.setOnChange = (room, fn) => oncForRoomId[room.id] = fn;
 
 Room.member = (room, peerId) => {
 	return room.members[peerId];
 };
 
+const sendDataQ = [];
+
 const sendData = (c, data, room) => {
 	assert(c && data, c,data,room);
 	if ( ! c.open) {
+		console.warn("not open", c);
 		doJoin(c.peer);
-		c = getConnectionTo(c.peer);
+		// sendDataQ
+		setTimeout(() => {
+			let c2 = getExistingConnectionTo(c.peer);
+			sendData(c2,data, room);
+		},100);
+		return;
 	}
 	console.log("send", data, "to", c.metadata); 
 	let d = Object.assign({}, data); // non-object eg Room causes bug?? But what about nested non-objects :(
@@ -176,7 +178,7 @@ const sendData = (c, data, room) => {
  * @param {String} pid 
  * @returns {?Peer.DataConnection}
  */
-const getConnectionTo = (pid) => {
+const getExistingConnectionTo = (pid) => {
 	if ( ! pid) return null;
 	let conns = peer.connections;
 	console.warn(peer, conns);
@@ -187,22 +189,26 @@ const getConnectionTo = (pid) => {
 	return consToPid[0];
 };
 
-const doProcessData = (data, conn, room) => {
+const onData = (data, conn, room) => {
 	// Will print 'hi!'
-	console.log("doProcessData!", data, "from", conn && conn.metadata);
+	console.log("onData!", data, "from", conn && conn.metadata);
 	const dtype = getType(data);
 	if (dtype === 'Room') {
-		Object.assign(room, data);
-		DataStore.setValue(['data','Room',room.id], room);
-		console.log("...doProcessData Room", data, "from", conn && conn.metadata);
+		// merge in
+		let ns = {data:{Room:{[room.id]: data}}};
+		DataStore.update(ns);
+		// DataStore.setValue(['data','Room',room.id], room);
+		console.log("...onData Room", data, "from", conn && conn.metadata);
 	}
 	if (dtype === 'Chat') {
-		console.log("...doProcessData Chat", data, "from", conn && conn.metadata);
+		console.log("...onData Chat", data, "from", conn && conn.metadata);
 		if ( ! room.chats) room.chats = [];
 		room.chats.push(data);
 	}
+	
 	// update	
-	DataStore.update();	
+	onChange();
+
 	// syndicate?
 	if (Room.isHost(room)) {
 		doSyndicate(data);
@@ -215,20 +221,29 @@ const doProcessData = (data, conn, room) => {
  * @param {Room} room 
  */
 const onConnect = (conn, room) => {
+	conn.didOpen = true; // so we can tell between closed and opening
 	console.log("onConnect", conn, room);
 	let m = conn.peer;
 	if ( ! room.memberIds.includes(m)) {
 		room.memberIds.push(m);
 	}
 	room.members[m] = conn.metadata || {};
+	onChange();
 };
 const onError = (e, conn) => {
+	conn.didError = true;
 	console.error("error", e, conn);
+	onChange();
 };
 const onClose = conn => {
+	conn.didClose = true;
 	console.error(conn);
+	onChange();
 };
 
+const onChange = () => {
+	DataStore.update();
+};
 
 const doSyndicate = (data, room) => {
 	console.log("doSyndicate", data);
@@ -247,34 +262,58 @@ const doSyndicate = (data, room) => {
  * Idempotent
  * @param {String} host 
  */
-const doJoin = (host) => {
-	const oldCon = getConnectionTo(host);
-	if (oldCon != null && oldCon.open) {
-		return;
+const doJoin = (host, user={}) => {
+	const oldCon = getExistingConnectionTo(host);
+	if (oldCon) {
+		if (oldCon.open) {
+			return;
+		}
+		if ( ! oldCon.didOpen && ! oldCon.didError && ! oldCon.didError) {
+			let rs = oldCon.dataChannel.readyState;
+			if (rs==="connecting") {
+				console.warn("oldCon _probably_ opening", oldCon);		
+				return;
+			}
+		}
+		console.warn("oldCon not open", oldCon);		
 	}
 	let room = new Room();
 	room.id = host;
-	let u = Login.getUser() || {};
-	const metadata = {from:pid, to:host, host, fromxid:Login.getId(), ...u};
-	const conn = peer.connect(host, {metadata});
-	window.myconn = conn;
-	console.log("conn", conn);
+	const metadata = {from:pid, to:host, host, fromxid:Login.getId(), ...user};
+	console.log("doJoin connect "+host+"...");
+	const conn = peer.connect(host, {metadata});		
+	console.log("...doJoin connect "+host, conn);
 	wireUpConnection(conn, room);
 	return room;
 };
 
 const wireUpConnection = (conn, room) => {
-	conn.on('data', data => doProcessData(data, conn, room));
+	conn.on('data', data => onData(data, conn, room));
 	conn.on('open', () => onConnect(conn, room));
 	conn.on('close', () => onClose(conn, room));
-	conn.on('error', e => onError(e, conn, room));
+	conn.on('error', e => onError(e, conn, room));	
 };
 
+Room.call = (room) => {
+	startAudioCall(room.id);
+};
 
 const pid = nonce(4).toLowerCase();
 const peer = new Peer(pid);
 
-let callInProgress = null;
+peer.on('call', function(call) {
+	// Answer the call, providing our mediaStream
+	let um = Navigator.getUserMedia(); // deprecated but simpler
+	// let constraints = {};	
+	// navigator.mediaDevices.getUserMedia(constraints);
+	call.answer(um);
+	call.on('stream', function(stream) {		
+		// `stream` is the MediaStream of the remote peer.
+		// Here you'd add it to an HTML video/canvas element.
+		document.querySelector('video').srcObject = stream;
+	});
+});
+
 /**
  * 
  * @param {?String} toPeerId
@@ -288,9 +327,14 @@ const startAudioCall = (toPeerId) => {
 		notifyUser({type:'error', text:"No Media (can be caused by http vs https)"});
 		return;
 	}
-	let pMediaStream = navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+	let pMediaStream = navigator.mediaDevices.getUserMedia({ audio: true, video: true });
 	pMediaStream.then(mediaStream => {
-		callInProgress = peer.call(toPeerId, mediaStream);
+		const call = peer.call(toPeerId, mediaStream);
+		call.on('stream', function(stream) {
+			// `stream` is the MediaStream of the remote peer.
+			// Here you'd add it to an HTML video/canvas element.
+			document.querySelector('video').srcObject = stream;
+		});
 	});
 };
 
@@ -307,5 +351,5 @@ const getConnectionsList = () => {
 
 export {
 	Room,
-	getPeerId, doJoin, startAudioCall, getConnectionTo, getConnections, getConnectionsList
+	getPeerId, doJoin, startAudioCall, getExistingConnectionTo as getConnectionTo, getConnections, getConnectionsList
 };

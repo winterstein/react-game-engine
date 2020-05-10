@@ -44,11 +44,7 @@ const LobbyPage = () => {
 	let room = roomId? DataStore.getValue('data','Room',roomId) : null;
 	
 	if ( ! room) {		
-		if (join) {
-			room = joinRoom(join);
-		} else {
-			return <Container><Entrance /></Container>;
-		}
+		return <Container><Entrance join={join} /></Container>;
 	}
 
 	let Guts;
@@ -70,20 +66,20 @@ const LobbyPage = () => {
 };
 
 
-const Entrance = () => {
+const Entrance = ({join}) => {
 	return (<>
 		<PropControl path={['misc','player']} prop='name' label='Your Name' />	
 		<Row>
 			<Col>
 				<Card>
 					<CardBody>
-						<PropControl prop='room' label='Room ID' />
-						<Button onClick={() => joinRoom(DataStore.getUrlValue('room'))}>Join Room</Button>
+						<PropControl path={['widget','Lobby']} prop='room' label='Room ID' value={join} />
+						<Button onClick={() => joinRoom(join || DataStore.getValue('widget','Lobby','room'))}>Join Room</Button>
 					</CardBody>
 				</Card>
 			</Col>
 			<Col>
-				<Button onClick={createRoom}>Create Room</Button>
+				{join? null : <Button onClick={createRoom}>Create Room</Button>}
 			</Col>
 		</Row></>);
 };
@@ -95,8 +91,7 @@ const RoomOpen = ({room}) => {
 	<h3><ShareLink room={room}>Share room {room.id}</ShareLink></h3>
 
 	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
-	
-	
+		
 	{Room.isHost(room)? <Button className='m-2' onClick={e => doStart(room)}>Start Game!</Button> : null}
 	</>;
 };
@@ -109,7 +104,7 @@ const Peeps = ({room}) => {
 };
 const Peep = ({pid,room}) => {
 	let m = room.members[pid] || {};
-	return <div>{pid} {m.name}</div>;
+	return <div>{pid} {m.name} {m.connection? ":)" : ":("}</div>;
 };
 
 const doStart = room => {
@@ -129,9 +124,11 @@ const Chatter = ({room}) => {
 		{chats.map((c,i) => <div key={i}><small>{c.from}:</small> {c.text}</div>)}
 		<Form inline onSubmit={doChat}>
 			<PropControl path={['misc','chat']} prop='text' />
-			<Button onClick={doChat} >Send</Button>
-		</Form>
+			<Button onClick={doChat} disabled={ ! DataStore.getValue('misc','chat')} >Send</Button>
+		</Form>		
 	</CardBody></Card>);
+			// <video style={{width:'50px',height:'50px'}}/>
+			// <Button onClick={e => Room.call(room)}>Call</Button>	
 };
 
 const ShareLink = ({room}) => {
@@ -145,10 +142,12 @@ const ShareLink = ({room}) => {
 // HACK
 setInterval(() => DataStore.update({}), 500);
 
+const getName = () => getValue('misc','player','name');
+
 const createRoom = () => {
 	let theRoom = Room.create();
 	let me = Room.member(theRoom, getPeerId()) || {};
-	me.name = getValue('misc','player','name');
+	me.name = getName();
 	DataStore.setValue(['data','Room', theRoom.id], theRoom);
 	DataStore.setValue(['misc','roomId'], theRoom.id);
 };
@@ -157,13 +156,13 @@ const joinRoom = (roomId) => {
 		Messaging.notifyUser("Please enter a Room ID");
 		return;
 	}
-	let theRoom = Room.enter(roomId);
 	
 	// set your name
-	let me = Room.member(theRoom, getPeerId()) || {};
-	me.name = getValue('misc','player','name');	
-	if (me.name) Room.sendRoomUpdate(theRoom);
+	let user = Login.getUser() || {};
+	user.name = getName();
 
+	let theRoom = Room.enter(roomId, user);
+	
 	DataStore.setValue(['data','Room', theRoom.id], theRoom, false);
 	DataStore.setValue(['misc','roomId'], theRoom.id, false);
 	return theRoom;

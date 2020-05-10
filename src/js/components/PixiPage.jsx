@@ -24,7 +24,6 @@ import Key, {KEYS} from '../Key';
 import { Alert, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { getPApp } from './Pixies';
 import { nonce } from '../base/data/DataClass';
-import {getPeerId, doJoin, startAudioCall, getConnections} from '../plumbing/peering';
 import GameAdmin, {doNewWorld} from './GameAdmin';
 
 
@@ -47,11 +46,6 @@ const PixiPage = () => {
 			assert(papp);
 		}		
 	}
-	// connect to remote?
-	if (world !== getPeerId()) {
-		doJoin(world);
-	}
-	
 	return (<div style={{position:'relative', userSelect:"none", overflow:"hidden"}}>
 		<div className='portrait'>
 			<Alert color='warning'>Please rotate your phone to landscape. Then reload this page.</Alert>
