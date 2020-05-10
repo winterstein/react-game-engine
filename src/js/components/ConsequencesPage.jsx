@@ -21,7 +21,7 @@ import StopWatch from '../StopWatch';
 import PropControl, { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container } from 'reactstrap';
+import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container, Form } from 'reactstrap';
 import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
 import {Room,getPeerId} from '../plumbing/peering';
@@ -44,12 +44,12 @@ const ConsequencesPage = () => {
 		if (join) {
 			theRoom = joinRoom(join);
 		} else {
-			return <Entrance />;
+			return <Container><Entrance /></Container>;
 		}
 	}
 
 	if ( ! theRoom.state || ! theRoom.state.stage || theRoom.state.stage === 'lobby') {
-		return <RoomOpen room={theRoom} />;
+		return <Container><RoomOpen room={theRoom} /></Container>;
 	}
 
 	return (<>
@@ -58,40 +58,57 @@ const ConsequencesPage = () => {
 };
 
 const Entrance = () => {
-	return (
-		<Container>
-			<PropControl path={['misc','player']} prop='name' label='Your Name' />	
-			<Row>
-				<Col>
-					<Card>
-						<CardBody>
-							<PropControl prop='room' label='Room ID' />
-							<Button onClick={() => joinRoom(DataStore.getUrlValue('room'))}>Join Room</Button>
-						</CardBody>
-					</Card>
-				</Col>
-				<Col>
-					<Button onClick={createRoom}>Create Room</Button>
-				</Col>
-			</Row>	
-		</Container>);
+	return (<>
+		<PropControl path={['misc','player']} prop='name' label='Your Name' />	
+		<Row>
+			<Col>
+				<Card>
+					<CardBody>
+						<PropControl prop='room' label='Room ID' />
+						<Button onClick={() => joinRoom(DataStore.getUrlValue('room'))}>Join Room</Button>
+					</CardBody>
+				</Card>
+			</Col>
+			<Col>
+				<Button onClick={createRoom}>Create Room</Button>
+			</Col>
+		</Row></>);
 };
 
 const RoomOpen = ({room}) => {
 	const roomId = room.id;
 	// onClick={e => doShare(e, this)
-	return 	<><a data-sharetext='Join my goose' data-sharetitle='Join my goose'
-	href={window.location+"?join="+roomId} >Share {roomId}</a>
+	return 	<>
+	<h3><ShareLink room={room}>Share room {room.id}</ShareLink></h3>
 
 	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
 
-	<PropControl path={['misc','chat']} prop='text' />
-	<Button onClick={() => {
-		Room.sendChat(room, DataStore.getValue('misc','chat','text'));
-	}} >Send</Button>
+	<Chatter room={room} />
 
 	Room: {JSON.stringify(room)}
 	</>;
+};
+
+const Chatter = ({room}) => {
+	let chats = room.chats || [];
+	return (<Card><CardBody>
+		{chats.map((c,i) => <div key={i}><small>{c.from}:</small> {c.text}</div>)}
+	<Form inline >
+		<PropControl path={['misc','chat']} prop='text' />
+		<Button onClick={() => {
+			Room.sendChat(room, DataStore.getValue('misc','chat','text'));
+			DataStore.setValue(['misc','chat','text'],null);
+		}} >Send</Button>
+	</Form>
+	</CardBody></Card>);
+};
+
+const ShareLink = (room) => {
+	// let shareUrl = $a.getAttribute('href');
+	// let shareTitle = $a.getAttribute('data-sharetitle');
+	// let shareText = $a.getAttribute('data-sharetext');
+	let href = window.location+"?join="+room.id;
+	return <a href={href} >Share {room.id}</a>;
 };
 
 // HACK
@@ -107,23 +124,6 @@ const joinRoom = (roomId) => {
 	DataStore.setValue(['data','Room', theRoom.id], theRoom, false);
 	DataStore.setValue(['misc','roomId'], theRoom.id, false);
 	return theRoom;
-};
-
-
-/**
- * 
- * @param {React.MouseEvent} e 
- * @param {*} $a 
- */
-const doShare = (e,$a) => {
-	if (navigator.share) {
-		let shareUrl = $a.getAttribute('href');
-		let shareTitle = $a.getAttribute('data-sharetitle');
-		let shareText = $a.getAttribute('data-sharetext');
-		navigator.share({url:shareUrl,title:shareTitle,text:shareText});
-		e.stopPropagation();
-		e.preventDefault();
-	}
 };
 
 export default ConsequencesPage;

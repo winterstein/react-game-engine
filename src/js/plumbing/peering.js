@@ -4,7 +4,7 @@ import Login from 'you-again';
 import _ from 'lodash';
 import DataStore from '../base/plumbing/DataStore';
 import DataClass, { nonce, getType } from '../base/data/DataClass';
-import { notifyUser } from '../base/plumbing/Messaging';
+import Messaging, { notifyUser } from '../base/plumbing/Messaging';
 import { assert } from '../base/utils/assert';
 
 
