@@ -3,8 +3,9 @@ import Peer from 'peerjs';
 import Login from 'you-again';
 import _ from 'lodash';
 import DataStore from '../base/plumbing/DataStore';
-import { nonce, getType } from '../base/data/DataClass';
+import DataClass, { nonce, getType } from '../base/data/DataClass';
 import { notifyUser } from '../base/plumbing/Messaging';
+import { assert } from '../base/utils/assert';
 
 
 class Room {
@@ -18,15 +19,11 @@ class Room {
 	 */
 	id;
 	/**
-	 * @type {String}
-	 */	
-	host;
-	/**
 	 * @type {String[]}
 	 */
 	memberIds = [];
 
-	members = [];
+	members = {};	
 
 	chats = [];
 
@@ -36,10 +33,11 @@ class Room {
 }
 window.Room = Room;
 
-class Chat {
+class Chat extends DataClass {
 	from;
 	text;
 }
+DataClass.register(Chat, 'Chat');
 
 
 Room.create = () => {	
@@ -48,7 +46,7 @@ Room.create = () => {
 	room.open = true;
 	let u = getUser();
 	room.memberIds = [getPeerId()];
-	room.members = [u];
+	room.members[getPeerId()] = u || {};
 	console.log("Room.create", room);
 
 	peer.on('connection', connb => {			
@@ -64,7 +62,31 @@ Room.create = () => {
 
 const roomUpdate = room => {
 	if ( ! room.open) return;
-	doSyndicate(room);
+	assert(Room.isHost(room), room);
+	// connection status?
+	room.memberIds.forEach(pid => {
+		let m = room.members[pid];
+		if ( ! m) {
+			console.error("No member for "+pid);
+			return;
+		}
+		if (pid===room.id) {
+			m.connection = true; // self!
+			return;
+		}
+		let conn = getConnectionTo(pid);
+		if ( ! conn) {
+			m.connection = false;
+			return;
+		}
+		if ( ! conn.open) {
+			m.connection = false;
+			return;
+		}
+		m.connection = true;
+		console.log(pid, m, conn);		
+	});
+	doSyndicate(room, room);
 	setTimeout(() => roomUpdate(room), 5000);
 };
 
@@ -80,15 +102,18 @@ Room.updateState = (room, state) => {
 		doSyndicate(room);
 		return;
 	}
-	let conn = getConnectionTo(room.host);
+	let conn = getConnectionTo(room.id);
 	sendData(conn, state);
 };
 
 Room.sendChat = (room, text) => {
-	const chat = new Chat();
+	assert(room && text, room,text);
+	assert(room.id, "No host?!", room);
+	let chat = new Chat();
 	chat.text = text;
 	chat.from = getPeerId();
-	
+	chat = Object.assign({}, chat); // Peer doesnt like classes :(
+
 	room.chats.push(chat);
 
 	if (Room.isHost(room)) {
@@ -96,8 +121,16 @@ Room.sendChat = (room, text) => {
 		return;
 	}
 
-	let conn = getConnectionTo(room.host);
-	sendData(conn, chat);
+	let conn = getConnectionTo(room.id);
+	if ( ! conn) {
+		console.warn("No connection to host - try to join...",room);
+		doJoin(room.id);
+		conn = getConnectionTo(room.id);
+		if ( ! conn) {
+			throw new Error("Cannot connect to "+room.id);
+		}
+	}
+	sendData(conn, chat, room);
 };
 
 Room.enter = id => {	
@@ -106,11 +139,11 @@ Room.enter = id => {
 	return room;
 };
 Room.exit = room => {
-	if (Room.isHost()) {
+	if (Room.isHost(room)) {
 		// ?
 		return; 
 	}
-	let conn = getConnectionTo(room.host);
+	let conn = getConnectionTo(room.id);
 	conn.close();
 };
 Room.isHost = room => getPeerId() === room.id;
@@ -119,9 +152,10 @@ const oncForRoomId = {};
 Room.setOnChange = (room, fn) => oncForRoomId[room.id] = fn;
 
 
-const sendData = (c, data) => {
+const sendData = (c, data, room) => {
+	assert(c && data, c,data,room);
 	console.log("send", data, "to", c.metadata); 
-	let d = Object.assign({}, data); // non-object eg Room causes bug??
+	let d = Object.assign({}, data); // non-object eg Room causes bug?? But what about nested non-objects :(
 	c.send(d);
 };
 
@@ -146,11 +180,11 @@ const doProcessData = (data, conn, room) => {
 	console.log("YEH data!", data, "from", conn && conn.metadata);
 	const dtype = getType(data);
 	if (dtype === 'Room') {
-		if ( ! Room.isHost()) {
+		if ( ! Room.isHost(room)) {
 			Object.assign(room, data);
 		}
 	}
-	if (dtype === 'chat') {
+	if (dtype === 'Chat') {
 		if ( ! room.chats) room.chats = [];
 		room.chats.push(data);
 	}
@@ -173,6 +207,7 @@ const onConnect = (conn, room) => {
 	if ( ! room.memberIds.includes(m)) {
 		room.memberIds.push(m);
 	}
+	room.members[m] = conn.metadata || {};
 };
 const onError = (e, conn) => {
 	console.error("error", e, conn);
@@ -182,15 +217,18 @@ const onClose = conn => {
 };
 
 
-const doSyndicate = data => {
+const doSyndicate = (data, room) => {
 	let conns = peer.connections || {};
 	const conlist = _.flatten(Object.values(conns));
 	conlist.forEach(c => {
-		sendData(c, data);
+		if ( ! c.open) {
+			console.warn("skip syndicate to closed ",c);
+		} else {
+			sendData(c, data, room);
+		}
 	});
 };
 
-let currentHost = null;
 /**
  * Idempotent
  * @param {String} host 
@@ -201,12 +239,12 @@ const doJoin = (host) => {
 	}
 	let room = new Room();
 	room.id = host;
-	const metadata = {from:pid, to:host, host, fromxid:Login.getId()};
+	let u = Login.getUser() || {};
+	const metadata = {from:pid, to:host, host, fromxid:Login.getId(), ...u};
 	const conn = peer.connect(host, {metadata});
 	window.myconn = conn;
 	console.log("conn", conn);
 	wireUpConnection(conn, room);
-	currentHost = host;
 	return room;
 };
 
@@ -228,9 +266,6 @@ let callInProgress = null;
  */
 const startAudioCall = (toPeerId) => {
 	if ( ! toPeerId) {
-		toPeerId = currentHost;
-	}
-	if ( ! toPeerId) {
 		notifyUser({type:'error', text:"No destination given"});
 		return;
 	}
@@ -245,10 +280,7 @@ const startAudioCall = (toPeerId) => {
 };
 
 const getPeerId = () => pid;
-/**
- * @returns {?String} 
- */
-const getHostId = () => currentHost;
+
 /**
  * @returns {String: DataConnection[]}
  */
@@ -260,5 +292,5 @@ const getConnectionsList = () => {
 
 export {
 	Room,
-	getPeerId, doJoin, startAudioCall, getHostId, getConnectionTo, getConnections, getConnectionsList
+	getPeerId, doJoin, startAudioCall, getConnectionTo, getConnections, getConnectionsList
 };
