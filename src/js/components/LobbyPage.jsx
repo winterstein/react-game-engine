@@ -140,7 +140,7 @@ const ShareLink = ({room}) => {
 	// let shareTitle = $a.getAttribute('data-sharetitle');
 	// let shareText = $a.getAttribute('data-sharetext');
 	let href = window.location+"?join="+room.id;
-	return <a href={href} >Share {room.id}</a>;
+	return <a href={href} target='_blank' >Share {room.id}</a>;
 };
 
 // HACK

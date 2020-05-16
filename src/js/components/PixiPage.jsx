@@ -27,7 +27,16 @@ import { nonce } from '../base/data/DataClass';
 import GameAdmin, {doNewWorld} from './GameAdmin';
 
 
+let rightClickDisabledFlag = false;
+
 const PixiPage = () => {
+	
+	// disable right-click to stop it interfering with the game. Use F12 to get the console
+	if ( ! rightClickDisabledFlag) {		
+		document.addEventListener('contextmenu', event => event.preventDefault());
+		rightClickDisabledFlag = true;
+	}
+
 	let world = DataStore.getUrlValue("world");
 	if ( ! world) {
 		doNewWorld();
