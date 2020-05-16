@@ -11,7 +11,10 @@ import com.winterwell.utils.io.FileUtils;
 public class BuildRGE extends BuildWinterwellProject {
 
 	public BuildRGE() {
-		super(new File(FileUtils.getWinterwellDir(), "react-game-engine"),"rge");
+		super(FileUtils.or(
+				new File(FileUtils.getWinterwellDir(), "react-game-engine"),
+				FileUtils.getWorkingDirectory()),
+				"rge");
 	}
 
 	@Override

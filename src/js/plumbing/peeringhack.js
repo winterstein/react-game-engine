@@ -9,7 +9,7 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import JSend from '../base/data/JSend';
 import * as jsonpatch from 'fast-json-patch';
 
-const DT = 5000;
+const DT = 500;
 
 class Room {
 
