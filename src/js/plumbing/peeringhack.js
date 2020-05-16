@@ -9,7 +9,7 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import JSend from '../base/data/JSend';
 import * as jsonpatch from 'fast-json-patch';
 
-const DT = 500;
+const DT = 250;
 
 class Room {
 
@@ -72,7 +72,7 @@ const getUser = () => {
 	return u;
 };
 
-const CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+":8328/channel";
+const CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
 //'http://localhost:8328/channel';
 
 Room.sendRoomUpdate = room => {

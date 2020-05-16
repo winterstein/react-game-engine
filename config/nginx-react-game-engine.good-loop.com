@@ -2,7 +2,7 @@
 server {
 	listen   80; ## listen for ipv4; this line is default and implied
 
-	root /home/apps/react-game-engine/web;
+	root /home/team/react-game-engine/web;
 	index index.html;
 
 	server_name localrge.good-loop.com;
