@@ -10,12 +10,26 @@ public class RGEMain extends AMain<RGEConfig> {
 		m.doMain(args);
 	}
 	
+	@Override
+	protected void init2(RGEConfig config) {
+		super.init2(config);
+		init3_gson();
+	}
+	
+	public RGEMain() {
+		super("rge", RGEConfig.class);
+	}
 	
 	@Override
 	protected void addJettyServlets(JettyLauncher jl) {	
 		super.addJettyServlets(jl);
 		MasterServlet ms = jl.addMasterServlet();
-//		ms.addServlet("stash", StashServlet.class); ??
+//		ms.addServlet("stash", StashServlet.class);
+		ms.addServlet("channel", ChannelServlet.class);
+		
+		// websocket
+		// SEE https://github.com/jetty-project/embedded-jetty-websocket-examples/tree/master/native-jetty-websocket-example/src/main/java/org/eclipse/jetty/demo
+		// OR https://stackoverflow.com/questions/42817476/how-can-i-add-a-websocketservlet-to-an-embedded-jetty-server-with-context-path
 	}
 	
 }

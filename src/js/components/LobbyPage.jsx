@@ -24,7 +24,7 @@ import Key, {KEYS} from '../Key';
 import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container, Form, CardTitle } from 'reactstrap';
 import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
-import {Room,getPeerId} from '../plumbing/peering';
+import {Room,getPeerId} from '../plumbing/peeringhack';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 import { stopEvent } from '../base/utils/miscutils';
 import Messaging from '../base/plumbing/Messaging';
@@ -103,7 +103,7 @@ const RoomOpen = ({room}) => {
 const Peeps = ({room}) => {
 	return (<Card><CardBody>
 		<CardTitle><h3>People Here</h3></CardTitle>
-		{room.memberIds.map(pid => <Peep key={pid} pid={pid} room={room}/>)}
+		{Room.memberIds(room).map(pid => <Peep key={pid} pid={pid} room={room}/>)}
 	</CardBody></Card>);
 };
 const Peep = ({pid,room}) => {
@@ -122,7 +122,7 @@ const Chatter = ({room}) => {
 		Room.sendChat(room, DataStore.getValue('misc','chat','text'));
 		DataStore.setValue(['misc','chat','text'],null);
 	};
-	let chats = room.chats || [];
+	let chats = Room.chats(room);
 	return (<Card><CardBody>
 		<CardTitle><h3>Chat</h3></CardTitle>
 		{chats.map((c,i) => <div key={i}><small>{c.from}:</small> {c.text}</div>)}

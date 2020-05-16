@@ -61,6 +61,8 @@ Room.create = () => {
 	return room;
 };
 
+Room.memberIds = room => room.memberIds;
+
 const roomUpdateFromHost = room => {
 	assert(Room.isHost(room), room);
 	if (room.closed) {

@@ -24,7 +24,7 @@ import Key, {KEYS} from '../Key';
 import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container, Form, CardTitle } from 'reactstrap';
 import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
-import {Room,getPeerId} from '../plumbing/peering';
+import {Room,getPeerId} from '../plumbing/peeringhack';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 import { stopEvent } from '../base/utils/miscutils';
 
@@ -33,9 +33,11 @@ const ConsequencesGame = ({room}) => {
 	let myId = getPeerId();
 	const statePath = ['data','Room',room.id,'state'];
 	
-	let dones = getValue(statePath.concat('done'));
+	let dones = getValue(statePath.concat('done')) || {};
 	let myAnswersPath = statePath.concat(['answers', myId]);
 	let myAnswers = getValue(myAnswersPath);
+
+	const imDone = dones[myId];
 
 	// All done??
 	if (Room.isHost(room)) {
@@ -78,7 +80,7 @@ const ShowStories = ({room}) => {
 
 const makeStories = room => {
 	// make stories
-	let n = room.memberIds.length;
+	let n = Room.memberIds(room).length;
 	room.state.story = [];
 	for(let i=0; i<n; i++) {		
 		let storyi = makeStory(i, n, room.state.answers);
@@ -97,7 +99,7 @@ const makeStory = (i, n, answers) => {
 const checkDone = (room, dones) => {
 	if ( ! dones) return false;
 	let dcnt = Object.values(dones).filter(d => d).length;
-	if (dcnt === room.memberIds.length) {
+	if (dcnt === Room.memberIds(room).length) {
 		return true;
 	}
 };
