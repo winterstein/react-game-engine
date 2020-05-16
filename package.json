@@ -1,6 +1,6 @@
 {
   "name": "react-game-engine",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "React Game Engine",
   "author": "Daniel Winterstein",
   "repository": {
@@ -41,8 +41,6 @@
     "compile": "webpack --config $PWD/webpack.config.js --progress --colors",
     "compile-watch": "webpack --config $PWD/webpack.config.js --progress --colors --watch",
     "compile-watch-fast": "NO_PROD=true webpack --config $PWD/webpack.config.js --progress --colors --watch",
-    "flow": "flow; test $? -eq 0 -o $? -eq 2",
-    "test": "jest",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {
@@ -61,7 +59,6 @@
     "@typescript-eslint/eslint-plugin": "^2.21.0",
     "@typescript-eslint/parser": "^2.21.0",
     "babel-eslint": "^10.1.0",
-    "babel-jest": "^24.9.0",
     "babel-loader": "^8.0.5",
     "babel-plugin-const-enum": "0.0.5",
     "babel-plugin-transform-node-env-inline": "^0.4.3",
@@ -73,20 +70,10 @@
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4",
     "eslint-plugin-react-hooks": "^1.6.0",
-    "jest": "^25.1.0",
-    "jest-puppeteer": "^4.4.0",
-    "puppeteer": "^2.0.0",
-    "puppet-theatre": "latest",
     "shelljs": "^0.8.3",
     "style-loader": "^0.23.1",
     "typescript": "^3.8.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.2.3"
-  },
-  "jest": {
-    "preset": "jest-puppeteer",
-    "globals": {
-      "window": {}
-    }
   }
 }
