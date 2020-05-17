@@ -87,7 +87,8 @@ const makeStories = room => {
 	let n = Room.memberIds(room).length;
 	room.state.story = [];
 	let answerArrays = Object.values(room.state.answers);
-	const numQs = answerArrays[0].length;	
+	let numQs = answerArrays[0].length;	
+	if (numQs===undefined) numQs = Object.keys(answerArrays[0]).length;	// e.g. {0:'Alan',1:'Betty'} instead of an array
 	const numAnswerSets = answerArrays.length;
 	for(let i=0; i<n; i++) {			
 		let answerSet = [];
