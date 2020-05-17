@@ -63,8 +63,8 @@ const ConsequencesGame = ({room}) => {
 		TODO
 
 		<div>
-			<Button onClick={e => setValue(statePath.concat(['done', myId]), true) && Room.sendRoomUpdate(room)} >I'm Done</Button>
-			<div>Done: {JSON.stringify(dones)}</div>
+			<Button disabled={imDone} onClick={e => setValue(statePath.concat(['done', myId]), true) && Room.sendRoomUpdate(room)} >I'm Done</Button>
+			<div>Done: {Object.keys(dones).join(", ")}</div>
 		</div>
 
 	</div>);		
@@ -72,8 +72,12 @@ const ConsequencesGame = ({room}) => {
 
 
 const ShowStories = ({room}) => {
-	return (<div><h2>The Stories</h2>
-		{room.state.story.map((s,i) => <div key={i}>{JSON.stringify(s)}</div>)}
+	let myi = Room.memberIds(room).indexOf(getPeerId());
+	// paranoia
+	myi = myi % room.state.story.length;
+	let story = room.state.story[myi];
+	return (<div><h2>Story {myi+1} of {room.state.story.length}</h2>
+		<div>{JSON.stringify(story)}</div>
 	</div>);
 };
 
@@ -82,17 +86,29 @@ const makeStories = room => {
 	// make stories
 	let n = Room.memberIds(room).length;
 	room.state.story = [];
-	for(let i=0; i<n; i++) {		
-		let storyi = makeStory(i, n, room.state.answers);
+	let answerArrays = Object.values(room.state.answers);
+	const numQs = answerArrays[0].length;	
+	const numAnswerSets = answerArrays.length;
+	for(let i=0; i<n; i++) {			
+		let answerSet = [];
+		for(let j=0; j<numQs; j++) {
+			answerSet.push(answerArrays[(i+j) % numAnswerSets][j]);
+		}
+		let storyi = makeStory(answerSet);
 		room.state.story[i] = storyi;
 	}
 	room.state.done = true;
 	Room.sendRoomUpdate(room);
 };
 
-const makeStory = (i, n, answers) => {
-	let answerArrays = Object.values(answers);
-	let answerSet = [answerArrays[i % n][0], answerArrays[(i+1) % n][1]];
+/**
+ * 
+ * @param {number} i person's index
+ * @param {number} n people in the room
+ * @param {*} answers 
+ * @returns {string} The story!
+ */
+const makeStory = (answerSet) => {
 	return "He was "+answerSet[0]+". She was "+answerSet[1];
 };
 
