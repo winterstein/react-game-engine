@@ -68,24 +68,12 @@
     "eslint-plugin-react": "^7.20.0",
     "eslint-plugin-react-hooks": "^2.5.1",
     "intl": "^1.2.5",
-    "jest": "^25.2.7",
-    "jest-environment-puppeteer": "^4.3.0",
-    "jest-puppeteer": "^4.4.0",
     "less": "^3.11.1",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.9.0",
-    "puppet-theatre": "^1.0.18",
-    "puppeteer": "^3.0.0",
     "shelljs": "^0.8.3",
     "typescript": "^3.8.3",
     "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11",
-    "yargs": "^15.1.0"
-  },
-  "jest": {
-    "preset": "jest-puppeteer",
-    "globals": {
-      "window": {}
-    }
+    "webpack-cli": "^3.3.11"
   }
 }
