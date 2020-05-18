@@ -108,7 +108,9 @@ const Peeps = ({room}) => {
 };
 const Peep = ({pid,room}) => {
 	let m = room.members[pid] || {};
-	return <div>{pid} {m.name} {m.connection? ":)" : ":("}</div>;
+	return <div>{m.name || pid}&nbsp;
+		{m.connection? <span role='img' aria-label=':)' className='text-success'>&#x1F603;</span> : <><span role='img' aria-label=':(' className='text-danger'>&#x1F626;</span> lost connection</>}
+	</div>;
 };
 
 const doStart = room => {

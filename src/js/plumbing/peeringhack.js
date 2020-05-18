@@ -69,6 +69,7 @@ Room.create = () => {
 const getUser = () => {
 	let u = Login.getUser() || {};
 	u.peerId = getPeerId();	
+
 	return u;
 };
 
@@ -80,21 +81,27 @@ Room.sendRoomUpdate = room => {
 		return;	
 	}
 	assert(room.id, "No host?!", room);
-
-	let diff = jsonpatch.compare(oldRoom, room);
-	let data = {room:JSON.stringify(room), peerId:getPeerId(), diff:JSON.stringify(diff)};
+	
+	let data = {
+		room: JSON.stringify(room), 
+		peerId: getPeerId()
+	};
+	if (oldRoom) {
+		let diff = jsonpatch.compare(oldRoom, room);
+		data.diff = JSON.stringify(diff);
+	}
 	let pLoad = ServerIO.load(CHANNEL_ENDPOINT+"/"+room.id, {data});
 	pLoad.then(res => {
 		let rd = JSend.data(res);
 		if (rd.diff) {
-			jsonpatch.applyPatch(room, diff);
+			jsonpatch.applyPatch(room, rd.diff);
 		} else if (rd.room) {
 			_.merge(room, rd.room);			
 		}
 		oldRoom = JSON.parse(JSON.stringify(room));
 	});
 };
-let oldRoom = {};
+let oldRoom = null;
 
 Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);

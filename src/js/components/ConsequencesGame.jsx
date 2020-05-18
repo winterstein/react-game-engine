@@ -29,7 +29,8 @@ import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 import { stopEvent } from '../base/utils/miscutils';
 
 
-const ConsequencesGame = ({room}) => {	
+const ConsequencesGame = ({room}) => {		
+
 	let myId = getPeerId();
 	const statePath = ['data','Room',room.id,'state'];
 	
@@ -53,15 +54,13 @@ const ConsequencesGame = ({room}) => {
 	return (<div>
 		<h2>Consequences Game</h2>
 		
-		<div>
-			<PropControl label='He was' path={myAnswersPath} prop={0} />
-		</div>
-		<div>
-			<PropControl label='She was' path={myAnswersPath} prop={1} />
-		</div>
-
-		TODO
-
+		<PropControl label='He was' path={myAnswersPath} prop={0} />
+		
+		<PropControl label='She was' path={myAnswersPath} prop={1} />
+		<PropControl label='They met' path={myAnswersPath} prop={2} />
+		<PropControl label='He said' path={myAnswersPath} prop={3} />
+		<PropControl label='She said' path={myAnswersPath} prop={4} />
+		<PropControl label='as a consequencs' path={myAnswersPath} prop={5} />
 		<div>
 			<Button disabled={imDone} onClick={e => setValue(statePath.concat(['done', myId]), true) && Room.sendRoomUpdate(room)} >I'm Done</Button>
 			<div>Done: {Object.keys(dones).join(", ")}</div>
@@ -71,12 +70,26 @@ const ConsequencesGame = ({room}) => {
 };
 
 
+/**
+ * @returns {string} The story!
+ */
+const makeStory = (answerSet) => {
+	return "He was "+answerSet[0]+". She was "+answerSet[1]+". They met "+answerSet[2]+". He said "+answerSet[3]+". She said "+answerSet[4]+". As a consequence "+answerSet[5];
+};
+
+
 const ShowStories = ({room}) => {
-	let myi = Room.memberIds(room).indexOf(getPeerId());
-	// paranoia
+	// alphabetical id sort, to give consistency between clients
+	let mids = [...Room.memberIds(room)];
+	mids.sort();
+
+	let myi = mids.indexOf(getPeerId()) || 0;	
 	myi = myi % room.state.story.length;
+
 	let story = room.state.story[myi];
-	return (<div><h2>Story {myi+1} of {room.state.story.length}</h2>
+	return (<div>
+		<h2>Consequences Game</h2>
+		<h3>Story {myi+1} of {room.state.story.length}</h3>
 		<div>{JSON.stringify(story)}</div>
 	</div>);
 };
@@ -100,17 +113,6 @@ const makeStories = room => {
 	}
 	room.state.done = true;
 	Room.sendRoomUpdate(room);
-};
-
-/**
- * 
- * @param {number} i person's index
- * @param {number} n people in the room
- * @param {*} answers 
- * @returns {string} The story!
- */
-const makeStory = (answerSet) => {
-	return "He was "+answerSet[0]+". She was "+answerSet[1];
 };
 
 const checkDone = (room, dones) => {

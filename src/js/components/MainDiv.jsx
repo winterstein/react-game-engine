@@ -21,6 +21,7 @@ import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
 import FullScreenButton from './FullScreenButton';
 import LobbyPage from './LobbyPage';
+import ConsequencesGame from './ConsequencesGame';
 
 // DataStore
 C.setupDataStore();
