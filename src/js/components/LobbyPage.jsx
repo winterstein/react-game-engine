@@ -28,7 +28,7 @@ import {Room,getPeerId} from '../plumbing/peeringhack';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 import { stopEvent } from '../base/utils/miscutils';
 import Messaging from '../base/plumbing/Messaging';
-
+import BG from './BG';
 import CGame from './ConsequencesGame';
 // Game states: Name -> Create / Join -> Start -> Enter -> Deliver stories
 
@@ -44,17 +44,20 @@ const LobbyPage = () => {
 	let room = roomId? DataStore.getValue('data','Room',roomId) : null;
 	
 	if ( ! room) {		
-		return <Container><Entrance join={join} /></Container>;
+		return <BG src='/img/lobby.jpg'><Container><Entrance join={join} /></Container></BG>;
 	}
 
+	let bg = '/img/lobby.jpg';
 	let Guts;
 	if ( ! room.state || ! room.state.stage || room.state.stage === 'lobby') {
 		Guts = <RoomOpen room={room} />;
 	} else {
+		// game on
+		bg = '/img/paper-texture.jpg';
 		Guts = <CGame room={room} />;
 	}
 
-	return (<Container>		
+	return (<BG src={bg}><Container>		
 		<Row>
 			<Col>{Guts}</Col>
 			<Col>
@@ -62,7 +65,7 @@ const LobbyPage = () => {
 				<Chatter room={room}/>
 			</Col>
 		</Row>
-	</Container>);
+	</Container></BG>);
 };
 
 
@@ -72,18 +75,17 @@ const Entrance = ({join}) => {
 	}
 	
 	return (<>
-		<PropControl path={['misc','player']} prop='name' label='Your Name' />	
+		<Card body className='mt-2 mb-2'><PropControl path={['misc','player']} prop='name' label='Your Name' /></Card>
 		<Row>
 			<Col>
-				<Card>
-					<CardBody>
-						<PropControl path={['widget','Lobby']} prop='room' label='Room ID' />
-						<Button onClick={() => joinRoom(join || DataStore.getValue('widget','Lobby','room'))}>Join Room</Button>
-					</CardBody>
+				<Card body>
+					<CardTitle>Join a Room</CardTitle>
+					<PropControl path={['widget','Lobby']} prop='room' label='Room ID' />
+					<Button onClick={() => joinRoom(join || DataStore.getValue('widget','Lobby','room'))}>Join</Button>
 				</Card>
 			</Col>
 			<Col>
-				{join? null : <Button onClick={createRoom}>Create Room</Button>}
+				{join? null : <Card body><CardTitle>Create a New Room</CardTitle><Button onClick={createRoom}>Create</Button></Card>}
 			</Col>
 		</Row></>);
 };
@@ -91,13 +93,13 @@ const Entrance = ({join}) => {
 const RoomOpen = ({room}) => {
 	const roomId = room.id;
 	// onClick={e => doShare(e, this)
-	return 	<>
+	return 	<Card body className='m-2'>
 	<h3><ShareLink room={room}>Share room {room.id}</ShareLink></h3>
 
 	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
 		
 	{Room.isHost(room)? <Button className='m-2' onClick={e => doStart(room)}>Start Game!</Button> : null}
-	</>;
+	</Card>;
 };
 
 const Peeps = ({room}) => {

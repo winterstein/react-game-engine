@@ -27,7 +27,9 @@ import DataClass, { nonce } from '../base/data/DataClass';
 import {Room,getPeerId} from '../plumbing/peeringhack';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 import { stopEvent } from '../base/utils/miscutils';
-
+import BG from './BG';
+import ServerIO from '../base/plumbing/ServerIOBase';
+import JSend from '../base/data/JSend';
 
 const ConsequencesGame = ({room}) => {		
 
@@ -60,7 +62,7 @@ const ConsequencesGame = ({room}) => {
 		<PropControl label='They met' path={myAnswersPath} prop={2} />
 		<PropControl label='He said' path={myAnswersPath} prop={3} />
 		<PropControl label='She said' path={myAnswersPath} prop={4} />
-		<PropControl label='as a consequencs' path={myAnswersPath} prop={5} />
+		<PropControl label='As a consequence' path={myAnswersPath} prop={5} />
 		<div>
 			<Button disabled={imDone} onClick={e => setValue(statePath.concat(['done', myId]), true) && Room.sendRoomUpdate(room)} >I'm Done</Button>
 			<div>Done: {Object.keys(dones).join(", ")}</div>
@@ -87,8 +89,21 @@ const ShowStories = ({room}) => {
 	myi = myi % room.state.story.length;
 
 	let story = room.state.story[myi];
-	return (<div>
+
+	// grab a backdrop?	
+	let pvImg = DataStore.fetch(['misc','bg',room.id, 'story'+myi], () => {
+		let q = room.state.bg[myi];
+		return ServerIO.load('/unsplash', {data:{q, size:1}})
+			.then(resp => {
+				console.warn(resp);			
+				let res = JSend.data(resp);			
+				return res[0];	
+			});
+	});
+
+	return (<div style={{fontSize:'150%'}}>
 		<h2>Consequences Game</h2>
+		{pvImg.value? <BG src={pvImg.value.urls && pvImg.value.urls.regular} /> : null}
 		<h3>Story {myi+1} of {room.state.story.length}</h3>
 		<div>{JSON.stringify(story)}</div>
 	</div>);
@@ -103,6 +118,7 @@ const makeStories = room => {
 	let numQs = answerArrays[0].length;	
 	if (numQs===undefined) numQs = Object.keys(answerArrays[0]).length;	// e.g. {0:'Alan',1:'Betty'} instead of an array
 	const numAnswerSets = answerArrays.length;
+	room.state.bg = {};
 	for(let i=0; i<n; i++) {			
 		let answerSet = [];
 		for(let j=0; j<numQs; j++) {
@@ -110,6 +126,7 @@ const makeStories = room => {
 		}
 		let storyi = makeStory(answerSet);
 		room.state.story[i] = storyi;
+		room.state.bg[i] = answerSet[2];
 	}
 	room.state.done = true;
 	Room.sendRoomUpdate(room);
