@@ -61,6 +61,7 @@ Room.member = (room, pid) => {
 	m.pid = pid;
 	return m;
 }; 
+
 Room.myState = room => {
 	const pid = getPeerId();
 	let s = room.state[pid];
@@ -169,9 +170,6 @@ Room.exit = room => {
 };
 Room.isHost = room => getPeerId() === room.id;
 
-Room.member = (room, peerId) => {
-	return room.members[peerId];
-};
 
 let currentRoom = null;
 
