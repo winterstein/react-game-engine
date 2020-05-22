@@ -8,6 +8,7 @@ import { assert } from '../base/utils/assert';
 import ServerIO from '../base/plumbing/ServerIOBase';
 import JSend from '../base/data/JSend';
 import * as jsonpatch from 'fast-json-patch';
+import deepCopy from '../base/utils/deepCopy';
 
 const DT = 250;
 
@@ -36,6 +37,7 @@ class Room {
 	open;
 	closed;
 	
+	/** split by id */
 	state = {};
 }
 window.Room = Room;
@@ -49,6 +51,34 @@ DataClass.register(Chat, 'Chat');
 Room.memberIds = room => {
 	return Object.keys(room.memberIds);
 };
+/**
+ * @param {!Room} room
+ * @param {!string} pid
+ */
+Room.member = (room, pid) => {
+	let m = room.members[pid] || {};
+	if ( ! m.name) m.name = pid;
+	m.pid = pid;
+	return m;
+}; 
+Room.myState = room => {
+	const pid = getPeerId();
+	let s = room.state[pid];
+	if ( ! s ) {
+		s = {};
+		room.state[pid] = s;
+	}
+	return s;
+};
+Room.sharedState = room => {
+	let s = room.state.shared;
+	if ( ! s ) {
+		s = {};
+		room.state.shared = s;
+	}
+	return s;
+};
+
 Room.chats = room => {
 	return room.chats? Object.values(room.chats) : [];
 };
@@ -93,15 +123,22 @@ Room.sendRoomUpdate = room => {
 	let pLoad = ServerIO.load(CHANNEL_ENDPOINT+"/"+room.id, {data});
 	pLoad.then(res => {
 		let rd = JSend.data(res);
+		let myState = deepCopy(Room.myState(room));
+		// update
 		if (rd.diff) {
 			jsonpatch.applyPatch(room, rd.diff);
-		} else if (rd.room) {
+		} else if (rd.room) {			
 			_.merge(room, rd.room);			
 		}
-		oldRoom = JSON.parse(JSON.stringify(room));
-	});
+		// preserve your state against race conditions
+		room.state[getPeerId()] = myState;
+
+		// for next time
+		oldRoom = deepCopy(room);
+	});	
 };
 let oldRoom = null;
+
 
 Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);

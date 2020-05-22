@@ -109,7 +109,7 @@ const Peeps = ({room}) => {
 	</CardBody></Card>);
 };
 const Peep = ({pid,room}) => {
-	let m = room.members[pid] || {};
+	let m = Room.member(room, pid);
 	return <div>{m.name || pid}&nbsp;
 		{m.connection? <span role='img' aria-label=':)' className='text-success'>&#x1F603;</span> : <><span role='img' aria-label=':(' className='text-danger'>&#x1F626;</span> lost connection</>}
 	</div>;
@@ -129,7 +129,7 @@ const Chatter = ({room}) => {
 	let chats = Room.chats(room);
 	return (<Card><CardBody>
 		<CardTitle><h3>Chat</h3></CardTitle>
-		{chats.map((c,i) => <div key={i}><small>{c.from}:</small> {c.text}</div>)}
+		{chats.map((c,i) => <Chat key={i} room={room} chat={c} />)}
 		<Form inline onSubmit={doChat}>
 			<PropControl path={['misc','chat']} prop='text' />
 			<Button onClick={doChat} disabled={ ! DataStore.getValue('misc','chat')} >Send</Button>
@@ -137,6 +137,11 @@ const Chatter = ({room}) => {
 	</CardBody></Card>);
 			// <video style={{width:'50px',height:'50px'}}/>
 			// <Button onClick={e => Room.call(room)}>Call</Button>	
+};
+
+const Chat = ({room, chat}) => {
+	let m = Room.member(room, chat.from);
+	return <div ><small>{m.name}:</small> {chat.text}</div>;
 };
 
 const ShareLink = ({room}) => {
