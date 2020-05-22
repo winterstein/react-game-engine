@@ -10,7 +10,7 @@ import JSend from '../base/data/JSend';
 import * as jsonpatch from 'fast-json-patch';
 import deepCopy from '../base/utils/deepCopy';
 
-const DT = 250;
+const DT = 200;
 
 class Room {
 
@@ -107,7 +107,7 @@ const getUser = () => {
 const CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
 //'http://localhost:8328/channel';
 
-Room.sendRoomUpdate = room => {
+Room._sendRoomUpdate = room => {
 	if ( ! room) {
 		return;	
 	}
@@ -139,7 +139,7 @@ Room.sendRoomUpdate = room => {
 	});	
 };
 let oldRoom = null;
-
+Room.sendRoomUpdate = _.debounce(Room._sendRoomUpdate, 200);
 
 Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);
