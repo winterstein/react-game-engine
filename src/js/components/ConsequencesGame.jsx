@@ -122,6 +122,7 @@ const ShowStories = ({room}) => {
 			<CardTitle><h3>Story {myi+1} of {stories.length}</h3></CardTitle>
 			{JSON.stringify(story)}
 		</Card>
+		<Card body className='mt-4'><Button onClick={e => Room.clearState(room)}>Return to Start</Button></Card>
 	</div>);
 };
 

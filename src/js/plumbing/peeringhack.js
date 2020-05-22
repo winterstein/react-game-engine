@@ -160,6 +160,12 @@ Room.sendChat = (room, text) => {
 	Room.sendRoomUpdate(room);
 };
 
+Room.clearState = room => {
+	room.state = {};
+	oldRoom = {};
+	DataStore.update({});
+};
+
 Room.enter = (id, user) => {	
 	console.log("Room.enter", id, room);
 	let room = doJoin(id, user);
