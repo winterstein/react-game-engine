@@ -107,7 +107,7 @@ const getUser = () => {
 const CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
 //'http://localhost:8328/channel';
 
-Room._sendRoomUpdate = room => {
+Room.sendRoomUpdate = room => {
 	if ( ! room) {
 		return;	
 	}
@@ -139,7 +139,8 @@ Room._sendRoomUpdate = room => {
 	});	
 };
 let oldRoom = null;
-Room.sendRoomUpdate = _.debounce(Room._sendRoomUpdate, 200);
+// nope
+// Room.sendRoomUpdate = _.debounce(Room._sendRoomUpdate, 200);
 
 Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);
