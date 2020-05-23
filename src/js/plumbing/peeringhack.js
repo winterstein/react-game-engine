@@ -219,6 +219,10 @@ Room.sendChat = (room, text) => {
 Room.clearState = room => {
 	room.state = {};
 	oldRoom = {};
+	// HACK to avoid picking up the old state from the server
+	pid = nonce(4).toLowerCase();
+	Cookies.set('pid', pid, {expires: 2/24}); // expires in two hours
+	
 	DataStore.update({});
 };
 
