@@ -87,7 +87,9 @@ const Entrance = ({join}) => {
 			<Col>
 				{join? null : <Card body><CardTitle>Create a New Room</CardTitle><Button onClick={createRoom}>Create</Button></Card>}
 			</Col>
-		</Row></>);
+		</Row>
+		<Row>Your ID: {getPeerId()}</Row>
+	</>);
 };
 
 const RoomOpen = ({room}) => {
