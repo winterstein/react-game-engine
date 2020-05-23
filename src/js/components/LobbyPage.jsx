@@ -98,7 +98,7 @@ const RoomOpen = ({room}) => {
 
 	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
 		
-	{Room.isHost(room)? <Button className='m-2' onClick={e => doStart(room)}>Start Game!</Button> : null}
+	{Room.isHost(room)? <Button className='m-2' onClick={e => doStart(room)}>Everybody's In? - Let's Start!</Button> : null}
 	</Card>;
 };
 
