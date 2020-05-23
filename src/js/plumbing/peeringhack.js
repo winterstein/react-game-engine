@@ -1,6 +1,7 @@
 
 import Login from 'you-again';
 import _ from 'lodash';
+import Cookies from 'js-cookie';
 import DataStore from '../base/plumbing/DataStore';
 import DataClass, { nonce, getType } from '../base/data/DataClass';
 import Messaging, { notifyUser } from '../base/plumbing/Messaging';
@@ -9,6 +10,7 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import JSend from '../base/data/JSend';
 import * as jsonpatch from 'fast-json-patch';
 import deepCopy from '../base/utils/deepCopy';
+import { getUrlVars } from '../base/utils/miscutils';
 
 const DT = 200;
 
@@ -80,6 +82,10 @@ Room.sharedState = room => {
 	return s;
 };
 
+/**
+ * @param {!Room}
+ * @returns {Chat[]}
+ */
 Room.chats = room => {
 	return room.chats? Object.values(room.chats) : [];
 };
@@ -104,7 +110,8 @@ const getUser = () => {
 	return u;
 };
 
-const CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
+let CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
+// CHANNEL_ENDPOINT = 'https://dw.winterwell.com/channel';
 //'http://localhost:8328/channel';
 
 Room.sendRoomUpdate = room => {
@@ -126,6 +133,11 @@ Room.sendRoomUpdate = room => {
 		let rd = JSend.data(res);
 		let myState = deepCopy(Room.myState(room));
 		// update
+		// HACK: process a flush commmand		
+		if (roomUpdate_processCommand(room, rd)) {
+			return;	
+		}
+		// normal update
 		if (rd.diff) {
 			jsonpatch.applyPatch(room, rd.diff);
 		} else if (rd.room) {			
@@ -142,6 +154,48 @@ let oldRoom = null;
 // nope
 // Room.sendRoomUpdate = _.debounce(Room._sendRoomUpdate, 200);
 
+/**
+ * special commands to eg flush state
+ * @param {*} room 
+ * @param {*} incomingData 
+ */
+const roomUpdate_processCommand = (room, incomingData) => {
+	if ( ! incomingData || ! incomingData.room) return false;
+	let inchats = Room.chats(incomingData.room);
+	if ( ! inchats) return false;
+	let cmds = inchats.filter(c => c.text && c.text.trim() === '!flush');
+	let newCmds = cmds.filter(c => ! c.done || ! c.done[getPeerId]);
+	if ( ! newCmds.length) return false;
+	// must have an id for done-flag
+	newCmds.forEach(c => {
+		if (c.id) return;
+		let cid = Object.keys(incomingData.room.chats).find(k => incomingData.room.chats[k] === c);
+		if ( ! cid) cid = "c"+new Date().getTime();
+		c.id = cid;
+		incomingData.room.chats[cid] = c; // make sure the local room picks up an id'd copy
+	});
+	// locally done?
+	newCmds = newCmds.filter(c => {
+		let localc = room.chats && room.chats[c.id];
+		if (localc && localc.done && localc.done[getPeerId()]) return false;
+		return true;
+	});
+	if ( ! newCmds.length) return false;
+	// act
+	newCmds.forEach(c => {
+		if ( ! c.done) c.done = {};
+		c.done[getPeerId()] = true;
+		const ct = c.text.trim();
+		if (ct === "!flush") {
+			console.warn("\n!FLUSH !FLUSH !FLUSH\n",c);
+			let inroom = incomingData.room;
+			room = Object.assign(room, inroom);
+		}
+	});
+	oldRoom = deepCopy(room);
+	return true;
+};
+
 Room.sendStateUpdate = (room, state) => {
 	room.state = Object.assign(room.state, state);
 	Room.sendRoomUpdate(room);
@@ -149,14 +203,15 @@ Room.sendStateUpdate = (room, state) => {
 
 
 Room.sendChat = (room, text) => {
-	assert(room && text, room,text);
+	if ( ! room || ! text) return;
 	assert(room.id, "No host?!", room);
 	let chat = new Chat();
 	chat.text = text;
 	chat.from = getPeerId();
+	chat.id = "c"+new Date().getTime();
 	chat = Object.assign({}, chat); // Peer doesnt like classes :(
 
-	room.chats[new Date().getTime()] = chat;
+	room.chats[chat.id] = chat;
 
 	Room.sendRoomUpdate(room);
 };
@@ -200,8 +255,11 @@ const doJoin = (host, user={}) => {
 setInterval(() => Room.sendRoomUpdate(currentRoom), DT);
 
 
-const pid = nonce(4).toLowerCase();
-
+let pid = Cookies.get("pid");
+if ( ! pid) {
+	pid = nonce(4).toLowerCase();
+	Cookies.set('pid', pid, {expires: 2/24}); // expires in two hours
+} // todo preserve name
 const getPeerId = () => pid;
 
 export {

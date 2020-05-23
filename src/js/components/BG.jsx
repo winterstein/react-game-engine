@@ -3,7 +3,7 @@ import React from 'react';
 
 const BG = ({src, children, opacity=0.5}) => {
 	let style= {
-		background: `url('${src}')`,
+		backgroundImage: `url('${src}')`,
 		backgroundSize: 'cover',
 		height:"100%", width:"100%",
 		position:'fixed',

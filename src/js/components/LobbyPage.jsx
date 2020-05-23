@@ -26,7 +26,7 @@ import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
 import {Room,getPeerId} from '../plumbing/peeringhack';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
-import { stopEvent } from '../base/utils/miscutils';
+import { stopEvent, copyTextToClipboard } from '../base/utils/miscutils';
 import Messaging from '../base/plumbing/Messaging';
 import BG from './BG';
 import CGame from './ConsequencesGame';
@@ -94,7 +94,7 @@ const RoomOpen = ({room}) => {
 	const roomId = room.id;
 	// onClick={e => doShare(e, this)
 	return 	<Card body className='m-2'>
-	<h3><ShareLink room={room}>Share room {room.id}</ShareLink></h3>
+	<h3><ShareLink room={room}>Room: {room.id}</ShareLink></h3>
 
 	<h2>{Room.isHost(room)? "Host" : "Guest "+getPeerId()}</h2>
 		
@@ -148,8 +148,9 @@ const ShareLink = ({room}) => {
 	// let shareUrl = $a.getAttribute('href');
 	// let shareTitle = $a.getAttribute('data-sharetitle');
 	// let shareText = $a.getAttribute('data-sharetext');
-	let href = window.location+"?join="+room.id;
-	return <a href={href} target='_blank' >Share {room.id}</a>;
+	let u = window.location;
+	let href = u+"?join="+room.id;
+	return <><a href={href} target='_blank' >Share {room.id}</a><Button className='ml-1' size='sm' onClick={e => copyTextToClipboard(href)}>copy link to clipboard</Button></>;
 };
 
 // HACK
