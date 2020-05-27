@@ -9,12 +9,14 @@ import com.winterwell.utils.time.Time;
 import com.winterwell.utils.web.SimpleJson;
 import com.winterwell.web.ajax.JSend;
 import com.winterwell.web.ajax.JThing;
+import com.winterwell.web.app.CrudServlet;
 import com.winterwell.web.app.IServlet;
 import com.winterwell.web.app.WebRequest;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.jetty.util.ajax.JSON;
@@ -29,11 +31,17 @@ import com.google.common.cache.CacheBuilder;
 public class ChannelServlet implements IServlet {
 
 
-	static Cache<String,Channel> channels = CacheBuilder.newBuilder().expireAfterAccess(1, TimeUnit.HOURS).build();
+	static Cache<String,Channel> channels = CacheBuilder.newBuilder()
+				.expireAfterAccess(10, TimeUnit.MINUTES).build();
 	
 	@Override
 	public void process(WebRequest state) throws Exception {
-		String schannel = state.getSlug();		
+		String schannel = state.getSlugBits(1);		
+		if ("_list".equals(schannel)) {
+			doList(state);
+			return;
+		}
+		
 		Channel channel = channels.getIfPresent(schannel);
 		if (channel==null) {
 			channel = new Channel(schannel);
@@ -74,6 +82,13 @@ public class ChannelServlet implements IServlet {
 		jsend.setData(data);
 		jsend.send(state);
 		
+	}
+
+	private void doList(WebRequest state) {
+		JSend jsend = new JSend();		
+		Collection<Channel> cs = channels.asMap().values();		
+		jsend.setData(new JThing(cs));
+		jsend.send(state);
 	}
 
 	private Map applyDiff(Map room, Object jdiff) {
