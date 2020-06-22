@@ -25,6 +25,7 @@ import { Alert, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
 import { getPApp } from './Pixies';
 import { nonce } from '../base/data/DataClass';
 import GameAdmin, {doNewWorld} from './GameAdmin';
+import FullScreenButton from './FullScreenButton';
 
 
 let rightClickDisabledFlag = false;
@@ -61,6 +62,7 @@ const PixiPage = () => {
 		</div>		
 		{inGame? <PixiComponent app={papp} /> : null }
 		<GameAdmin world={world} />		
+		<FullScreenButton />
 	</div>);
 };
 

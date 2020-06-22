@@ -38,6 +38,7 @@ import CGame from './ConsequencesGame';
 const LobbyPage = () => {
 	let wpath = ['misc','consequences'];
 	let pid = getPeerId();	
+	let game = DataStore.getUrlValue('game');
 	let join = DataStore.getUrlValue('join');
 	let roomId = DataStore.getValue('misc','roomId');
 
@@ -51,7 +52,7 @@ const LobbyPage = () => {
 	let Guts;
 	if ( ! room.state || ! room.state.stage || room.state.stage === 'lobby') {
 		Guts = <RoomOpen room={room} />;
-	} else {
+	} else {		
 		// game on
 		bg = '/img/paper-texture.jpg';
 		Guts = <CGame room={room} />;

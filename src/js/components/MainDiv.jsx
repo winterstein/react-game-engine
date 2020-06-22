@@ -31,11 +31,12 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
-	pixi: PixiPage,
-	consequences: LobbyPage,
+	goose: PixiPage,
+	consequences: LobbyPage,	
+	lobby: LobbyPage,
 };
 
-const DEFAULT_PAGE = 'pixi';
+const DEFAULT_PAGE = 'lobby';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 
@@ -117,7 +118,6 @@ class MainDiv extends Component {
 					</div>
 				</div>
 				<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />
-				<FullScreenButton />
 			</div>
 		);
 	} // ./render()
