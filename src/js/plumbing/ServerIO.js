@@ -20,7 +20,8 @@ export default ServerIO;
  * This is the dataspace used in unit.js for reporting events */
 ServerIO.dataspace = 'gl';
 
-ServerIO.NO_API_AT_THIS_HOST = true;
+ServerIO.APIBASE = 'http://dw.winterwell.com'; // TODO https
+ServerIO.CHANNEL_ENDPOINT = ServerIO.APIBASE+'/channel';
 
 ServerIO.PROFILER_ENDPOINT = `${C.HTTPS}://${C.SERVER_TYPE}profiler.good-loop.com`;
 // ServerIO.PROFILER_ENDPOINT = 'https://testprofiler.good-loop.com';

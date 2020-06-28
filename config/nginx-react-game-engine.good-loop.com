@@ -2,13 +2,13 @@
 server {
 	listen   80; ## listen for ipv4; this line is default and implied
 
-	root /home/team/react-game-engine/web;
+	root /home/winterwell/react-game-engine/web;
 	index index.html;
 
 	server_name localrge.good-loop.com;
 
 	location / {
-			try_files $uri $uri/ @backend;
+			try_files $uri $uri/ index @backend;
 			add_header 'Access-Control-Allow-Origin' "$http_origin";
 			add_header 'Access-Control-Allow-Credentials' 'true';
 	}

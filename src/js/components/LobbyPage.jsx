@@ -22,9 +22,8 @@ import PropControl, { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from '../Key';
 import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container, Form, CardTitle } from 'reactstrap';
-import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
-import {Room,getPeerId} from '../plumbing/peeringhack';
+import {Room,getPeerId,getCurrentRoom} from '../plumbing/peeringhack';
 import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
 import { stopEvent, copyTextToClipboard } from '../base/utils/miscutils';
 import Messaging from '../base/plumbing/Messaging';
@@ -33,9 +32,18 @@ import CGame from './ConsequencesGame';
 // Game states: Name -> Create / Join -> Start -> Enter -> Deliver stories
 
 /**
+ * 
+ * @param {!Room} room 
+ * @returns {boolean}
+ */
+const isInLobby = room => {
+	return ! room.state || ! room.state.stage || room.state.stage === 'lobby';
+};
+
+/**
  * @param {String} world
  */
-const LobbyPage = () => {
+const LobbyPage = ({title}) => {
 	let wpath = ['misc','consequences'];
 	let pid = getPeerId();	
 	let game = DataStore.getUrlValue('game');
@@ -45,12 +53,12 @@ const LobbyPage = () => {
 	let room = roomId? DataStore.getValue('data','Room',roomId) : null;
 	
 	if ( ! room) {		
-		return <BG src='/img/lobby.jpg'><Container><Entrance join={join} /></Container></BG>;
+		return <BG src='/img/lobby.jpg'><Container>{title? <h2>{title}</h2> : null}<Entrance join={join} /></Container></BG>;
 	}
 
 	let bg = '/img/lobby.jpg';
 	let Guts;
-	if ( ! room.state || ! room.state.stage || room.state.stage === 'lobby') {
+	if (isInLobby(room)) {
 		Guts = <RoomOpen room={room} />;
 	} else {		
 		// game on
@@ -58,7 +66,8 @@ const LobbyPage = () => {
 		Guts = <CGame room={room} />;
 	}
 
-	return (<BG src={bg}><Container>		
+	return (<BG src={bg}><Container>
+		{title? <h2>{title}</h2> : null}
 		<Row>
 			<Col>{Guts}</Col>
 			<Col>
@@ -74,9 +83,18 @@ const Entrance = ({join}) => {
 	if (join) {
 		DataStore.setValue(['widget','Lobby','room'], join);
 	}
-	
-	return (<>
-		<Card body className='mt-2 mb-2'><PropControl path={['misc','player']} prop='name' label='Your Name' /></Card>
+	// First enter your name
+	let name = DataStore.getValue("misc", "player", "name");
+	if ( ! name) {
+		return <Card body className='mt-2 mb-2'>
+			<PropControl path={['misc','player']} prop="name" label="Your Name" />
+		</Card>;
+	}
+
+	return (<>				
+		<Card body className='mt-2 mb-2'>
+			<PropControl path={['misc','player']} prop="name" label="Your Name" />
+		</Card>
 		<Row>
 			<Col>
 				<Card body>
@@ -106,6 +124,7 @@ const RoomOpen = ({room}) => {
 };
 
 const Peeps = ({room}) => {
+	assert(room, "Peeps - no room!");
 	return (<Card><CardBody>
 		<CardTitle><h3>People Here</h3></CardTitle>
 		{Room.memberIds(room).map(pid => <Peep key={pid} pid={pid} room={room}/>)}
@@ -115,6 +134,7 @@ const Peep = ({pid,room}) => {
 	let m = Room.member(room, pid);
 	return <div>{m.name || pid}&nbsp;
 		{m.connection? <span role='img' aria-label=':)' className='text-success'>&#x1F603;</span> : <><span role='img' aria-label=':(' className='text-danger'>&#x1F626;</span> lost connection</>}
+		{m.answer? <span>{""+m.answer}</span> : null}
 	</div>;
 };
 
@@ -124,6 +144,7 @@ const doStart = room => {
 };
 
 const Chatter = ({room}) => {
+	assert(room, "Chatter - no room!");
 	const doChat = e => {
 		stopEvent(e);
 		Room.sendChat(room, DataStore.getValue('misc','chat','text'));
@@ -186,3 +207,6 @@ const joinRoom = (roomId) => {
 };
 
 export default LobbyPage;
+export {
+	isInLobby, Peeps, Chatter
+};

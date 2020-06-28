@@ -10,9 +10,9 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import JSend from '../base/data/JSend';
 import * as jsonpatch from 'fast-json-patch';
 import deepCopy from '../base/utils/deepCopy';
-import { getUrlVars } from '../base/utils/miscutils';
+import { getUrlVars, modifyHash } from '../base/utils/miscutils';
 
-const DT = 200;
+const DT = 500;
 
 class Room {
 
@@ -110,9 +110,9 @@ const getUser = () => {
 	return u;
 };
 
-let CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
-// CHANNEL_ENDPOINT = 'https://dw.winterwell.com/channel';
-//'http://localhost:8328/channel';
+if ( ! ServerIO.CHANNEL_ENDPOINT) {
+	ServerIO.CHANNEL_ENDPOINT = window.location.protocol+"//"+window.location.host+"/channel";
+}
 
 Room.sendRoomUpdate = room => {
 	if ( ! room) {
@@ -126,9 +126,10 @@ Room.sendRoomUpdate = room => {
 	};
 	if (oldRoom) {
 		let diff = jsonpatch.compare(oldRoom, room);
+		if (diff.length) console.warn("Room.sendRoomUpdate", diff);
 		data.diff = JSON.stringify(diff);
 	}
-	let pLoad = ServerIO.load(CHANNEL_ENDPOINT+"/"+room.id, {data});
+	let pLoad = ServerIO.load(ServerIO.CHANNEL_ENDPOINT+"/"+room.id, {data});
 	pLoad.then(res => {
 		let rd = JSend.data(res);
 		let myState = deepCopy(Room.myState(room));
@@ -230,6 +231,8 @@ Room.clearState = room => {
 Room.enter = (id, user) => {	
 	console.log("Room.enter", id, room);
 	let room = doJoin(id, user);
+	// support page reload
+	modifyHash(null, {join: room.id});
 	return room;
 };
 
@@ -239,6 +242,10 @@ Room.isHost = room => getPeerId() === room.id;
 
 
 let currentRoom = null;
+/**
+ * @returns {?Room}
+ */
+const getCurrentRoom = () => currentRoom;
 
 /**
  * Idempotent
@@ -269,5 +276,6 @@ const getPeerId = () => pid;
 
 export {
 	Room,
+	getCurrentRoom,
 	getPeerId
 };

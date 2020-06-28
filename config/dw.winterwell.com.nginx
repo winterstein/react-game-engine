@@ -8,7 +8,7 @@ server {
 	server_name dw.winterwell.com localdw.winterwell.com;
 
 	location / {
-			try_files $uri $uri/ @backend;
+			try_files $uri $uri/ index @backend;
 			add_header 'Access-Control-Allow-Origin' "$http_origin";
 			add_header 'Access-Control-Allow-Credentials' 'true';
 	}

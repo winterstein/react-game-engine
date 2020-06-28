@@ -10,7 +10,6 @@ import C from "../C";
 import Crud from "../base/plumbing/Crud"; // Crud is loaded here (but not used here)
 
 // Templates
-import BS from '../base/components/BS4';
 import MessageBar from '../base/components/MessageBar';
 import LoginWidget from '../base/components/LoginWidget';
 
@@ -22,6 +21,7 @@ import TestPage from '../base/components/TestPage';
 import FullScreenButton from './FullScreenButton';
 import LobbyPage from './LobbyPage';
 import ConsequencesGame from './ConsequencesGame';
+import AdCardsPage from './AdCardsPage';
 
 // DataStore
 C.setupDataStore();
@@ -32,8 +32,9 @@ const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
 	goose: PixiPage,
-	consequences: LobbyPage,	
+	consequences: LobbyPage,
 	lobby: LobbyPage,
+	cards: AdCardsPage,
 };
 
 const DEFAULT_PAGE = 'lobby';
