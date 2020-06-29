@@ -42,7 +42,7 @@ const AdCardsPage = () => {
 			TODO game options - showCards
 		</LobbyPage>);
 	}
-	if ( ! room.game) {
+	if ( ! room.game || ! room.game.playerIds) {
 		// only setup once (the host)
 		if ( ! Room.isHost(room)) {
 			return <Misc.Loading />;
@@ -60,19 +60,22 @@ const AdCardsPage = () => {
 	return (<Container fluid>
 		<Row>
 			<Col>
-				<h2>Card Game ON!</h2>				
+				<h3>Ads Without Humanity</h3>				
 				<h4>Client rep: {clientMember.name || game.client} {isClient? " - That's You!" : null}</h4>
 
 				{isClient? <ClientView game={game} member={member} pid={pid} /> : null}
 				{ ! isClient? <AdvertiserView game={game} member={member} pid={pid} /> : null}
 				
+				<TriviaStage game={game} pid={pid} isClient={isClient} />
+				<DoneStage game={game} pid={pid} isClient={isClient} />
+
 			</Col>
 			<Col>
 				<Peeps room={room} />
 				<Chatter room={room} />
 			</Col>
 		</Row>
-		<div>Room: {room.id}, Host: {room.oid}</div>
+	<div>Room: {room.id}, Host: {room.oid}, Stage: {game.roundStage}</div>
 	</Container>);
 };
 
@@ -81,31 +84,105 @@ const WAIT_MSGS = [
 	"With passion and energy, the creatives set to work...",
 ];
 
-const ClientView = ({game, member, pid}) => {
+const ClientView = ({game, member, pid}) => {	
 	const pickedCards = AdCardsGame.pickedCards(game);
 	const allPicked = pickedCards.length >= game.playerIds.length - 1;
+	if (game.roundStage==='create' && allPicked) AdCardsGame.setRoundStage(game, 'pitch');
+	
+	const rstage = game.roundStage;
+
 	if ( ! game.waitMsg) game.waitMsg = randomPick(WAIT_MSGS);
 	return (<>
 		<h3>Congratulations! You have just been made Chief Marketing Officer for</h3>
-		<Card body color='primary'><h3>ACME {game.product}</h3></Card>
+		<Card body color='dark'><h3 className='text-light'>ACME {game.product}</h3></Card>
+		
+		<h4 className={rstage!=='brief'? 'd-none' : null}>
+			Tell the Advertisers what the product is. Then click this button 
+			<Button color='primary' onClick={e => AdCardsGame.setRoundStage(game, 'create')}>Let Them Get Creative</Button>
+		</h4>
 
-		{allPicked? 
-			(game.options.showCards || game.readyToPick? 
-				<><h4>Pick a winning slogan</h4><ClientChoiceHand game={game} member={member} pid={pid} hand={pickedCards} /></> 
-				: <h4>Ask the Advertisers for their slogan pitches. Then click this button when you are <button type="button" >Ready to Choose the Winner</button></h4>)
-			: <div>{game.waitMsg}</div>
-		}
-	
-		<div><Button onClick={e => AdCardsGame.newRound(game)}>New Round</Button></div>
+		<h5 className={rstage!=='create'? 'd-none' : null}>{game.waitMsg}</h5>
+
+		<h4 className={rstage!=='pitch'? 'd-none' : null}>
+			Pitches! 
+			Ask the Advertisers for their slogan pitches. Then click this button when you are ready to
+			<Button color='primary' onClick={e => AdCardsGame.setRoundStage(game, 'pick')}>Choose the Winner</Button>
+		</h4>
+
+		<div className={rstage!=='pick'? 'd-none' : null}>
+			<h4>Pick a winning slogan</h4>
+			<ClientChoiceHand game={game} member={member} pid={pid} hand={pickedCards} />
+		</div>
 
 	</>);
 };
 
+const TriviaStage = ({game, pid, isClient}) => {
+	if (game.roundStage !== 'trivia') return null;
+	const tpath = ['misc','trivia',game.winningCard];
+	const triviaGuess = DataStore.getValue(tpath.concat('brand'));
+
+	let guesses = game.playerIds.map(p => game.playerState[p].triviaGuess).filter(g => g);
+	const allGuessed = guesses.length >= game.playerIds.length;
+	if (allGuessed && isClient) {
+		AdCardsGame.setRoundStage(game, 'done');
+	}
+
+	return (
+		<div>
+			<h4>The winning slogan is: </h4>
+			<Card body color='dark'><h3 className='text-light mb-5'>ACME {game.product}</h3></Card>
+			<Card body color='success' ><h3>{game.winningCard}</h3></Card>
+			
+			<h4>Trivia Bonus: Whose slogan was it really?</h4>			
+			<PropControl path={tpath} prop='brand' />
+			<Button onClick={e => game.playerState[pid].triviaGuess = triviaGuess||'pass'}>{triviaGuess? 'Enter':'Pass'}</Button>
+		</div>);
+};
+
+const DoneStage = ({game,pid,isClient}) => {
+	if (game.roundStage !== 'done') return null;
+	return (<div>
+		<Card body color='dark'><h3 className='text-light mb-5'>ACME {game.product}</h3></Card>
+		<Card body color='success' ><h3>{game.winningCard}</h3></Card>
+
+		The slogan belongs to {AdCardsGame.brandForSlogan(game.winningCard)}. It is used here without endorsement.
+		
+		<p>TODO show points</p>
+
+		{isClient? <Button color='success' onClick={e => AdCardsGame.newRound(game)}>New Round</Button> : null}
+	</div>);
+};
+
 const AdvertiserView = ({game,member,pid}) => {
+	const rstage = game.roundStage;
+	let picked = game.playerState[pid].picked;
+
 	return (<>
-		{game.options.showCards? <Card body color='primary'>ACME {game.product}</Card> : <h3>Ask the Client about the product</h3>}
-	
-		<YourHand member={member} game={game} pid={pid} />
+		<h4 className={rstage!=='brief'? 'd-none' : null}>
+			Ask the Client about the product			
+		</h4>
+
+		<div className={rstage!=='create'? 'd-none' : null}>
+			<h4>Pick your best slogan</h4>
+			<Card body color='dark'><h3 className='text-light mb-5'>ACME {game.product}</h3></Card>
+			<YourHand member={member} game={game} pid={pid} />
+		</div>
+
+		<div className={rstage!=='pitch'? 'd-none' : null}>
+			<h4>Pitch It!</h4>
+			<Card body color='dark'><h3 className='text-light mb-5'>ACME {game.product}</h3></Card>
+			<Card body color='success' ><h3>{picked}</h3></Card>
+		</div>	
+
+		<div className={rstage!=='pick'? 'd-none' : null}>
+			<h4>The Client is deciding...</h4>
+			<Card body color='dark'><h3 className='text-light mb-5'>ACME {game.product}</h3></Card>
+			<Card body color='success' >
+				<h3 className='text-muted'>{picked}</h3>
+			</Card>			
+		</div>
+		
 	</>);
 };
 
@@ -121,10 +198,9 @@ const YourHand = ({member, game, pid}) => {
 	return (<Row>
 		{hand.map((card, i) => 
 			<Col key={i} className='pt-5'>
-				<Card body className={picked===card? 'mt-n5' : null} color='success' 
+				<Card body style={{cursor:"pointer"}} className={picked===card? 'mt-n5' : null} color='success' 
 					onClick={e => pickCard(card)} >
 					<h3>{card}</h3>
-					<div style={{transform:"rotate(-180deg)"}}>{AdCardsGame.brandForSlogan(card)}</div>
 				</Card>
 			</Col>
 		)}
@@ -136,13 +212,14 @@ const ClientChoiceHand = ({hand, member, game, pid}) => {
 	let picked = game.playerState[pid].picked;
 	if ( ! picked) member.answer = false;
 	const pickCard = card => {
-		game.playerState[pid].picked = card;
+		game.winningCard = card;		
 		member.answer = true;
+		AdCardsGame.setRoundStage(game, 'trivia');
 	};
 	return (<Row>
 		{hand.map((card, i) => 
 			<Col key={i}>
-				<Card body className={picked===card? 'mt-n5' : null} color='success' 
+				<Card body style={{cursor:"pointer"}} className={game.winningCard===card? 'mt-n5' : null} color='success' 
 					onClick={e => pickCard(card)} ><h3>{card}</h3>
 				</Card>
 			</Col>

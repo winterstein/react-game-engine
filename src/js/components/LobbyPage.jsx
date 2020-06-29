@@ -81,7 +81,7 @@ const LobbyPage = ({title}) => {
 
 const Entrance = ({join}) => {
 	if (join) {
-		DataStore.setValue(['widget','Lobby','room'], join);
+		DataStore.setValue(['widget','Lobby','room'], join, false);
 	}
 	// First enter your name
 	let name = DataStore.getValue("misc", "player", "name");
@@ -178,7 +178,7 @@ const ShareLink = ({room}) => {
 	// let shareText = $a.getAttribute('data-sharetext');
 	let u = window.location;
 	let href = u+"?join="+room.id;
-	return <><a href={href} target='_blank' >Share {room.id}</a><Button className='ml-1' size='sm' onClick={e => copyTextToClipboard(href)}>copy link to clipboard</Button></>;
+	return <>Room code: <a href={href} target='_blank' >{room.id}</a><Button className='ml-1' size='sm' onClick={e => copyTextToClipboard(href)}>copy link to clipboard</Button></>;
 };
 
 // HACK

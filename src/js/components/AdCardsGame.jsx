@@ -14,6 +14,9 @@ import JSend from '../base/data/JSend';
 
 class AdCardsGame extends DataClass {	
 
+	/** @type {string} brief|create|pitch|pick|trivia|done */
+	roundStage;
+
 	/** @type {string[]} */
 	playerIds;
 
@@ -34,6 +37,11 @@ class AdCardsGame extends DataClass {
 
 }
 DataClass.register(AdCardsGame, "AdCardsGame");
+
+AdCardsGame.setRoundStage = (game, newStage) => {
+	game.roundStage = newStage;
+	// TODO reset answer flags
+};
 
 /**
  * Shuffles array in place.
@@ -58,17 +66,19 @@ DataStore.fetch(['misc','ads.tsv'], () => {
 	return ptsv
 		.then(res0 => res0.text()) // TODO support in JSend
 		.then(res => {
-			console.warn(res);
+			// console.warn(res);
 			let rows = res.split("\n");
 			AdCardsGame.ALL_PRODUCTS = [];
 			AdCardsGame.ALL_SLOGANS = [];
 			AdCardsGame.BRAND_FOR_SLOGAN = {};
 			rows.forEach(rs => {
 				let row = rs.split("\t");
-				if (row[0]) AdCardsGame.ALL_PRODUCTS.push(row[0]);
-				if (row[2]) AdCardsGame.ALL_SLOGANS.push(row[2]);
-				if (row[1]) {
-					AdCardsGame.BRAND_FOR_SLOGAN[row[1]] = row[2];
+				if (row[0] && row[0] !== 'Products') AdCardsGame.ALL_PRODUCTS.push(row[0]);
+				if (row[2] && row[2] !== 'Slogan') {
+					AdCardsGame.ALL_SLOGANS.push(row[2]);
+					if (row[1]) {
+						AdCardsGame.BRAND_FOR_SLOGAN[row[2]] = row[1];
+					}
 				}
 			});
 		});
@@ -114,6 +124,8 @@ const dealCardTo = (game, pid) => {
 
 AdCardsGame.newRound = (game) => {
 	game.waitMsg = false;
+	game.roundStage = 'brief';
+	game.winningCard = false;
 	// client
 	let cid = game.playerIds.indexOf(game.client);
 	cid++;

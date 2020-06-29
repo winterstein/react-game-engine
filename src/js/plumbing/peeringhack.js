@@ -122,15 +122,17 @@ Room.sendRoomUpdate = room => {
 	assert(room.id, "No host?!", room);
 	
 	let data = {
-		room: JSON.stringify(room), 
+		// room: JSON.stringify(room), 
 		peerId: getPeerId()
 	};
 	if (oldRoom) {
 		let diff = jsonpatch.compare(oldRoom, room);
 		if (diff.length) console.warn("Room.sendRoomUpdate", diff);
 		data.diff = JSON.stringify(diff);
+	} else {
+		data.room = JSON.stringify(room);		
 	}
-	let pLoad = ServerIO.load(ServerIO.CHANNEL_ENDPOINT+"/"+room.id, {data});
+	let pLoad = ServerIO.load(ServerIO.CHANNEL_ENDPOINT+"/"+room.id, {data, method:"POST"});
 	pLoad.then(res => {
 		let rd = JSend.data(res);
 		let myState = deepCopy(Room.myState(room));
@@ -149,7 +151,8 @@ Room.sendRoomUpdate = room => {
 		room.state[getPeerId()] = myState;
 
 		// for next time
-		oldRoom = deepCopy(room);
+		// NB: prefer the servers view, if sent, as that will catch any client<>server mismatch next time round
+		oldRoom = rd.room || deepCopy(room);
 	});	
 };
 let oldRoom = null;
