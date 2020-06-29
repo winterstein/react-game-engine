@@ -8,3 +8,8 @@ web/privacy-policy.html
 .vscode
 package-lock.json
 /bin/
+logs
+pom.bob.xml
+dependencies
+.settings
+config/version.properties

@@ -85,11 +85,16 @@ const Entrance = ({join}) => {
 	}
 	// First enter your name
 	let name = DataStore.getValue("misc", "player", "name");
+	if ( ! name) { // stored?
+		name = window.localStorage.getItem("name");
+		DataStore.setValue(["misc", "player", "name"], name, false);
+	}
 	if ( ! name) {
 		return <Card body className='mt-2 mb-2'>
 			<PropControl path={['misc','player']} prop="name" label="Your Name" />
 		</Card>;
 	}
+	window.localStorage.setItem("name", name);
 
 	return (<>				
 		<Card body className='mt-2 mb-2'>
@@ -112,7 +117,6 @@ const Entrance = ({join}) => {
 };
 
 const RoomOpen = ({room}) => {
-	const roomId = room.id;
 	// onClick={e => doShare(e, this)
 	return 	<Card body className='m-2'>
 	<h3><ShareLink room={room}>Room: {room.id}</ShareLink></h3>

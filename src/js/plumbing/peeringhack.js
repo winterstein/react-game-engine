@@ -92,7 +92,8 @@ Room.chats = room => {
 
 Room.create = () => {	
 	let room = new Room();
-	room.id = getPeerId();
+	room.id = nonce(4).toLowerCase();
+	room.oid = getPeerId();
 	room.open = true;
 	let u = getUser();
 	room.memberIds[getPeerId()] = getPeerId();
@@ -238,7 +239,11 @@ Room.enter = (id, user) => {
 
 Room.exit = room => {
 };
-Room.isHost = room => getPeerId() === room.id;
+/**
+ * 
+ * @param {!Room} room 
+ */
+Room.isHost = room => getPeerId() === room.oid;
 
 
 let currentRoom = null;

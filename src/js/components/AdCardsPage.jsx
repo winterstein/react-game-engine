@@ -43,6 +43,10 @@ const AdCardsPage = () => {
 		</LobbyPage>);
 	}
 	if ( ! room.game) {
+		// only setup once (the host)
+		if ( ! Room.isHost(room)) {
+			return <Misc.Loading />;
+		}
 		room.game = new AdCardsGame();
 		room.game.playerIds = Room.memberIds(room);
 		AdCardsGame.setup(room.game);
@@ -68,7 +72,7 @@ const AdCardsPage = () => {
 				<Chatter room={room} />
 			</Col>
 		</Row>
-		<div>Room: {room.id}</div>
+		<div>Room: {room.id}, Host: {room.oid}</div>
 	</Container>);
 };
 
@@ -116,9 +120,11 @@ const YourHand = ({member, game, pid}) => {
 	};
 	return (<Row>
 		{hand.map((card, i) => 
-			<Col key={i}>
+			<Col key={i} className='pt-5'>
 				<Card body className={picked===card? 'mt-n5' : null} color='success' 
-					onClick={e => pickCard(card)} ><h3>{card}</h3>
+					onClick={e => pickCard(card)} >
+					<h3>{card}</h3>
+					<div style={{transform:"rotate(-180deg)"}}>{AdCardsGame.brandForSlogan(card)}</div>
 				</Card>
 			</Col>
 		)}

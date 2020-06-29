@@ -2,8 +2,6 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'lodash';
 import SJTest, {assert} from 'sjtest';
 import Login from 'you-again';
@@ -12,6 +10,7 @@ import C from '../C';
 
 import DataClass, { nonce } from '../base/data/DataClass';
 import { randomPick } from '../base/utils/miscutils';
+import JSend from '../base/data/JSend';
 
 class AdCardsGame extends DataClass {	
 
@@ -53,13 +52,33 @@ function shuffle(a) {
 
 let HAND_SIZE = 6;
 
+// TODO fetch card data
+DataStore.fetch(['misc','ads.tsv'], () => {
+	const ptsv = fetch("/data/Ads-Without-Humanity.tsv");
+	return ptsv
+		.then(res0 => res0.text()) // TODO support in JSend
+		.then(res => {
+			console.warn(res);
+			let rows = res.split("\n");
+			AdCardsGame.ALL_PRODUCTS = [];
+			AdCardsGame.ALL_SLOGANS = [];
+			AdCardsGame.BRAND_FOR_SLOGAN = {};
+			rows.forEach(rs => {
+				let row = rs.split("\t");
+				if (row[0]) AdCardsGame.ALL_PRODUCTS.push(row[0]);
+				if (row[2]) AdCardsGame.ALL_SLOGANS.push(row[2]);
+				if (row[1]) {
+					AdCardsGame.BRAND_FOR_SLOGAN[row[1]] = row[2];
+				}
+			});
+		});
+});
+
 AdCardsGame.setup = game => {
-	// TODO fetch card data
-	game.products = ['sausages','cucumber'];
-	game.slogans = ['I love ___','Just Do It'];
 	// options
 	game.options= {showCards:true};
-	// game.deck = game.slogans.slice(); // copy
+	game.slogans = AdCardsGame.ALL_SLOGANS.slice(); // safety copy
+	game.products = AdCardsGame.ALL_PRODUCTS.slice();
 	// blank player state	
 	const n = game.playerIds.length;
 	game.playerState = {};
@@ -82,6 +101,10 @@ AdCardsGame.setup = game => {
 	AdCardsGame.newRound(game);
 };
 
+AdCardsGame.brandForSlogan = slogan => {
+	return AdCardsGame.BRAND_FOR_SLOGAN[slogan];
+};
+
 const dealCardTo = (game, pid) => {
 	let phand = game.playerState[pid].hand;
 	let card = game.slogans[game.sloganIndex % game.slogans.length];
@@ -90,7 +113,7 @@ const dealCardTo = (game, pid) => {
 };
 
 AdCardsGame.newRound = (game) => {
-	game.waitMsg = null;
+	game.waitMsg = false;
 	// client
 	let cid = game.playerIds.indexOf(game.client);
 	cid++;
@@ -102,7 +125,7 @@ AdCardsGame.newRound = (game) => {
 	game.playerIds.forEach(pid => {
 		const pstate = game.playerState[pid];
 		pstate.hand = pstate.hand.filter(c => c !== pstate.picked);
-		pstate.picked = null;
+		pstate.picked = false;
 	});
 	// deal new cards
 	game.playerIds.forEach(pid => {
