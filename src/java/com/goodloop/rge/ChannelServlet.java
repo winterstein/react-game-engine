@@ -13,6 +13,7 @@ import com.winterwell.web.app.CrudServlet;
 import com.winterwell.web.app.IServlet;
 import com.winterwell.web.app.WebRequest;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,7 @@ import com.google.common.cache.CacheBuilder;
 /**
  * TODO poor-mans web sockets
  * @author daniel
- *
+ * @testedby ChannelServletTest
  */
 public class ChannelServlet implements IServlet {
 
@@ -53,7 +54,8 @@ public class ChannelServlet implements IServlet {
 		String diff = state.get("diff");
 		if (diff!=null) {
 			Object jdiff = JSON.parse(diff);
-			channel.room = applyDiff(channel.room, jdiff);
+			List<Map> diffs = Containers.asList(jdiff);
+			channel.room = applyDiff(channel.room, diffs);
 		} else if (room != null) {
 			Map jroom = (Map) JSON.parse(room);
 			channel.room = merge(channel.room, jroom);
@@ -91,32 +93,25 @@ public class ChannelServlet implements IServlet {
 		jsend.send(state);
 	}
 
-	private Map applyDiff(Map room, Object jdiff) {
-		List<Map> diffs = Containers.asList(jdiff);		
+	/**
+	 * 
+	 * @param room
+	 * @param diffs Each diff is {op:replace, path:/foo/bar, value:v}
+	 * TODO other ops 
+	 * @return
+	 */
+	Map applyDiff(Map room, List<Map> diffs) {			
 		if (diffs.isEmpty()) {
 			return room;
 		}
 		for (Map diff : diffs) {
-			String op = (String) diff.get("op");
+			String op = (String) diff.get("op"); // replace
 			String path = (String) diff.get("path");
 			Object value = diff.get("value");
-//			set(room, path, value);
-			String[] bits = path.split("/");
-			Map obj = room;
-			for(int bi=1; bi<bits.length-1; bi++) {
-				String bit = bits[bi];
-				Map bobj = (Map) obj.get(bit);
-				if (bobj==null) {
-					bobj = new ArrayMap();
-					obj.put(bit, bobj);
-				}
-				obj = bobj;
-			}
-			String k = bits[bits.length-1];
-			obj.put(k, value);
-			System.out.println(path);
+			// NB: drop the leading / on path
+			String[] bits = path.substring(1).split("/");
+			SimpleJson.set(room, value, bits);
 		}
-		// TODO Auto-generated method stub
 		return room;
 	}
 

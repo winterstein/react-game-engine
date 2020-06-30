@@ -156,7 +156,7 @@ const DoneStage = ({game,pid,isClient}) => {
 
 const AdvertiserView = ({game,member,pid}) => {
 	const rstage = game.roundStage;
-	let picked = game.playerState[pid].picked;
+	let picked = game.playerState && game.playerState[pid] && game.playerState[pid].picked;
 
 	return (<>
 		<h4 className={rstage!=='brief'? 'd-none' : null}>
@@ -189,7 +189,7 @@ const AdvertiserView = ({game,member,pid}) => {
 
 const YourHand = ({member, game, pid}) => {
 	const hand = AdCardsGame.getHand(game, pid);
-	let picked = game.playerState[pid].picked;
+	let picked = game.playerState[pid] && game.playerState[pid].picked;
 	if ( ! picked) member.answer = false;
 	const pickCard = card => {
 		game.playerState[pid].picked = card;

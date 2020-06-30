@@ -149,12 +149,16 @@ AdCardsGame.newRound = (game) => {
 };
 
 AdCardsGame.pickedCards = (game) => {
-	let picks = game.playerIds.map(pid => game.playerState[pid].picked);
+	let picks = game.playerIds.map(pid => game.playerState[pid] && game.playerState[pid].picked);
 	picks = picks.filter(p => p);
 	return picks;
 };
 
 AdCardsGame.getHand = (game, pid) => {
+	if ( ! game.playerState || ! game.playerState[pid]) {
+		console.warn("Game not setup?! playerState missing", JSON.stringify(game));
+		return [];
+	}
 	return game.playerState[pid].hand;
 };
 
