@@ -16,7 +16,7 @@ public class MusicalBumps {
 			try {
 				proc = new Proc("amixer set Master 0%");
 				proc.start();
-				proc.waitFor(new Dt(5, TUnit.SECOND));
+				proc.waitFor(new Dt(4, TUnit.SECOND));
 				proc.close();
 				
 				Utils.sleep(7000);
