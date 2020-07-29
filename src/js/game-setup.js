@@ -20,6 +20,7 @@ import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
 import Allosaurus from './creatures/Allosaurus';
+import BlueShark from './creatures/BlueShark';
 import Beaver from './creatures/Beaver';
 import Wood from './creatures/Wood';
 import Meat from './creatures/Meat';
@@ -31,7 +32,7 @@ import Grass from './creatures/Grass';
 import Water from './creatures/Water';
 import Tree from './creatures/Tree';
 
-import { addScript } from 'wwutils';
+// import { addScript } from './base/utils/miscutils';
 import pJoyRing from './components/pJoyRing';
 import {containerFor, setPApp, setPSpriteFor, getPSpriteFor, getPApp} from './components/Pixies';
 
@@ -304,7 +305,7 @@ const setupAfterLoad2_UI = game => {
 	// spawns
 	// NB shark is bigger than 48x48
 	let rslot = 0;
-	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf','allosaurus','beaver'].forEach(spawnName => {		
+	['sheep','goat','chicken','wolf','frog','bunny','fish','badger','werewolf','allosaurus','BlueShark', 'beaver'].forEach(spawnName => {		
 		let icon = SpriteLib[spawnName]();
 		const onClick = e => {
 			console.log("onDown",e, ""+e.target);
@@ -421,6 +422,7 @@ Game.setup = game => {
 	Game.addKind(game, Goat);
 	Game.addKind(game, Werewolf);
 	Game.addKind(game, Allosaurus);
+	Game.addKind(game, BlueShark);
 	Game.addKind(game, Beaver);
 	Game.addKind(game, Wood);
 	Game.addKind(game, Frog);

@@ -20,6 +20,8 @@ export default Fish;
 
 Fish.chases =['Frog','Meat'];
 
+Fish.flees=['BlueShark'];
+
 Fish.updater = ({sprite,game,dt}) => {
 	// Fish on land die :(
 	const {row,column} = Game.getRowColumn(game, sprite);

@@ -138,6 +138,29 @@ SpriteLib.allosaurus = () => {
 	Sprite.animate(sp, 'right');
 	return sp;
 };
+
+SpriteLib.BlueShark = () => {
+	// a bit taller
+	let sbase = {
+		kind: 'BlueShark',
+		src: '/img/blue-shark.png',
+		tiles: [1,1],
+		tileSize: [128,67],
+		// animations: {
+		// 	left: {frames:[2,3]}, 
+		// 	right: {frames:[0,1]}, 
+		// 	// up: {frames:[36+n*3,37+n*3,38+n*3]}, 
+		// 	// down: {frames:[0+n*3,1+n*3,2+n*3]} 
+		// },
+	};
+	let sp = new Sprite(sbase);
+	// ??starting animation??
+	Sprite.initFrames(sp);
+	// Sprite.animate(sp, 'right');
+	return sp;
+};
+
+
 SpriteLib.beaver = () => {
 	// a bit taller
 	let sbase = {

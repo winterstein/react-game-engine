@@ -16,4 +16,6 @@ Creature.terrains = ['Grass','Earth','Water', 'Tree'];
 
 Creature.chases = ['Wood', 'Tree','Frog'];
 
+Creature.flees = ['BlueShark'];
+
 export default Creature;

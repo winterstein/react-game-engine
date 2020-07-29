@@ -14,7 +14,7 @@ Creature.attack = 25;
 
 Creature.terrains = ['Grass','Earth','Water','Tree'];
 
-Creature.chases = ['Meat','Werewolf','Fish'];
+Creature.chases = ['Meat','Werewolf','Fish','Allosaurus'];
 
 Creature.flees = ['Allosaurus','Frog'];
 

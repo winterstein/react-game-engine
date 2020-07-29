@@ -19,4 +19,4 @@ Creature.terrains = ['Grass','Earth','Tree','Water'];
 
 export default Creature;
 
-Creature.flees = ['Badger','Fish'];
+Creature.flees = ['Badger','Fish','BlueShark'];
