@@ -10,7 +10,7 @@ public class MusicalBumps {
 
 	public static void main(String[] args) {		
 		while(true) {
-			double dt = 5000 + Utils.getRandom().nextDouble()*TUnit.MINUTE.millisecs;
+			double dt = 5000 + Utils.getRandom().nextDouble()*TUnit.MINUTE.millisecs*0.40;
 			Utils.sleep((long) dt);
 			Proc proc = null;
 			try {
@@ -19,11 +19,12 @@ public class MusicalBumps {
 				proc.waitFor(new Dt(5, TUnit.SECOND));
 				proc.close();
 				
-				Utils.sleep(7000);
+				Utils.sleep(5000);
 
 				proc = new Proc("amixer set Master 100%");
 				proc.start();
-				proc.waitFor(new Dt(4, TUnit.SECOND));
+				proc.waitFor(new Dt(5, TUnit.SECOND));
+				proc.close();
 				
 			} catch(Throwable ex) {
 				FileUtils.close(proc);
