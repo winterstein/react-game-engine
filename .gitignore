@@ -13,3 +13,4 @@ pom.bob.xml
 dependencies
 .settings
 config/version.properties
+build-lib
