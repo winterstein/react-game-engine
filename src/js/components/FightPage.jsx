@@ -24,7 +24,7 @@ import { getPApp } from './Pixies';
 import DataClass, { nonce } from '../base/data/DataClass';
 import GameAdmin, {doNewWorld} from './GameAdmin';
 import FullScreenButton from './FullScreenButton';
-import Player from '../creatures/Player';
+import Fight from '../data/Fight';
 
 
 let rightClickDisabledFlag = false;
@@ -43,17 +43,18 @@ const FightPage = () => {
 		fight = makeFight();
 	}
 
-	// check it has been loaded / inited
-	let papp = getPApp();
-	if ( ! papp) {
-		papp = getPApp();
-		assert(papp);
-	}			
-
 	return (<div style={{position:'relative', userSelect:"none", overflow:"hidden"}}>		
-		<PixiComponent app={papp} />
+		{fight.team.map(peep => <Peep key={peep.id} sprite={peep} />)}
+
+		{fight.enemies.map(peep => <Enemy key={peep.id} sprite={peep} />)}		
 	</div>);
 };
+
+const Peep = ({sprite}) => {
+	return JSON.stringify(sprite.name);
+};
+
+const Enemy = ({sprite}) => <Peep sprite={sprite} />;
 
 const makeFight = () => {
 	let fight = new Fight();
