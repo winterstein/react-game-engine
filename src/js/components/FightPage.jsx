@@ -25,6 +25,7 @@ import DataClass, { nonce } from '../base/data/DataClass';
 import GameAdmin, {doNewWorld} from './GameAdmin';
 import FullScreenButton from './FullScreenButton';
 import Fight from '../data/Fight';
+import Monster from '../data/Monster';
 
 
 let rightClickDisabledFlag = false;
@@ -42,16 +43,24 @@ const FightPage = () => {
 	if ( ! fight) {
 		fight = makeFight();
 	}
+	let activeSprite = fight.team.find(s => s.id===fight.turn) || fight.enemies.find(s => s.id===fight.turn);
 
 	return (<div style={{position:'relative', userSelect:"none", overflow:"hidden"}}>		
 		{fight.team.map(peep => <Peep key={peep.id} sprite={peep} />)}
 
-		{fight.enemies.map(peep => <Enemy key={peep.id} sprite={peep} />)}		
+		{fight.enemies.map(peep => <Enemy key={peep.id} sprite={peep} />)}
+
+		Turn: {fight.turn}
+		Active: {activeSprite.name}
+
+		Options:
+		{activeSprite.spells && activeSprite.spells.map(spell => spell)}
+		Guard		
 	</div>);
 };
 
 const Peep = ({sprite}) => {
-	return JSON.stringify(sprite.name);
+	return sprite.name;
 };
 
 const Enemy = ({sprite}) => <Peep sprite={sprite} />;
@@ -59,13 +68,14 @@ const Enemy = ({sprite}) => <Peep sprite={sprite} />;
 const makeFight = () => {
 	let fight = new Fight();
 	fight.team = [
-		{name:"Greg"},
-		{name:"Alice"}
+		new Sprite({name:"Alice", spells:['Honey Badger', 'Rhino', 'Tiger', 'Bat']}),
+		new Sprite({name:"Bob"})
 	];
 	fight.enemies = [
-		{name:"Angry Robot"},
-		{name:"Nasty Robot"}
+		new Monster({name:"Angry Robot"}),
+		new Monster({name:"Nasty Robot"})
 	];
+	fight.turn = fight.team[0].id;
 	DataStore.setValue(["misc", "game","fight"], fight, false);
 	return fight;
 };

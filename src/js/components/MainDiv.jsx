@@ -14,14 +14,10 @@ import MessageBar from '../base/components/MessageBar';
 import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
-import PixiPage from './PixiPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
-import FullScreenButton from './FullScreenButton';
-import LobbyPage from './LobbyPage';
 import FightPage from './FightPage';
-import ConsequencesGame from './ConsequencesGame';
 
 // DataStore
 C.setupDataStore();
@@ -31,9 +27,6 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
-	goose: PixiPage,
-	consequences: LobbyPage,
-	lobby: LobbyPage,
 	fight: FightPage
 };
 
@@ -110,17 +103,13 @@ class MainDiv extends Component {
 			</div>);
 		}
 	
-		return (
-			<div>
-				<div>
-					<MessageBar />
-					<div className='page' id={page}>						
-						<Page path={path} />
-					</div>
-				</div>
-				<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />
+		return (<>
+			<MessageBar />
+			<div className='page' id={page}>						
+				<Page path={path} />
 			</div>
-		);
+			<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />
+		</>);
 	} // ./render()
 } // ./MainDiv
 

@@ -14,8 +14,7 @@ import * as PIXI from 'pixi.js';
 import { randomPick } from './base/utils/miscutils';
 import Pixies, { containerFor, setPSpriteFor, getPSpriteFor } from './components/Pixies';
 import ServerIO from './base/plumbing/ServerIOBase';
-import KindOfCreature from './creatures/KindOfCreature';
-
+import Kind from './data/Kind';
 
 class Game extends DataClass {
 
@@ -128,69 +127,6 @@ Game.init = () => {
 	gameLoop();
 };
 
-/**
- * @param {?Sprite} sprite default to player0
- * @param {!String} input e.g. "up"
- * @param {?Boolean} on if false the input is being switched off - eg key-up
- */
-Game.handleInput = ({sprite, input, dx, dy, on}) => {
-	if ( ! sprite) {
-		sprite = Game.get().sprites.player0;
-	}
-	const v = 100; // pixles per second
-	switch(input) {
-	case 'up':
-		if (on) {
-			sprite.dy = -v;
-		}
-		if ( ! on && sprite.dy < 0) sprite.dy = 0;
-		break;
-	case 'down':
-		if (on) {
-			sprite.dy = v;
-		}
-		if ( ! on && sprite.dy > 0) sprite.dy = 0;
-		break;
-	case 'left':
-		if (on) {
-			sprite.dx = -v;
-		}
-		if ( ! on && sprite.dx < 0) sprite.dx = 0;
-		break;
-	case 'right':
-		if (on) {
-			sprite.dx = v;
-		}
-		if ( ! on && sprite.dx > 0) sprite.dx = 0;
-		break;
-	case 'dxdy':
-		if (on) {
-			if (Math.abs(dx)<10 && Math.abs(dy)<10) {
-				on = false;
-			} else {
-				// normalise
-				const dd = Math.sqrt(dx*dx + dy*dy);
-				dx /= dd;
-				dy /= dd;				
-				sprite.dx = v*dx;
-				sprite.dy = v*dy;
-			}
-		}
-		if ( ! on ) {
-			sprite.dx = 0;
-			sprite.dy = 0;
-		}
-		break;
-	}
-	// console.log(input, on, sprite.dx + " dy: "+sprite.dy, sprite);
-};
-
-/**
- * @returns {Sprite}
- */
-Game.getPlayer = game => {
-	return game.sprites.player0;
-};
 
 /**
  * @param {?String[]} types
@@ -295,23 +231,12 @@ Game.getTile = ({game, row, column}) => {
 };
 
 /**
- * @deprecated no-op really given Kind constructor does this
- * @param {?Game} game
- * @param {!KindOfCreature} kind NB: Can be called repeatedly
- */
-Game.addKind = (game, kind) => {
-	if ( ! game) game = Game.get();
-	Game.assIsa(game);
-	KindOfCreature.kinds[kind.name] = kind;
-};
-
-/**
  * Easy way to make a sprite
  * @param kindName {!String} name of a KindOfCreature
  */
 Game.make = (kindName, spriteSettings={}, container) => {
 	const game = Game.get();
-	const kind = KindOfCreature.kinds[kindName];
+	const kind = Kind.getKind(kindName);
 	if ( ! kind) {
 		throw new Error("Cannot make "+kindName+" - kind unknown");
 	}
@@ -330,8 +255,6 @@ Game.make = (kindName, spriteSettings={}, container) => {
 		let {row, column} = spriteSettings;
 		// NB: sets a row_col id
 		Game.make2_Tile({game, row, column, tile:sprite});
-	} else {
-		sprite.id = kindName+nonce();
 	}
 
 	// dont duplicate template stuff

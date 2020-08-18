@@ -149,7 +149,7 @@ Grid.screenFromGame = gxy => {
 		};
 	}
 
-
+	// isometric
 	assert(x !== undefined && y !== undefined, "Grid.js screenFromGame", gxy);
 	return {
 		x: (x*tw + y*th)*RT2, 

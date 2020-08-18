@@ -7,7 +7,6 @@ import StopWatch from '../StopWatch';
 import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
 import { getPSpriteFor, getPApp } from '../components/Pixies';
-import KindOfCreature from '../creatures/KindOfCreature';
 
 
 class Animate extends DataClass {
@@ -127,6 +126,7 @@ class Sprite extends DataClass {
 	 */
 	constructor(base) {
 		super(base);
+		this.id = (base.kind||'')+nonce(5);
 		Object.assign(this, base);
 		delete this.status;
 	}
@@ -341,15 +341,16 @@ Sprite.frame = sprite => {
 };
 
 /**
- * Get template
+ * Get template (to avoid having all the sprite info in each instance)
  * @param {Sprite} sprite 
  * @param {Sprite}
  */
-const t = sprite => {
-	if ( ! sprite.kind) return sprite;
-	const k = KindOfCreature.kinds[sprite.kind];
-	if ( ! k || ! k.sprites) return sprite;
-	const v = sprite.variant || 0;
-	const template = k.sprites[v];	
-	return template || sprite;
-};
+const t = sprite => sprite;
+// {
+// 	if ( ! sprite.kind) return sprite;
+// 	const k = Kind.getKind(sprite.kind);
+// 	if ( ! k || ! k.sprites) return sprite;
+// 	const v = sprite.variant || 0;
+// 	const template = k.sprites[v];	
+// 	return template || sprite;
+// };
