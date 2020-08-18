@@ -20,8 +20,8 @@ import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
 import FullScreenButton from './FullScreenButton';
 import LobbyPage from './LobbyPage';
+import FightPage from './FightPage';
 import ConsequencesGame from './ConsequencesGame';
-import AdCardsPage from './AdCardsPage';
 
 // DataStore
 C.setupDataStore();
@@ -34,10 +34,10 @@ const PAGES = {
 	goose: PixiPage,
 	consequences: LobbyPage,
 	lobby: LobbyPage,
-	cards: AdCardsPage,
+	fight: FightPage
 };
 
-const DEFAULT_PAGE = 'lobby';
+const DEFAULT_PAGE = 'fight';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 

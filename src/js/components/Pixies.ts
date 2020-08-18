@@ -2,8 +2,7 @@
  * 
  */
 import * as PIXI from 'pixi.js';
-import { PartiallyEmittedExpression } from 'typescript';
-import Sprite from '../data/Sprite';
+// import Sprite from '../data/Sprite';
 import { assMatch } from 'sjtest';
 
 /**
@@ -12,7 +11,7 @@ import { assMatch } from 'sjtest';
 const containerFor : {[key: string]: PIXI.Container} = {};
 const _pspriteFor : {[key: string]: PIXI.Sprite} = {};
 
-const setPSpriteFor = (sprite : Sprite, psprite : PIXI.Sprite) => {
+const setPSpriteFor = (sprite, psprite : PIXI.Sprite) => {
 	const id = sprite.id;
 	assMatch(id,String);
 	return _pspriteFor[id] = psprite;
@@ -22,7 +21,7 @@ const setPSpriteFor = (sprite : Sprite, psprite : PIXI.Sprite) => {
  * @param sprite 
  * @returns {?PIXI.Sprite} psprite if set
  */
-const getPSpriteFor = (sprite : Sprite) => {
+const getPSpriteFor = (sprite) => {
 	const id = sprite.id;
 	assMatch(id,String);
 	return _pspriteFor[id];
