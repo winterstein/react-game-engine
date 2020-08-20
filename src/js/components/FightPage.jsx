@@ -28,7 +28,8 @@ import Fight from '../data/Fight';
 import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
-import { space } from '../base/utils/miscutils';
+import { space, randomPick } from '../base/utils/miscutils';
+import Command from '../data/Command';
 // import svg from '../img/angry-robot.svg';
 
 const DrawReact = ({src, height="200px", width="200px"}) => {
@@ -94,7 +95,7 @@ const FightPage = () => {
 	</div>);	
 };
 
-const ActionButton = ({action, active, target}) => <Button color='primary' className='mr-2' onClick={e => doAction({action, active, target})}>{action}</Button>;
+const ActionButton = ({action, active, target}) => <Button color={Monster.isa(active)? 'danger' : 'primary'} className='mr-2' onClick={e => doAction({action, active, target})}>{action}</Button>;
 
 const doAction = ({action, active, target}) => {
 	action = action.toLowerCase();
@@ -105,40 +106,54 @@ const doAction = ({action, active, target}) => {
 	case "honey badger":
 		console.warn("BADGER!!!");
 		if (target) {
-			target.health -= 20;
+			Command.push(target, new Command("+", "health", -50));
 		}
 		break;
 	default:
 		if (target) {
-			target.health -= 10;
+			Command.push(target, new Command("+", "health", -10));
 		}
 		break;
 	}
 	console.warn(action);
 	if (target && target.health < 0) {
-		doDie(target);
+		Command.push(target, new Command("die"));
+		// Fight.addCommand({fight, target, command: new Command("die")});
+		let alive = fight.enemies.filter(s => s.health > 0);
+		if ( ! alive.length) {
+			Command.push(fight, new Command("win"));
+		}
 	}
 	doNextTurn();
 };
 
-const doDie = sprite => {
-
-};
 
 const doNextTurn = () => {
 	let spriteIds = [...fight.team,...fight.enemies].map(s => s.id);	
 	let i = spriteIds.indexOf(fight.turn);
 	i = (i + 1) % spriteIds.length;
-	fight.turn = spriteIds[i];
-	DataStore.update();
+	Command.push(fight, new Command("set", "turn", spriteIds[i]));
+
+	// hack random attack
+	let activeEnemy = fight.enemies.find(s => s.id===fight.turn);
+	if (activeEnemy) {
+		setTimeout(() => {
+			let target = randomPick(fight.team);
+			let spell = randomPick(activeEnemy.spells);
+			doAction({action:spell, active:activeEnemy, target});
+		}, 2000);
+	}
 };
 
 const Peep = ({sprite, selected}) => {
 	if (sprite.src && sprite.src.includes(".svg")) {
-		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected")}>
+		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected")}
+			style={{position:'relative',width:'200px'}}
+			>
 			{selected? <b>{sprite.name}</b> : sprite.name}
 			<DrawReact src={sprite.src} />
 			Health: {sprite.health}
+			{sprite.health <= 0? <div style={{position:'absolute',bottom:0}}><DrawReact src={'/img/src/fire.svg'} /></div> : null}
 		</div>);
 	}
 	return sprite.name;
@@ -149,6 +164,7 @@ const setFocus = sprite => DataStore.setValue(['focus','Sprite'], sprite.id);
 const Enemy = ({sprite}) => <Peep sprite={sprite} />;
 
 const makeFight = () => {
+	// let game = Game.get(); game is tied to pixi which we aren't using
 	let fight = new Fight();
 	fight.team = [
 		new Sprite({name:"Alice", src:"/img/src/alice.svg", spells:['Honey Badger', 'Rhino', 'Tiger', 'Bat'], health:100}),

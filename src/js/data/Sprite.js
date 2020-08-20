@@ -15,7 +15,7 @@ class Animate extends DataClass {
 	frames;
 
 	/** @type {Number} */
-	dt;   
+	dt;
 
 	/** @type {Boolean} */
 	stop;
