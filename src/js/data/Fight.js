@@ -9,6 +9,7 @@ class Fight extends DataClass {
 	enemies;
 }
 DataClass.register(Fight,'Fight');
+Fight.str = f => "Fight";
 
 const This = Fight;
 export default Fight;

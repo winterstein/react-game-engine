@@ -7,6 +7,7 @@ import StopWatch from '../StopWatch';
 import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
 import { getPSpriteFor, getPApp } from '../components/Pixies';
+import { space } from '../base/utils/miscutils';
 
 
 class Animate extends DataClass {
@@ -133,6 +134,7 @@ class Sprite extends DataClass {
 }
 DataClass.register(Sprite, "Sprite");
 export default Sprite;
+Sprite.str = s => space(s.kind, s.id, s.name);
 
 /**
  * Setup frames for animation -- requires tileSize and tiles
@@ -202,7 +204,6 @@ Sprite.screenRect = (sp) => {
 Sprite.onCollision = null;
 
 Sprite.update = (sprite, game) => {
-	const tick = StopWatch.tick(game.ticker);
 	const dt = StopWatch.dt(game.ticker);
 	// command?
 	if (sprite.commands && sprite.commands[0]) {

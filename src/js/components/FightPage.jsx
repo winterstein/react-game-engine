@@ -29,7 +29,7 @@ import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
 import { space, randomPick } from '../base/utils/miscutils';
-import Command from '../data/Command';
+import Command, { cmd } from '../data/Command';
 // import svg from '../img/angry-robot.svg';
 
 const DrawReact = ({src, height="200px", width="200px"}) => {
@@ -85,8 +85,16 @@ const FightPage = () => {
 		<Row>
 			{focalSprite? <Col>Focus: {focalSprite.name}</Col> : null}
 		</Row>
-		Turn: {fight.turn} 
-		Active: {activeSprite.name}
+
+<pre>
+Turn: {fight.turn} 
+Active: {activeSprite.name}
+</pre>
+Commands: 
+<ol>
+	{Command._q.map((c,i) => <li key={i}>{Command.str(c)}</li>)};
+</ol>
+
 
 		Options: 
 		{activeSprite.spells && activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)}
@@ -95,7 +103,77 @@ const FightPage = () => {
 	</div>);	
 };
 
-const ActionButton = ({action, active, target}) => <Button color={Monster.isa(active)? 'danger' : 'primary'} className='mr-2' onClick={e => doAction({action, active, target})}>{action}</Button>;
+const ActionButton = ({action, active, target}) => (<Button 
+	color={Monster.isa(active)? (active.selectedAction===action? 'warning':'danger') : 'primary'} 
+	className='mr-2' 
+	onClick={e => doAction({action, active, target})}
+	>{action}</Button>);
+
+
+
+
+/************************************************************************************* */
+/***********************************************************************************/
+
+/**
+ * 
+ * @param {Command} command 
+ */
+Command.start = command => {
+	console.log("start", Command.str(command));
+	switch(command.verb) {
+	case "+":
+	case "set":
+		command.before = command.subject[command.object];
+		break;
+	}
+}; // ./start
+
+/**
+ * 
+ * @param {Command} command 
+ */
+Command.finish = command => {
+	console.log("finishing...", Command.str(command));
+	switch(command.verb) {
+	case "+":
+		// avoid floating point issues from update
+		command.subject[command.object] = command.before + command.value;
+		break;
+	case "set":
+		command.subject[command.object] = command.value;
+		break;
+	case "attack":
+		let action = command.subject.selectedAction;
+		let targetId = command.subject.selectedTargetId;
+		let target = fight.team.find(p => p.id === targetId);
+		doAction({action, active:command.subject, target});
+	}
+	console.log("...finished", Command.str(command));
+}; // ./finish
+
+/**
+ * 
+ * @param {Command} command 
+ */
+Command.updateCommand = (command, dmsecs) => {
+	const dfraction = dmsecs/command.duration;
+	switch(command.verb) {
+	case "+":
+		// avoid floating point issues from update
+		command.subject[command.object] = command.before + command.value * dfraction;
+		break;
+	case "pick":
+		let n = command.value.length;
+		let i = Math.round(dfraction * n * 2) % n;
+		command.subject[command.object] = command.value[i];
+		break;
+	}	
+}; // ./updateCommand
+
+/************************************************************************************* */
+/************************************************************************************* */
+
 
 const doAction = ({action, active, target}) => {
 	action = action.toLowerCase();
@@ -106,22 +184,22 @@ const doAction = ({action, active, target}) => {
 	case "honey badger":
 		console.warn("BADGER!!!");
 		if (target) {
-			Command.push(target, new Command("+", "health", -50));
+			cmd(new Command(target, "+", "health", -50));
 		}
 		break;
 	default:
 		if (target) {
-			Command.push(target, new Command("+", "health", -10));
+			cmd(new Command(target, "+", "health", -10));
 		}
 		break;
 	}
 	console.warn(action);
 	if (target && target.health < 0) {
-		Command.push(target, new Command("die"));
+		cmd(target, new Command("die"));
 		// Fight.addCommand({fight, target, command: new Command("die")});
 		let alive = fight.enemies.filter(s => s.health > 0);
 		if ( ! alive.length) {
-			Command.push(fight, new Command("win"));
+			cmd(fight, new Command("win"));
 		}
 	}
 	doNextTurn();
@@ -132,16 +210,15 @@ const doNextTurn = () => {
 	let spriteIds = [...fight.team,...fight.enemies].map(s => s.id);	
 	let i = spriteIds.indexOf(fight.turn);
 	i = (i + 1) % spriteIds.length;
-	Command.push(fight, new Command("set", "turn", spriteIds[i]));
+	let nextId = spriteIds[i];
+	cmd(new Command(fight, "set", "turn", nextId, {duration:100}));
 
 	// hack random attack
-	let activeEnemy = fight.enemies.find(s => s.id===fight.turn);
+	let activeEnemy = fight.enemies.find(s => s.id===nextId);
 	if (activeEnemy) {
-		setTimeout(() => {
-			let target = randomPick(fight.team);
-			let spell = randomPick(activeEnemy.spells);
-			doAction({action:spell, active:activeEnemy, target});
-		}, 2000);
+		cmd(new Command(activeEnemy, "pick", "selectedTargetId", fight.team.map(p => p.id)));
+		cmd(new Command(activeEnemy, "pick", "selectedAction", activeEnemy.spells));
+		cmd(new Command(activeEnemy, "attack"));
 	}
 };
 
@@ -176,6 +253,29 @@ const makeFight = () => {
 	];
 	fight.turn = fight.team[0].id;
 	DataStore.setValue(["misc", "game","fight"], fight, false);
+
+	// game loop
+	// tick
+	fight.ticker = new StopWatch();
+	const ticker = fight.ticker;
+	// // update loop - use request ani frame
+	let gameLoop = () => {
+		if (fight.isStopped) {
+			return;
+		}
+		//Call this `gameLoop` function on the next screen refresh
+		//(which happens 60 times per second)		
+		requestAnimationFrame(gameLoop);		
+		// tick
+		let tick = StopWatch.update(ticker);
+		if (tick) {
+			Command.tick(tick);
+			DataStore.update();
+		}
+	};	
+	//Start the loop
+	gameLoop();
+
 	return fight;
 };
 

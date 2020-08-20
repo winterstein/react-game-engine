@@ -1,7 +1,7 @@
 import DataClass from "./base/data/DataClass";
 
 /**
- * @typedef TimeNumber
+ * @typedef EpochMSecs
  * epoch milliseconds
  */
 
@@ -11,7 +11,7 @@ class StopWatch extends DataClass {
 	tickLength = 1000 / 20;
 
 	/** 
-	 * @type {TimeNumber} The last tick used */
+	 * @type {EpochMSecs} The last tick used. */
 	tick;
 
 	/**
@@ -27,7 +27,7 @@ class StopWatch extends DataClass {
 	pauseTime = 0;
 
 	/**
-	 * @type {TimeNumber}
+	 * @type {EpochMSecs}
 	 */
 	startTime = new Date().getTime();
 	
@@ -40,7 +40,7 @@ class StopWatch extends DataClass {
 DataClass.register(StopWatch, "StopWatch");
 
 /**
- *  The dt in seconds since the last tick checked (call `update()` first).
+ *  The dt in seconds between the current tick and the previous tick (call `update()` first).
  * @returns {Number}
  */
 StopWatch.dt = sw => {
