@@ -55,6 +55,7 @@ class Command extends DataClass {
 
 	setDuration(msecs) {
 		this.duration = msecs;
+		return this;
 	}
 }
 DataClass.register(Command, 'Command');

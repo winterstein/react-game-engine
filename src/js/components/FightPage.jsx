@@ -75,16 +75,21 @@ const FightPage = () => {
 	} else {
 		target = fight.enemies[0];
 	}
+	let c0 = Command.peek();
+	let badger = SpriteLib.badger();
+	badger.x=200; badger.y=200;
 
 	return (<div style={{position:'relative', userSelect:"none", overflow:"hidden"}}>		
-		<Row>
-			<Col>{fight.team.map(peep => <Peep key={peep.id} sprite={peep} selected={peep===activeSprite} />)}</Col>
+		<div className="position-relative" style={{width:'100vw',height:'70vh'}}>
+			{fight.team.map(peep => <Peep key={peep.id} sprite={peep} selected={peep===activeSprite} />)}
 			
-			<Col>{fight.enemies.map(peep => <Enemy key={peep.id} sprite={peep} selected={peep===activeSprite} />)}</Col>
-		</Row>
-		<Row>
+			{fight.enemies.map(peep => <Enemy key={peep.id} sprite={peep} selected={peep===activeSprite} />)}
+
+			{c0 && c0.carrier? <ImgSprite sprite={c0.carrier} /> : null}
+		</div>
+		<div>
 			{focalSprite? <Col>Focus: {focalSprite.name}</Col> : null}
-		</Row>
+		</div>
 
 <pre>
 Turn: {fight.turn} 
@@ -101,6 +106,10 @@ Commands:
 		<ActionButton action={'Guard'} active={activeSprite} />
 
 	</div>);	
+};
+
+const ImgSprite = ({sprite}) => {
+	return <div style={{position:"absolute",top:sprite.y,left:sprite.x,width:'48px',height:'48px',overflow:"hidden"}}><img src={sprite.src} /></div>;
 };
 
 const ActionButton = ({action, active, target}) => (<Button 
@@ -126,6 +135,14 @@ Command.start = command => {
 	case "set":
 		command.before = command.subject[command.object];
 		break;
+	case "attack":
+		if ( ! command.value) command.value = command.subject.selectedAction;
+		if ( ! command.object) {
+			const tid = command.subject.selectedTargetId;
+			let target = fight.team.find(p => p.id === tid);
+			command.object = target;
+		}
+		break;
 	}
 }; // ./start
 
@@ -144,19 +161,20 @@ Command.finish = command => {
 		command.subject[command.object] = command.value;
 		break;
 	case "attack":
-		let action = command.subject.selectedAction;
-		let targetId = command.subject.selectedTargetId;
-		let target = fight.team.find(p => p.id === targetId);
-		doAction({action, active:command.subject, target});
+		cmd(new Command(command.object, "+", "health", -command.damage).setDuration(100));
+		doNextTurn();
+		break;
+	case "guard":
+		doNextTurn();
 		break;
 	case "check-state":
-		Fight.sprites.forEach(sp => {
+		Fight.sprites(fight).forEach(sp => {
 			if (sp.health > 0) return;
-			cmd(sp, new Command("die"));
+			cmd(new Command(sp, "die"));
 		});
 		let alive = fight.enemies.filter(s => s.health > 0);
 		if ( ! alive.length) {
-			cmd(fight, new Command("win"));
+			cmd(new Command(fight, "win"));
 		}
 		break;
 	}
@@ -174,6 +192,16 @@ Command.updateCommand = (command, dmsecs) => {
 		// avoid floating point issues from update
 		command.subject[command.object] = command.before + command.value * dfraction;
 		break;
+	case "attack":
+		if (command.carrier) {
+			let {x:x1, y:y1} = command.subject;
+			let {x:x2, y:y2} = command.object;
+			let x = x2*dfraction + x1*(1-dfraction);
+			let y = y2*dfraction + y1*(1-dfraction);
+			command.carrier.x = x;
+			command.carrier.y = y;
+		}
+		break;
 	case "pick":
 		let n = command.value.length;
 		let i = Math.round(dfraction * n * 2) % n;
@@ -188,25 +216,32 @@ Command.updateCommand = (command, dmsecs) => {
 
 const doAction = ({action, active, target}) => {
 	action = action.toLowerCase();
+	let attackCommand = new Command(active, "attack", target, action);
+	attackCommand.damage = 10;
 	switch(action) {
-	case "guard":
-		console.log("guard = no-op");
+	case "guard":		
+		attackCommand = new Command(active, "guard");		
 		break;
 	case "honey badger":
-		console.warn("BADGER!!!");
-		if (target) {
-			cmd(new Command(target, "+", "health", -50));
-		}
+		attackCommand.carrier = SpriteLib.badger();
+		attackCommand.damage = 50;		
 		break;
-	default:
-		if (target) {
-			cmd(new Command(target, "+", "health", -10));
-		}
+	case "bunny":
+		attackCommand.carrier = SpriteLib.bunny();
+		break;
+	case "fish":
+		attackCommand.carrier = SpriteLib.fish();
+		break;
+	case "goose":
+		attackCommand.carrier = SpriteLib.goose();
+		break;	
+	case "chicken":
+		attackCommand.carrier = SpriteLib.chicken();
 		break;
 	}
+	cmd(attackCommand);	
 	// check for death & victory / defeat after the health hit has taken effect
 	cmd(new Command(fight, "check-state").setDuration(0));
-	doNextTurn();
 };
 
 
@@ -229,7 +264,7 @@ const doNextTurn = () => {
 const Peep = ({sprite, selected}) => {
 	if (sprite.src && sprite.src.includes(".svg")) {
 		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected")}
-			style={{position:'relative',width:'200px'}}
+			style={{position:'absolute',width:'200px',top:sprite.y, left:sprite.x}}
 			>
 			{selected? <b>{sprite.name}</b> : sprite.name}
 			<DrawReact src={sprite.src} />
@@ -248,11 +283,11 @@ const makeFight = () => {
 	// let game = Game.get(); game is tied to pixi which we aren't using
 	let fight = new Fight();
 	fight.team = [
-		new Sprite({name:"Alice", src:"/img/src/alice.svg", spells:['Honey Badger', 'Rhino', 'Tiger', 'Bat'], health:100}),
-		new Sprite({name:"Bob", src:"/img/src/bob.svg", spells:['Cobra', 'Alligator', 'Flying Snake'], health:100})
+		new Sprite({name:"Alice", src:"/img/src/alice.svg", spells:['Honey Badger', 'Bunny', 'Wolf'], health:100, x:20, y:50}),
+		new Sprite({name:"Bob", src:"/img/src/bob.svg", spells:['Fish',"Chicken","Goose"], health:100, x:30, y:300 })
 	];
 	fight.enemies = [
-		new Monster({name:"Angry Robot", src:"/img/src/angry-robot.svg", spells:['Laser Glare', 'Sonic Punch'], health:70}),
+		new Monster({name:"Angry Robot", src:"/img/src/angry-robot.svg", spells:['Laser Glare', 'Sonic Punch'], health:70, x:500, y:100}),
 		// new Monster({name:"Nasty Robot"})
 	];
 	fight.turn = fight.team[0].id;
