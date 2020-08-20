@@ -11,5 +11,7 @@ class Fight extends DataClass {
 DataClass.register(Fight,'Fight');
 Fight.str = f => "Fight";
 
+Fight.sprites = f => [...f.team,...f.enemies];
+
 const This = Fight;
 export default Fight;

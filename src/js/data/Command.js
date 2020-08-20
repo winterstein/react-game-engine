@@ -45,11 +45,16 @@ class Command extends DataClass {
 	then;
 
 	constructor(subject, verb, object, value, params) {
-		super(params); // base
+		super(); // base
+		this._init(params);
 		this.subject = subject;
 		this.verb = assMatch(verb, String);
 		this.object = object;
-		this.value = value;
+		this.value = value;		
+	}
+
+	setDuration(msecs) {
+		this.duration = msecs;
 	}
 }
 DataClass.register(Command, 'Command');
@@ -57,7 +62,7 @@ export default Command;
 
 
 Command.str = c => space(c.id, DataClass.str(c.subject), c.verb, c.object, c.value, 
-	c.startTick && c.latestTick && "done: "+printer.str(100*(c.latestTick - c.startTick)/c.duration)+"%"
+	c.startTick && c.latestTick && "done: "+printer.str(100*(c.latestTick - c.startTick)/c.duration)+"% of "+c.duration
 );
 /**
  * 

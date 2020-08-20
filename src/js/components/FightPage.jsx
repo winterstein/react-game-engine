@@ -65,7 +65,7 @@ const FightPage = () => {
 	if ( ! fight) {
 		fight = makeFight();
 	}
-	let sprites = [...fight.team,...fight.enemies];	
+	let sprites = Fight.sprites(fight);
 	let activeSprite = sprites.find(s => s.id===fight.turn);
 	let focalSprite = sprites.find(s => s.id===DataStore.getValue('focus','Sprite'));
 	
@@ -92,7 +92,7 @@ Active: {activeSprite.name}
 </pre>
 Commands: 
 <ol>
-	{Command._q.map((c,i) => <li key={i}>{Command.str(c)}</li>)};
+	{Command._q.map((c,i) => <li key={i}>{Command.str(c)}</li>)}
 </ol>
 
 
@@ -148,6 +148,17 @@ Command.finish = command => {
 		let targetId = command.subject.selectedTargetId;
 		let target = fight.team.find(p => p.id === targetId);
 		doAction({action, active:command.subject, target});
+		break;
+	case "check-state":
+		Fight.sprites.forEach(sp => {
+			if (sp.health > 0) return;
+			cmd(sp, new Command("die"));
+		});
+		let alive = fight.enemies.filter(s => s.health > 0);
+		if ( ! alive.length) {
+			cmd(fight, new Command("win"));
+		}
+		break;
 	}
 	console.log("...finished", Command.str(command));
 }; // ./finish
@@ -193,15 +204,8 @@ const doAction = ({action, active, target}) => {
 		}
 		break;
 	}
-	console.warn(action);
-	if (target && target.health < 0) {
-		cmd(target, new Command("die"));
-		// Fight.addCommand({fight, target, command: new Command("die")});
-		let alive = fight.enemies.filter(s => s.health > 0);
-		if ( ! alive.length) {
-			cmd(fight, new Command("win"));
-		}
-	}
+	// check for death & victory / defeat after the health hit has taken effect
+	cmd(new Command(fight, "check-state").setDuration(0));
 	doNextTurn();
 };
 
