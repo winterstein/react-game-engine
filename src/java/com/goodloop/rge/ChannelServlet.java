@@ -4,6 +4,7 @@ package com.goodloop.rge;
 import com.winterwell.depot.merge.Merger;
 import com.winterwell.utils.containers.ArrayMap;
 import com.winterwell.utils.containers.Containers;
+import com.winterwell.utils.log.Log;
 import com.winterwell.utils.time.TUnit;
 import com.winterwell.utils.time.Time;
 import com.winterwell.utils.web.SimpleJson;
@@ -32,11 +33,14 @@ import com.google.common.cache.CacheBuilder;
 public class ChannelServlet implements IServlet {
 
 
+	private static final String LOGTAG = "channel";
+	
 	static Cache<String,Channel> channels = CacheBuilder.newBuilder()
 				.expireAfterAccess(10, TimeUnit.MINUTES).build();
 	
 	@Override
 	public void process(WebRequest state) throws Exception {
+		Log.d(LOGTAG, "ip: "+state.getRemoteAddr()+" "+state);
 		String schannel = state.getSlugBits(1);		
 		if ("_list".equals(schannel)) {
 			doList(state);
