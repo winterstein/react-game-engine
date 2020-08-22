@@ -18,6 +18,7 @@ import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
 import FightPage from './FightPage';
+import StoryPage from './StoryPage';
 
 // DataStore
 C.setupDataStore();
@@ -27,7 +28,8 @@ C.setupDataStore();
 const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
-	fight: FightPage
+	fight: FightPage,
+	story: StoryPage,
 };
 
 const DEFAULT_PAGE = 'fight';

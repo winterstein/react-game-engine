@@ -357,7 +357,7 @@ const makeFight = () => {
 	];
 	fight.enemies = [
 		new Monster({
-			name: "Angry Robot", src: "/img/src/angry-robot.svg", spells: ['Laser Glare', 'Sonic Punch'], health: 70, x: 500, y: 100,
+			name: "Angry Robot", src: "/img/src/angry-robot.svg", spells: ['Laser Glare', 'Sonic Punch'], health: 100, x: 500, y: 100,
 			affinities: { mammal: 'weak', bird: 'strong' }
 		}),
 		// new Monster({name:"Nasty Robot"})
