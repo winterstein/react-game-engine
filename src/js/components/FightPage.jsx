@@ -26,6 +26,7 @@ import DataClass, { nonce, getType } from '../base/data/DataClass';
 import GameAdmin, { doNewWorld } from './GameAdmin';
 import FullScreenButton from './FullScreenButton';
 import Fight from '../data/Fight';
+import Spell from '../data/Spell';
 import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
@@ -73,33 +74,41 @@ const FightPage = () => {
 
 	let target;
 	if (Monster.isa(activeSprite)) {
-		target = fight.team[0];
+		target = fight.team[0]; //selected??
 	} else {
-		target = fight.enemies[0];
+		if (Sprite.isa(focalSprite)) {
+			target = focalSprite;
+		} else {
+			target = fight.enemies[0];
+		}
 	}
 	let c0 = Command.peek();
 	let badger = SpriteLib.badger();
 	badger.x = 200; badger.y = 200;
 
 	return (<div style={{ position: 'relative', userSelect: "none", overflow: "hidden" }}>
-		<div className="position-relative" style={{ width: '100vw', height: '70vh' }}>
-			{fight.team.map(peep => <Peep key={peep.id} sprite={peep} selected={peep === activeSprite} />)}
+		<div className='flex-row'>
+			<div className="position-relative" style={{ width: '700px', height: '90vh' }}>
+				{fight.team.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} />)}
 
-			{fight.enemies.map(peep => <Enemy key={peep.id} sprite={peep} selected={peep === activeSprite} />)}
+				{fight.enemies.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} />)}
 
-			{c0 && c0.carrier ? <ImgSprite sprite={c0.carrier} /> : null}
-		</div>
-		<div>
-			{focalSprite ? (<Card body><CardTitle>{focalSprite.name}</CardTitle>
-				{focalSprite.affinity ? <h3>{EMOJI[focalSprite.affinity]}</h3> : null}
-				{focalSprite.affinities ? <table><tbody>
-					<tr>{KAffinity.values.map(a => <td key={a}>{EMOJI[a]}</td>)}</tr>
-					<tr>{KAffinity.values.map(a => <td key={a}>{focalSprite.affinities[a] || '-'}</td>)}</tr>
-				</tbody></table>
-					: null}
-			</Card>) : null}
-		</div>
-
+				{c0 && c0.carrier ? <ImgSprite sprite={c0.carrier} /> : null}
+			</div>
+			<div>
+				{focalSprite ? (<Card body className='game-card'><CardTitle><h3>{focalSprite.name}</h3></CardTitle>
+					{focalSprite.affinity ? <h3>{EMOJI[focalSprite.affinity]}</h3> : null}
+					<div>
+						Health: {Math.round(focalSprite.health)} {focalSprite.fullHealth? "("+Math.round(100*focalSprite.health / focalSprite.fullHealth)+"%)" : null}
+					</div>
+					{focalSprite.affinities ? <table><tbody>
+						<tr>{KAffinity.values.map(a => <td key={a}>{EMOJI[a]}</td>)}</tr>
+						<tr>{KAffinity.values.map(a => <td key={a}>{focalSprite.knowAffinity && focalSprite.knowAffinity[a]? (focalSprite.affinities[a] || '-') : '?'}</td>)}</tr>
+					</tbody></table>
+						: null}
+				</Card>) : null}
+			</div>
+		</div>{/* ./flex-row */}
 		<pre>
 			Active: {activeSprite && activeSprite.name}
 		</pre>				
@@ -108,25 +117,35 @@ const FightPage = () => {
 		{activeSprite && activeSprite.spells && activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)}
 		<ActionButton action={'Guard'} active={activeSprite} />
 
-		<div><small>Commands:
+		{/* <div><small>Commands:
 			<ol>
 				{Command._q.map((c, i) => <li key={i}>{Command.str(c)}</li>)}
 			</ol>
-		</small></div>
+		</small></div> */}
 
 	</div>);
 };
 
-const ImgSprite = ({ sprite }) => {
-	return (<div style={{ position: "absolute", top: sprite.y, left: sprite.x, width:sprite.src?'48px':null, height: '48px', overflow: "hidden" }}>
+const ImgSprite = ({ sprite, width, height}) => {
+	if ( ! width && sprite.src) width=48;
+	if ( ! height && sprite.src) height=48;
+	if (width) width = width+"px";
+	if (height) height = height+"px";
+	return (<div style={{ position: "absolute", top: sprite.y, left: sprite.x, width, height, overflow: "hidden" }}>
 		{sprite.src? <img src={sprite.src} /> : (sprite.label || sprite.name || getType(sprite) || sprite.id)}</div>);
 };
 
-const ActionButton = ({ action, active, target }) => (<Button
-	color={Monster.isa(active) ? (active.selectedAction === action ? 'warning' : 'danger') : 'primary'}
-	className='mr-2'
-	onClick={e => doAction({ action, active, target })}
->{action}</Button>);
+const ActionButton = ({ action, active, target }) => {
+	let label = action;
+	if (Spell.isa(action)) {
+		label = action.name;
+	}
+	return (<Button
+		color={Monster.isa(active) ? (active.selectedAction === action ? 'warning' : 'danger') : 'primary'}
+		disabled={Monster.isa(active)}
+		className='mr-2'
+		onClick={e => doAction({ action, active, target })}>{action.affinity?EMOJI[action.affinity]:null}{label}</Button>);
+};
 
 
 
@@ -139,6 +158,11 @@ const ActionButton = ({ action, active, target }) => (<Button
  * @param {Command} command 
  */
 Command.start = command => {
+	// undo guard, if they were
+	if (command.subject.stance === 'guard' && command.verb !== 'guard') {
+		command.subject.defence -= 1;
+	}		
+
 	console.log("start", Command.str(command));
 	switch (command.verb) {
 	case "+":
@@ -146,15 +170,22 @@ Command.start = command => {
 		command.before = command.subject[command.object];
 		break;
 	case "attack":
-		if (!command.value) command.value = command.subject.selectedAction;
-		if (!command.object) {
+		if ( ! command.value) {
+			let spell = command.subject.selectedAction;
+			command.value = spell;
+			command.damage = spell.damage || 10;
+			command.affinity = spell.affinity;
+		}
+		if ( ! command.object) {
 			const tid = command.subject.selectedTargetId;
 			let target = fight.team.find(p => p.id === tid);
 			command.object = target;
 		}
 		if ( ! command.carrier) {
-			command.carrier = new Sprite({label:command.value});
-			command.carrier.name = command.value;
+			let label = command.value;
+			if (Spell.isa(label)) label = label.name;
+			command.carrier = new Sprite({label});
+			command.carrier.name = label;
 		}
 		break;
 	}
@@ -177,6 +208,9 @@ Command.finish = command => {
 	case "+":
 		// avoid floating point issues from update
 		command.subject[command.object] = command.before + command.value;
+		break;
+	case "pick":
+		command.subject[command.object] = randomPick(command.value);
 		break;
 	case "set":
 		command.subject[command.object] = command.value;
@@ -207,6 +241,12 @@ Command.finish = command => {
 				damage *= 2;
 			}
 		}
+		if ( ! command.object.knowAffinity) command.object.knowAffinity = {};
+		if (command.affinity) command.object.knowAffinity[command.affinity] = true;
+		// guard?
+		if (command.object.stance === "guard") {
+			damage *= 0.75; // reduce damage by 25%
+		}
 		const c = new Command(command.object, "+", "health", -damage).setDuration(1000);
 		c.label = label;
 		cmd(c);
@@ -215,6 +255,8 @@ Command.finish = command => {
 		doNextTurn();
 		break;
 	case "guard":
+		command.subject.defence = (command.subject.defence || 0) + 1;
+		command.subject.stance = 'guard';
 		doNextTurn();
 		break;
 	case "check-state":
@@ -235,6 +277,8 @@ Command.finish = command => {
 		fight.dead.push(command.subject);
 		fight.enemies = fight.enemies.filter(s => s !== command.subject);
 		fight.team = fight.team.filter(s => s !== command.subject);
+		// adjust height
+		fight.enemies.forEach((e,i) => e.y = 250*i);
 		break;
 	}
 	console.log("...finished", Command.str(command));
@@ -273,30 +317,14 @@ Command.updateCommand = (command, dmsecs) => {
 
 
 const doAction = ({ action, active, target }) => {
-	action = action.toLowerCase();
+	const actionName = Spell.isa(action)? action.name.toLowerCase() : action.toLowerCase();
 	let attackCommand = new Command(active, "attack", target, action);
-	attackCommand.damage = 10;
+	attackCommand.damage = action.damage || 10;
 	attackCommand.affinities = active.affinities;
-	attackCommand.affinity = active.affinity;
-	switch (action) {
+	attackCommand.affinity = action.affinity || active.affinity;
+	switch (actionName) {
 	case "guard":
 		attackCommand = new Command(active, "guard");
-		break;
-	case "honey badger":
-		attackCommand.carrier = SpriteLib.badger();
-		attackCommand.damage = 50;
-		break;
-	case "bunny":
-		attackCommand.carrier = SpriteLib.bunny();
-		break;
-	case "fish":
-		attackCommand.carrier = SpriteLib.fish();
-		break;
-	case "goose":
-		attackCommand.carrier = SpriteLib.goose();
-		break;
-	case "chicken":
-		attackCommand.carrier = SpriteLib.chicken();
 		break;
 	}
 	cmd(attackCommand);
@@ -319,15 +347,16 @@ const doNextTurn = () => {
 	}
 };
 
-const Peep = ({ sprite, selected }) => {
-	if (sprite.src && sprite.src.includes(".svg")) {
+const Peep = ({i, sprite, selected }) => {
+	if (sprite.src) {
 		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected")}
 			style={{ position: 'absolute', width: '200px', top: sprite.y, left: sprite.x }}
 		>
-			{selected ? <b>{sprite.name}</b> : sprite.name}
-			<DrawReact src={sprite.src} />
+			{selected ? <b>{sprite.name}</b> : null}
+			{sprite.src.includes(".svg")? <DrawReact src={sprite.src} /> 
+				: (sprite.src? <img src={sprite.src} /> : null)}
 			{sprite.label? <h4>{sprite.label}</h4> : null}
-			Health: {Math.round(sprite.health)}
+			{selected? <div>Health: {Math.round(sprite.health)}</div> : null}
 			{sprite.health <= 0 ? <div style={{ position: 'absolute', bottom: 0 }}><DrawReact src={'/img/src/fire.svg'} /></div> : null}
 		</div>);
 	}
@@ -335,8 +364,6 @@ const Peep = ({ sprite, selected }) => {
 };
 
 const setFocus = sprite => DataStore.setValue(['focus', 'Sprite'], sprite.id);
-
-const Enemy = ({ sprite }) => <Peep sprite={sprite} />;
 
 const KAffinity = new Enum("mammal bird reptile fish bug plant");
 const EMOJI = {
@@ -352,16 +379,80 @@ const makeFight = () => {
 	// let game = Game.get(); game is tied to pixi which we aren't using
 	let fight = new Fight();
 	fight.team = [
-		new Sprite({ name: "Alice", src: "/img/src/alice.svg", spells: ['Honey Badger', 'Bunny', 'Wolf'], health: 100, x: 20, y: 50, affinity: 'mammal' }),
-		new Sprite({ name: "Bob", src: "/img/src/bob.svg", spells: ['Fish', "Chicken", "Goose"], health: 100, x: 30, y: 300, affinity: 'bird' })
+		new Sprite({ 
+			name: "Alice", src: "/img/src/alice.svg", 
+			spells: [
+				new Spell({name:'Honey Badger',damage:30, affinity:'mammal', carrier:SpriteLib.badger()}), 
+				new Spell({name:'Bunny', damage:5, affinity:'mammal', carrier:SpriteLib.bunny()}), 
+				new Spell({name:'Wolf', damage:15, affinity:'mammal', carrier:SpriteLib.wolf()}), 
+				new Spell({name:'super healing herbs',damage:-200, affinity:'plant'}),
+				new Spell({name:'Ladybird', affinity:'bug'}),
+				new Spell({ name:'fierce snake',damage:70, affinity:'reptile'})
+			], 
+			health: 100, x: 20, y: 50, affinity: 'mammal' 
+		}),
+		new Sprite({ name: "Bob", src: "/img/src/bob.svg", 
+			spells: [
+				new Spell({name:'Fish',affinity:'fish',damage:10, carrier:SpriteLib.fish()}), 
+				new Spell({name:'Chicken',affinity:'bird',damage:10, carrier:SpriteLib.chicken()}), 
+				new Spell({name:'Goose',affinity:'bird',damage:15, carrier:SpriteLib.goose()}), 
+				new Spell({name:'nettle',affinity:'plant',damage:40})
+			], 
+			health: 100, x: 30, y: 300, affinity: 'bird'
+		}),
+		new Sprite({ name: "Honey Badger", src: "/img/src/honey-badger.w150.png", 
+			spells: [
+				new Spell({name:'Rampage',damage:40,affinity:'mammal'}),
+				new Spell({name:'Chaos',damage:30,affinity:'mammal'}),
+				new Spell({name:'Stink Attack',damage:60,affinity:'mammal'}),
+				new Spell({name:'Healing Herbs',affinity:'plant',damage:-40})
+			], 
+			health: 200, x: 30, y: 550, 
+			affinity: 'mammal'
+		})
 	];
+
 	fight.enemies = [
 		new Monster({
-			name: "Angry Robot", src: "/img/src/angry-robot.svg", spells: ['Laser Glare', 'Sonic Punch'], health: 100, x: 500, y: 100,
-			affinities: { mammal: 'weak', bird: 'strong' }
+			name: "Angry Robot", src: "/img/src/angry-robot.svg", spells: ['Laser Glare', 'Sonic Punch'], health: 100, x: 500, y: 50,
+			// affinities: { mammal: 'weak', bird: 'strong' }
 		}),
-		// new Monster({name:"Nasty Robot"})
-	];
+		new Monster({
+			name: "Angry Smelly Robot", src:'/img/src/smelly-bot.w200.png', 
+			spells: [new Spell({name:'Smelly Punch', damage:20}), 'Sharp Kick'], 
+			health: 40, x: 500, y: 300,
+			// affinities: { plant: 'weak', mammal: 'strong' }
+		}),
+		new Monster({
+			name: "Pineapple Bot", src:'/img/src/pineapple-bot.w200.png', 
+			spells: [
+				new Spell({name:'concerswing', damage:1}),
+				new Spell({name:'spikyturn', damage:21}),
+				new Spell({name:'pufferfish', damage:50}),		
+				new Spell({name:'frogkick', damage:30})
+			],			 
+			health: 140, x: 500, y: 550,
+			// affinities: { bird: 'weak', fish: 'strong' }
+		}),
+		new Monster({
+			name: "Angry Jellyfish", src:'/img/src/jellyfish.h200.png', 
+			spells: [
+				new Spell({name:'stinging grasp', damage:19}),
+				new Spell({name:'scare stare', damage:2}),
+			],
+			health: 14, x: 450, y: 650,
+			// affinities: { bug: 'weak', reptile: 'strong' }
+		})	
+	]; // end enemies
+	// random strong/weak
+	fight.enemies.forEach(enemy => {
+		enemy.affinities = {};
+		enemy.affinities[randomPick(KAffinity.values)] = 'weak';
+		enemy.affinities[randomPick(KAffinity.values)] = 'strong';
+	});
+	// setup fullHealth
+	Fight.sprites(fight).forEach(sp => sp.fullHealth = sp.fullHealth || sp.health);
+
 	fight.turn = fight.team[0].id;
 	DataStore.setValue(["misc", "game", "fight"], fight, false);
 
