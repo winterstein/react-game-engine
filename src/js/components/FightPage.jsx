@@ -19,6 +19,7 @@ import PixiComponent from './PixiComponent';
 import StopWatch from '../StopWatch';
 import PropControl, { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
+// import * as PIXISound from 'pixi-sound';
 import Key, { KEYS } from '../Key';
 import { Alert, Button, Modal, ModalHeader, ModalBody, Row, Col, Card, CardTitle } from 'reactstrap';
 import { getPApp } from './Pixies';
@@ -169,7 +170,7 @@ Command.start = command => {
 	case "set":
 		command.before = command.subject[command.object];
 		break;
-	case "attack":
+	case "attack":		
 		if ( ! command.value) {
 			let spell = command.subject.selectedAction;
 			command.value = spell;
@@ -187,6 +188,8 @@ Command.start = command => {
 			command.carrier = new Sprite({label});
 			command.carrier.name = label;
 		}
+		// a sound
+		// PIXI.sound.play(command.affinity==='bird'?"bird":'sword');
 		break;
 	}
 	if (command.label) {
@@ -487,5 +490,11 @@ const makeFight = () => {
 
 	return fight;
 };
+
+// Sounds
+// console.log("PIXI",PIXI);
+// console.log("PIXISound",PIXISound);
+// PIXISound.sound.add('sword', 'http://pixijs.io/pixi-sound/examples/resources/sword.mp3');
+// PIXISound.sound.add('bird', 'http://pixijs.io/pixi-sound/examples/resources/bird.mp3');
 
 export default FightPage;

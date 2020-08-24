@@ -16,7 +16,7 @@ const collision = (sprite1, sprite2) => {
 	// return true;
 };
 
-// are the sides of one rectangle touching the other?
+/** are the sides of one rectangle touching the other?  */
 const rectRect = (r1, r2) => 
 	(
 		r1.x + (r1.width || 1) >= r2.x &&	// r1 right edge past r2 left
