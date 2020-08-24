@@ -19,6 +19,7 @@ import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
 import FightPage from './FightPage';
 import StoryPage from './StoryPage';
+import ExplorePage from './ExplorePage';
 
 // DataStore
 C.setupDataStore();
@@ -30,6 +31,7 @@ const PAGES = {
 	test: TestPage,
 	fight: FightPage,
 	story: StoryPage,
+	explore: ExplorePage
 };
 
 const DEFAULT_PAGE = 'fight';

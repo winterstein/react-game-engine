@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "dungeon-generator": "^0.0.1",
     "pixi.js": "^5.2.1",
     "easy-enums": "^1.1.7",
     "fscreen": "^1.0.2",
