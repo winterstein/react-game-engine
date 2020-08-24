@@ -89,9 +89,9 @@ const FightPage = () => {
 	return (<div style={{ position: 'relative', userSelect: "none", overflow: "hidden" }}>
 		<div className='flex-row'>
 			<div className="position-relative" style={{ width: '700px', height: '90vh' }}>
-				{fight.team.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} />)}
+				{fight.team.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} focus={peep===focalSprite} />)}
 
-				{fight.enemies.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} />)}
+				{fight.enemies.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} focus={peep===focalSprite} />)}
 
 				{c0 && c0.carrier ? <ImgSprite sprite={c0.carrier} /> : null}
 			</div>
@@ -268,6 +268,13 @@ Command.finish = command => {
 		if ( ! alive.length) {
 			cmd(new Command(fight, "win"));
 		}
+		alive = fight.team.filter(s => s.health > 0);
+		if ( ! alive.length) {
+			cmd(new Command(fight, "lose"));
+		}
+		break;
+	case "lose":
+		alert("Defeat!");
 		break;
 	case "win":
 		alert("Victory!");
@@ -347,9 +354,9 @@ const doNextTurn = () => {
 	}
 };
 
-const Peep = ({i, sprite, selected }) => {
+const Peep = ({i, sprite, selected, focus }) => {
 	if (sprite.src) {
-		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected")}
+		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected", focus && "focus")}
 			style={{ position: 'absolute', width: '200px', top: sprite.y, left: sprite.x }}
 		>
 			{selected ? <b>{sprite.name}</b> : null}
