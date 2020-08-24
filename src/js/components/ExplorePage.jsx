@@ -29,7 +29,7 @@ import Fight from '../data/Fight';
 import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
-import { space, randomPick } from '../base/utils/miscutils';
+import { space, randomPick, modifyHash } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import ServerIO from '../base/plumbing/ServerIOBase';
@@ -144,6 +144,9 @@ const ExplorePage = () => {
 		} else {
 			player.x = nx;
 			player.y = ny;
+			if (player.x===monster.x && player.y===monster.y) {
+				modifyHash(['fight']);
+			}
 			DataStore.update();
 		}
 	};
