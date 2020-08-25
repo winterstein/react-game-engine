@@ -67,7 +67,7 @@ dungeon.generate();
 dungeon.print(); //outputs wall map to console.log
 console.log("dungeon", dungeon);
 
-let player,monster;
+let player;
 
 const keyLeft = new Key(KEYS.ArrowLeft);
 const keyRight = new Key(KEYS.ArrowRight);
@@ -99,6 +99,24 @@ const getRoom = (x,y) => {
 };
 window.getRoom = getRoom;
 
+const setupMonster = () => {
+	let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
+	if ( ! monster.x || monster.dead) {
+		let mx,my;
+		for(let i=0; i<1000; i++) {
+			mx = 5+Math.floor(20*Math.random());
+			my = 5+Math.floor(20*Math.random());
+			if (getRoom(mx,my)) {
+				break;
+			}
+		}
+		monster.x = mx;
+		monster.y = my;
+		monster.dead = false;
+	}
+	return monster;
+};
+
 const ExplorePage = () => {
 	// dungeon.size; // [width, heihgt]
 	// dungeon.walls.get([x, y]); //return true if position is wall, false if empty
@@ -118,17 +136,9 @@ const ExplorePage = () => {
 	let iRoom = dungeon.initial_room; //piece tagged as 'initial'
 	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
 	if ( ! player) {
-		player = new Sprite({name:"Alice",x:sx_sy[0], y:sx_sy[1]});
-		let mx,my;
-		for(let i=0; i<1000; i++) {
-			mx = 5+Math.floor(20*Math.random());
-			my = 5+Math.floor(20*Math.random());
-			if (getRoom(mx,my)) {
-				break;
-			}
-		}
-		monster = new Sprite({name:"Yargl the Terrible",x:mx, y:my});
+		player = new Sprite({name:"Alice",x:sx_sy[0], y:sx_sy[1]});		
 	}	
+	let monster = setupMonster();
 
 	const onTick = ticker => {
 		// console.log("onTick", this, ticker);
@@ -190,7 +200,7 @@ const GameLoop = ({onTick, onClose, children}) => {
 			// e.g. release keys
 			if (onClose) onClose();
 		};
-	  }, []);
+	}, []);
 			
 	return children;
 };
@@ -211,9 +221,9 @@ const MiniMap = ({}) => {
 
 const what = (x,y) => {
 	if (x===player.x && y===player.y) return "🕵";
-	if (x===monster.x && y===monster.y) return "🧞";
+	if (x===setupMonster().x && y===setupMonster().y) return "🧞";
 	return " ";
-}
+};
 
 const bcol = (x,y) => {
 	if (getWall(x,y)) {

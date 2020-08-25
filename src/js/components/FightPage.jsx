@@ -31,7 +31,7 @@ import Spell from '../data/Spell';
 import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
-import { space, randomPick } from '../base/utils/miscutils';
+import { space, randomPick, modifyHash } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 // import svg from '../img/angry-robot.svg';
@@ -281,6 +281,9 @@ Command.finish = command => {
 		break;
 	case "win":
 		alert("Victory!");
+		let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
+		monster.dead = true;
+		modifyHash(['explore']);
 		break;
 	case "die":
 		if ( ! fight.dead) fight.dead=[];
