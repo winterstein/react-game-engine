@@ -33,16 +33,45 @@ import { space, randomPick } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import ServerIO from '../base/plumbing/ServerIOBase';
+import MDText from '../base/components/MDText';
+import BG from '../base/components/BG';
+
+let ticker = new StopWatch({tickLength:500});
 
 const StoryPage = () => {
 
 	let pvChapter = DataStore.fetch(['misc','chapter',1], () => {
 		return ServerIO.load("/data/book/chapter1.md");
 	});
-	console.log(pvChapter.value);
+	if ( ! pvChapter.value) return <Misc.Loading/>;
 
-	return (<div>STORY
-		{""+pvChapter.value}
+	let chapter = pvChapter.value;
+	let _title = chapter.match(/^# (.+)$/m);
+	let title = (_title && _title[1]) || "";
+	// console.log(title);
+	let sections = chapter.split(/^##\s+/m);
+	// console.log(sections);
+	let si = 1;
+	let section = sections[si];
+	// let scenes = section.split(/^###\s+/m);
+	let scenes = section.split(/\n/g);
+	let [sceneIndex, setSceneIndex] = useState(0);
+
+	let tick = StopWatch.update(ticker);
+	let [lastTick,setLastTick] = useState(tick);
+	if (tick > lastTick) {
+		setSceneIndex(sceneIndex + 1);
+		setLastTick(tick);
+	}
+	setTimeout(() => DataStore.update(), 250);
+
+	return (<div className='open-book container'>
+		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1}>
+			<div className='right-page'>
+				<h2><MDText source={title} /></h2>
+				{scenes.map((s,i) => i > sceneIndex? null : <div key={i}><MDText source={s} /></div>)}
+			</div>
+		</BG>
 	</div>);
 };
 

@@ -1,12 +1,14 @@
 
-# Diary of a Schhol Astronaut(x) Detective
+# Diary of a School ~~Astronaut~~ Detective
 
 ## Sunday 
 
+### Leaving
+
 Mom: (happy) Today's the day! Fresh country air here we come!
 
-Today is the **worst** day ever. We are leaving home, and my school, and all my friends...      
-and in fact we're leaving everything, to go live in a field in the middle of nowhere.
+Today is the *worst* day ever. We are leaving home, and my school, and all my friends...      
+and in fact we're leaving everything, to go live in ??, which is a field in the middle of nowhere.
 
 The first challenge is loading the car. We did not realise how much stuff we had until we tried to pack it up. Mom tried to use the move as an excuse to get us to throw out some of our toys. But we swore to defend them. Then Dad tried to get Mom to throw out some of her clothes. 
 
@@ -18,9 +20,11 @@ The resulting explosion was heard three blocks away.
 
 So in the end we compromised by putting most of our things in storage to be delivered once we're settled in. 
 
-Mom: Okay, pick what you want to bring now.
+Mom: Okay, pick what toy you want to have in the car.
 
-??
+|Dinosaur|Owl|Lion|
+
+### Packing
 
 A van and two burly men came round. They threw all our stuff in their van, like it was just so much junk. 
 
@@ -30,37 +34,60 @@ They handed Dad a ticket and drove off.
 
 Mom: Don't lose that. 
 
-And then, without further ado, we are off. Their really should have been more ado: A speech by the mayor; weeeping friends... But it's just the click of seatbelts, the clunk of car doors, and the rumble of the engine. 
+### Driving
+
+And then, without further ado, we are off. There really should have been more ado: A speech by the mayor; weeeping friends... But it's just the click of seatbelts, the clunk of car doors, and the rumble of the engine. 
 
 (drive, city, field, cows skull, field)
 
-After a while, the drifted off to sleep. I had the weirdest dream. ??
+After a while, I drifted off to sleep. I had the weirdest dream.
 
-Dream or vision - meet the shifting world child 
-I am omega, or 𝜔 for short.
-see the guardian angel ??
+### Dream
 
+I'm in a garden. It's a nice garden. There are flowers and butterflies of every colour. I'm seated in a chair facing two most peculiar people. One is a friendly looking old man who smiles at me. The other is a girl with long dark hair, who looks off to the side, as if the whole garden is just *too* boring. The first person is - is now a middle aged Indian lady still smiling. And then he, she, they are a young dark skinned boy, then a Chinese girl and, and... I never see them do it, but they keep changing. However, their smile remains the same, and I somehow know it's all one person.
 
-We arrive. I had hoped the new home might be something special. That to make up for it being out in the sticks, it might be a mansion, 
-with a pool, a games room, a TV room, and a trampoline. My hopes are dashed. Then the pieces are trodden on. Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
+(garden)
 
+Morphing Person: Welcome to The Garden. Do not be worried. This is a safe place.
+
+Morphing Person: I am omega, or 𝜔 for short. I have summoned you here for a purpose. You are a Wayfarer and it is time for your skills to awaken.
+
+Omega: There is something going on in ??. 
+
+Moody Girl: Can I go yet? There's no point explaining anything to him before he's had a first crossing.
+
+### Driving
+
+(car) 
+
+The dream ends, and I wake up in the car.
+
+Cassie: You drool in your sleep. It's disgusting.
+
+We arrive. I had hoped the new home might be something special. To make up for it being out in the boondocks, it should be a mansion, 
+with a pool, a games room, a TV room, and a trampoline. This is... not the case. My hopes are dashed, and then the pieces of hope are trodden on.
+
+### Arrive
+
+Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
 
 (explore house)
 
-Cassie: Listen RatFace, you-touch-my-music-you-die.    
-She says this without looking up from her phone.    
+Bedroom:
+	Cassie: Listen RatFace, you-touch-my-music-you-die. /She says this without looking up from her phone./
 
-There are only two bedrooms.   
-So I have to share with my sister.   
-Aargh.   
-Aaaaaaargh.  
+	There are only two bedrooms.   
+	So I have to share with my sister.    
+	Aargh.    
+	Aaaaaaargh.   
 
-Meet my sister.
+	Meet my sister.
 
-Card:{name:Cassie, age:14, likes: BoyZone, Billy Thompson in class S5, selfies, dislikes: Younger brothers, Warning: Highly dangerous}
+	Card:{name:Cassie, age:16, likes: BoyZone, Billy Thompson in class S5, selfies, dislikes: Younger brothers, Warning: Highly dangerous}
 
 
 ## Monday
+
 1st day of school. 
 
 (walk into school, kids ahead chatting... 
@@ -81,16 +108,9 @@ Except, you don't know who anyone is, so it's a blind choice.
 
 Where will you sit? Table A B C D
 
-Next, is the hard bit. I have to talk to someone. They're all strangers today could be great friends in waiting.
-??
-2. Trade on your mysterious origins. School kids, like any predator, pick on the weak. And a lonely new kid is the weakest creature around. But: gossip is hard currency, and the only person with any on you is: you. This gives you an exotic air of mystery. It will wear off fast, so you've got to cash it in straight away.
-At lunch, walk tall like you're the King of Cool, and sit down at the popular kids table. They may snub you tomorrow, but you'll have set your initial status high instead of low.
+Next, is the hard bit. I have to talk to someone. But they're all strangers. I suppose some of them could be great friends in waiting. 
 
-3. Talk to someone. Loneliness is a deadly disease for school kids. If you look lonely, other kids may fear it is contagious, and avoid you -- which is a vicious circle. Fortunately every class has some nice kids. But they don't exactly where badges saying "nice kid" or "I like your favourite band too". So talk to everyone like you're a chat show host.
-
-4. Get onto the current thing, whatever it is. Football stickers, TV shows, a catchy dance video -- If there's a trend people are talking about, then now is not the time to be fussy: Share their enthusiasm!
-
-What were those kids saying about a new app?
+What this new app?
 
 
 
