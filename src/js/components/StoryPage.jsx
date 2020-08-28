@@ -29,14 +29,31 @@ import Fight from '../data/Fight';
 import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
-import { space, randomPick } from '../base/utils/miscutils';
+import { space, randomPick, asNum } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import ServerIO from '../base/plumbing/ServerIOBase';
 import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
 
-let ticker = new StopWatch({tickLength:500});
+class Bookmark {
+
+}
+Bookmark.sections = chapterText => chapterText.split(/^##\s+/m);
+Bookmark.scenes = section => section.split(/^###\s+/m);	
+Bookmark.sentences = scene => scene.split(/\n *\n/);
+
+Bookmark.sss = bookmark => bookmark? bookmark.split(".").map(i => asNum(i)) : [0,0,0];
+Bookmark.next = (bookmark, chapterText) => {
+	let sss = Bookmark.sss(bookmark);
+	let sections = Bookmark.sections(chapterText);
+	let scenes = Bookmark.scenes(sections[sss[0]]);
+	let sentences = Bookmark.sentences(scenes[sss[1]]);
+	console.log("next",sss,sections,scenes,sentences);
+};
+
+let ticker = new StopWatch({tickLength:700});
+const spaceKey = new Key(" ");
 
 const StoryPage = () => {
 
@@ -48,31 +65,34 @@ const StoryPage = () => {
 	let chapter = pvChapter.value;
 	let _title = chapter.match(/^# (.+)$/m);
 	let title = (_title && _title[1]) || "";
-	// console.log(title);
-	let sections = chapter.split(/^##\s+/m);
-	// console.log(sections);
-	let si = 1;
-	let section = sections[si];
-	// let scenes = section.split(/^###\s+/m);
-	let scenes = section.split(/\n/g);
-	let [sceneIndex, setSceneIndex] = useState(0);
-
-	let tick = StopWatch.update(ticker);
-	let [lastTick,setLastTick] = useState(tick);
-	if (tick > lastTick) {
-		setSceneIndex(sceneIndex + 1);
-		setLastTick(tick);
-	}
-	setTimeout(() => DataStore.update(), 250);
+	
+	let bookmark = DataStore.getUrlValue('bookmark');
+	setTimeout(() => DataStore.update(), 500);
+	let sections = Bookmark.sections(chapter);
 
 	return (<div className='open-book container'>
 		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1}>
 			<div className='right-page'>
-				<h2><MDText source={title} /></h2>
-				{scenes.map((s,i) => i > sceneIndex? null : <div key={i}><MDText source={s} /></div>)}
+				{sections.map((s,i) => <Section key={i} section={s} sectionIndex={i} bookmark={bookmark} />)}
 			</div>
 		</BG>
 	</div>);
+};
+
+const Section = ({section, sectionIndex, bookmark}) => {
+	let scenes = Bookmark.scenes(section);
+	return <div>{scenes.map((s,j) => <Scene key={j} scene={s} sectionIndex={sectionIndex} sceneIndex={j} bookmark={bookmark} />)}<hr/></div>;
+};
+
+
+const Scene = ({scene, sectionIndex, sceneIndex, bookmark}) => {
+	let sentences = Bookmark.sentences(scene);
+	return <div>{sentences.map((s,i) => <Sentence key={i} sentenceIndex={i} text={s} sceneIndex={sceneIndex} sectionIndex={sectionIndex} bookmark={bookmark} />)}</div>;
+};
+
+const Sentence = ({text, sentenceIndex, sceneIndex, sectionIndex, bookmark}) => {
+	let isLatest = [sectionIndex, sceneIndex, sentenceIndex].join('.') === bookmark;
+	return <div>{sectionIndex}.{sceneIndex}.{sentenceIndex}: <MDText source={text} /> {isLatest}</div>;
 };
 
 export default StoryPage;
