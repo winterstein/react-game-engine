@@ -35,25 +35,27 @@ import printer from '../base/utils/printer';
 import ServerIO from '../base/plumbing/ServerIOBase';
 import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
+import Tree from '../base/data/Tree';
 
-class Bookmark {
-
-}
-Bookmark.sections = chapterText => chapterText.split(/^##\s+/m);
-Bookmark.scenes = section => section.split(/^###\s+/m);	
-Bookmark.sentences = scene => scene.split(/\n *\n/);
-
-Bookmark.sss = bookmark => bookmark? bookmark.split(".").map(i => asNum(i)) : [0,0,0];
-Bookmark.next = (bookmark, chapterText) => {
-	let sss = Bookmark.sss(bookmark);
-	let sections = Bookmark.sections(chapterText);
-	let scenes = Bookmark.scenes(sections[sss[0]]);
-	let sentences = Bookmark.sentences(scenes[sss[1]]);
-	console.log("next",sss,sections,scenes,sentences);
-};
 
 let ticker = new StopWatch({tickLength:700});
 const spaceKey = new Key(" ");
+
+class StoryTree {
+	constructor(text) {
+		this.text = text;
+		this.root = new Tree();
+		let sections = text.split(/^##\s/m);
+		sections.forEach((section,i) => {
+			let tSection = Tree.add(this.root, {index:i});
+			let scenes = section.split(/^###\s/m);
+			scenes.forEach((scene,j) => {
+				let tScene = Tree.add(tSection, {index:j});
+				let scenes = section.split(/^###\s/m);
+			});
+		});
+	}
+};
 
 const StoryPage = () => {
 
@@ -66,14 +68,15 @@ const StoryPage = () => {
 	let _title = chapter.match(/^# (.+)$/m);
 	let title = (_title && _title[1]) || "";
 	
-	let bookmark = DataStore.getUrlValue('bookmark');
+	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
 	setTimeout(() => DataStore.update(), 500);
-	let sections = Bookmark.sections(chapter);
+	let st = new StoryTree(chapter);
+	console.log(st);
 
 	return (<div className='open-book container'>
 		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1}>
 			<div className='right-page'>
-				{sections.map((s,i) => <Section key={i} section={s} sectionIndex={i} bookmark={bookmark} />)}
+				{JSON.stringify(st)}
 			</div>
 		</BG>
 	</div>);
