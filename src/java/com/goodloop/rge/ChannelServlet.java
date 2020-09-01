@@ -55,6 +55,7 @@ public class ChannelServlet implements IServlet {
 		
 		// set state?
 		String room = state.get("room");
+		// diff? using json-patch https://tools.ietf.org/html/rfc6902
 		String diff = state.get("diff");
 		if (diff!=null) {
 			Object jdiff = JSON.parse(diff);
