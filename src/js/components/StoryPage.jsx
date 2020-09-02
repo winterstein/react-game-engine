@@ -97,10 +97,7 @@ StoryTree.next = storyTree => {
 	// return
 	return nextNode;
 };
-Bookmark.show = (bookmark, level, i) => {
-	let sss = Bookmark.sss(bookmark);
-	return sss[level] >= i;
-};
+
 
 const Emoji = ({children}) => <span aria-label='emoji' role='img'>{children}</span>;
 
