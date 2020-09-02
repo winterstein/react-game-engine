@@ -210,6 +210,10 @@ const StoryLine = ({node}) => {
 	if (text[0]==='|') {
 		return null;
 	}
+	// Is it a test? handled in nextTest
+	if (text[0]==='{') {
+		return null;
+	}
 	// Is it dialogue?
 	if (text.match(/^[a-zA-Z0-9 ]+:/)) {
 		return <ChatLine line={text} />;
