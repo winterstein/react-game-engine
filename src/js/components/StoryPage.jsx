@@ -36,6 +36,7 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
 import Tree from '../base/data/Tree';
+import ChatLine from './ChatLine';
 
 
 let ticker = new StopWatch({tickLength:700});
@@ -157,6 +158,10 @@ const StoryLine = ({node}) => {
 	// Is it a choice?
 	if (text[0]==='|') {
 		return null;
+	}
+	// Is it dialogue?
+	if (text.match(/^[a-zA-Z0-9 ]+:/)) {
+		return <ChatLine line={text} />;
 	}
 	// spot scenes
 	let se = substr(node.value.index, -2);
