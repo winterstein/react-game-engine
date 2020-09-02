@@ -8,7 +8,7 @@
 Mom: (happy) Today's the day! Fresh country air here we come!
 
 Today is the *worst* day ever. We are leaving home, and my school, and all my friends...      
-and in fact we're leaving everything, to go live in ??, which is a field in the middle of nowhere.
+and in fact we're leaving everything, to go live in Rosbreck, which is a field in the middle of nowhere.
 
 The first challenge is loading the car. We did not realise how much stuff we had until we tried to pack it up. Mom tried to use the move as an excuse to get us to throw out some of our toys. But we swore to defend them. Then Dad tried to get Mom to throw out some of her clothes. 
 
