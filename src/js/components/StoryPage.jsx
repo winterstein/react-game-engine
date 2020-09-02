@@ -37,6 +37,7 @@ import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
 import Tree from '../base/data/Tree';
 import ChatLine from './ChatLine';
+import deepCopy from '../base/utils/deepCopy';
 
 
 let ticker = new StopWatch({tickLength:700});
@@ -55,22 +56,30 @@ class StoryTree {
 		this.tSentence4id = {};
 		let sections = text.split(/^##\s/m);
 		sections.forEach((section,i) => {
-			let tSection = Tree.add(this.root, {index:""+i});
+			let tSection = Tree.add(this.root, {id:nonce(), index:""+i});
 			let scenes = section.split(/^###\s/m);
 			scenes.forEach((scene,j) => {
-				let tScene = Tree.add(tSection, {index:i+"."+j});
-				let sentences = scene.split(/\n *\n/);
-				sentences.forEach((sentence,k) => {
-					sentence = sentence.trim();
-					if ( ! sentence) return; // skip blank lines
-					let tSentence = Tree.add(tScene, {index:i+"."+j+"."+k, id:nonce(),text:sentence});
-					this.tSentence4id[tSentence.value.id] = tSentence;
-				});
+				let tScene = Tree.add(tSection, {id:nonce(), index:i+"."+j});
+				// branches for local dialog variants
+				let twigs = scene.split(/^####\s/m);
+				twigs.forEach((twig,b) => {
+					// NB the 1st twig is probably "pre-twigging"
+					let twigi = i+"."+j+(b? "."+("abcdefgh"[b-1]) : "");
+					let tTwig = Tree.add(tScene, {id:nonce(), index:twigi});
+					let sentences = twig.split(/\n *\n/);
+					sentences.forEach((sentence,k) => {
+						sentence = sentence.trim();
+						if ( ! sentence) return; // skip blank lines
+						let tSentence = Tree.add(tTwig, {index:twigi+"."+k, id:nonce(), text:sentence});
+						this.tSentence4id[tSentence.value.id] = tSentence;
+					});
+				}); // ./twigs
 			});
-		});
+		}); // ./sections
 		Tree.add(this.history, this.root.value);
 	}
-};
+} // ./StoryTree
+
 /**
  * 
  * @param {StoryTree} storyTree 
@@ -84,7 +93,7 @@ StoryTree.next = storyTree => {
 	let nodes = Tree.flatten(storyTree.root);
 	let nextNode;
 	for(let i=0; i<nodes.length; i++) {
-		if (nodes[i].value === last.value) {
+		if (nodes[i].value && last.value && nodes[i].value.id === last.value.id) {
 			nextNode = nodes[i+1];
 			break;
 		}
@@ -93,11 +102,37 @@ StoryTree.next = storyTree => {
 		// all done
 		return null;
 	}
+	// shallow copy the node, so e.g. we can edit choices
+	let nextNodeValue = Object.assign({}, nextNode.value);
+	// skip this node?
+	if (nextNodeValue.text && nextNodeValue.text[0] === "{") {
+		let ok = nextTest(nextNodeValue.text);
+		if ( ! ok) {
+			console.warn("TODO skip", nextNode);
+		}
+	}
 	// add to history
-	Tree.add(storyTree.history, nextNode.value);
+	Tree.add(storyTree.history, nextNodeValue);
 	// return
 	return nextNode;
 };
+const nextTest = test => {
+	let m = test.match("{if (.+)}");
+	let test2 = m && m[1];
+	if ( ! test2) {
+		console.warn("nextTest - no test?! "+test);
+		return true;
+	}
+	// HACK inventory check?
+	let m2 = test2.match("(\\w+) in inventory");
+	if (m2 && m2[1]) {
+		let haveit = inventory[m2[1]];
+		if (haveit) console.log("nextTest: yes! "+test);
+		return !! haveit;
+	}
+	return true;
+};
+window.nextTest = nextTest; // debug
 
 StoryTree.current = storyTree => {
 	let olds = Tree.flatten(storyTree.history);
@@ -120,6 +155,7 @@ const StoryPage = () => {
 	let title = (_title && _title[1]) || "";
 	
 	const storyTree = DataStore.getValue(['misc','StoryTree',chapterNum]) || DataStore.setValue(['misc','StoryTree',chapterNum], new StoryTree(chapter), false);
+	window.storyTree = storyTree;
 	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
 
 	// get a text node
@@ -146,10 +182,25 @@ const Buttons = ({currentNode, storyTree}) => {
 	let text = currentNode.value && currentNode.value.text;
 	if ( ! text) return "TODO";
 	if (text[0]==="|")	{
-		let choices = text.split("|").filter(c => c);
-		return choices.map(c => <Button color='primary' key={c}>{c}</Button>);
+		const i = text.indexOf("| ");
+		let thenbit = text.substr(i+1).trim();
+		let choices = text.substr(0, i).split("|").filter(c => c);
+		return choices.map(c => <Button color='primary' onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>);
 	}
 	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>;
+};
+
+// HACK
+window.inventory = {};
+
+const doChoice = ({currentNode, storyTree, c, thenbit}) => {	
+	// TODO modify history not source
+	currentNode.value.text = c;
+	// HACK add to inventory
+	if (thenbit===">> inventory") {
+		inventory[c] = (inventory[c] || 0) + 1;
+	}
+	StoryTree.next(storyTree);
 };
 
 const StoryLine = ({node}) => {
