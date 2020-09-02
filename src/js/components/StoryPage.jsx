@@ -115,20 +115,6 @@ const StoryPage = () => {
 	let _title = chapter.match(/^# (.+)$/m);
 	let title = (_title && _title[1]) || "";
 	
-<<<<<<< HEAD
-	let bookmark = DataStore.getUrlValue('bookmark');
-	if ( ! bookmark) {
-		bookmark = Bookmark.make(chapter);
-		DataStore.setUrlValue('bookmark', bookmark, false);
-	}
-	setTimeout(() => DataStore.update(), 500);
-	let sections = Bookmark.sections(chapter);
-
-	return (<div className='open-book container'>
-		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1}>
-			<div className='right-page'>
-				{sections.map((s,i) => Bookmark.show(bookmark, 0, i)? <Section key={i} section={s} sectionIndex={i} bookmark={bookmark} /> : bookmark)}
-=======
 	const storyTree = DataStore.getValue(['misc','StoryTree',chapterNum]) || DataStore.setValue(['misc','StoryTree',chapterNum], new StoryTree(chapter), false);
 	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
 
@@ -143,7 +129,6 @@ const StoryPage = () => {
 								
 				<Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>
 
->>>>>>> feature/tree-chapter
 			</div>
 		</BG>
 	</div>);
