@@ -134,45 +134,9 @@ const StoryPage = () => {
 	</div>);
 };
 
-<<<<<<< HEAD
-const Section = ({section, sectionIndex, bookmark}) => {
-	let scenes = Bookmark.scenes(section);
-	return <div>{scenes.map((s,j) => Bookmark.show(bookmark, 1, j)? <Scene key={j} scene={s} sectionIndex={sectionIndex} sceneIndex={j} bookmark={bookmark} /> : bookmark)}<hr/></div>;
-=======
 const StoryLine = ({node}) => {
 	return <div key={i}>{node.value? <MDText source={node.value.text || ""+node.value.index} /> : "-"}</div>;
->>>>>>> feature/tree-chapter
 };
 
-// const Section = ({section, sectionIndex, bookmark}) => {
-// 	let scenes = Bookmark.scenes(section);
-// 	return <div>{scenes.map((s,j) => <Scene key={j} scene={s} sectionIndex={sectionIndex} sceneIndex={j} bookmark={bookmark} />)}<hr/></div>;
-// };
-
-<<<<<<< HEAD
-const Scene = ({scene, sectionIndex, sceneIndex, bookmark}) => {
-	let sentences = Bookmark.sentences(scene);
-	return <div>{sentences.map((s,i) => Bookmark.show(bookmark, 2, i)? <Sentence key={i} sentenceIndex={i} text={s} sceneIndex={sceneIndex} sectionIndex={sectionIndex} bookmark={bookmark} /> : bookmark)}</div>;
-};
-
-const Sentence = ({text, sentenceIndex, sceneIndex, sectionIndex, bookmark}) => {
-	let isLatest = Bookmark.isLatestSentence(bookmark, [sectionIndex, sceneIndex, sentenceIndex]);
-	return (<div>{sectionIndex}.{sceneIndex}.{sentenceIndex}: 
-		<MDText source={text} /> 
-		{isLatest? <Button onClick={e => Bookmark.next(bookmark)}>...</Button> : null}
-	</div>);
-};
-=======
-
-// const Scene = ({scene, sectionIndex, sceneIndex, bookmark}) => {
-// 	let sentences = Bookmark.sentences(scene);
-// 	return <div>{sentences.map((s,i) => <Sentence key={i} sentenceIndex={i} text={s} sceneIndex={sceneIndex} sectionIndex={sectionIndex} bookmark={bookmark} />)}</div>;
-// };
-
-// const Sentence = ({text, sentenceIndex, sceneIndex, sectionIndex, bookmark}) => {
-// 	let isLatest = [sectionIndex, sceneIndex, sentenceIndex].join('.') === bookmark;
-// 	return <div>{sectionIndex}.{sceneIndex}.{sentenceIndex}: <MDText source={text} /> {isLatest}</div>;
-// };
->>>>>>> feature/tree-chapter
 
 export default StoryPage;
