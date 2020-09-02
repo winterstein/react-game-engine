@@ -106,7 +106,7 @@ const StoryPage = () => {
 	return (<div className='open-book container'>
 		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1}>
 			<div className='right-page'>				
-				{Tree.map(storyTree.history, t => <div>{t.value.index+" "+t.value.text}</div>)}
+				{Tree.flatten(storyTree.history).map(t => <div>{t.value? t.value.index+" "+t.value.text : "-"}</div>)}
 				<hr/>
 								
 				<Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>
