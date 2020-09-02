@@ -29,7 +29,7 @@ import Fight from '../data/Fight';
 import Monster from '../data/Monster';
 
 import ReactVivus from 'react-vivus';
-import { space, randomPick, asNum } from '../base/utils/miscutils';
+import { space, randomPick, asNum, substr } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import ServerIO from '../base/plumbing/ServerIOBase';
@@ -73,7 +73,7 @@ class StoryTree {
 /**
  * 
  * @param {StoryTree} storyTree 
- * @returns {Tree}
+ * @returns {Tree} in root
  */
 StoryTree.next = storyTree => {
 	// what comes next? find latest then step on
@@ -98,13 +98,19 @@ StoryTree.next = storyTree => {
 	return nextNode;
 };
 
+StoryTree.current = storyTree => {
+	let olds = Tree.flatten(storyTree.history);
+	let last = olds[olds.length-1]; 
+	return last;
+};
+
 
 const Emoji = ({children}) => <span aria-label='emoji' role='img'>{children}</span>;
 
 const StoryPage = () => {
 	const chapterNum = 1;
 	let pvChapter = DataStore.fetch(['misc','chapter',chapterNum], () => {
-		return ServerIO.load("/data/book/chapter1.md");
+		return ServerIO.load("/data/book/chapter-test.md");
 	});
 	if ( ! pvChapter.value) return <Misc.Loading/>;
 
@@ -115,24 +121,49 @@ const StoryPage = () => {
 	const storyTree = DataStore.getValue(['misc','StoryTree',chapterNum]) || DataStore.setValue(['misc','StoryTree',chapterNum], new StoryTree(chapter), false);
 	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
 
+	// get a text node
+	let currentNode = StoryTree.current(storyTree);
+	while(currentNode && ! (currentNode.value && currentNode.value.text)) {
+		currentNode = StoryTree.next(storyTree);
+	}
 
 	setTimeout(() => DataStore.update(), 500);	
-
+	
 	return (<div className='open-book container'>
-		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1}>
+		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1} height='100vh'>
 			<div className='right-page'>				
 				{Tree.flatten(storyTree.history).map((t,i) => <StoryLine key={i} node={t} />)}
-				<hr/>
-								
-				<Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>
 
+				<hr/>
+				<Buttons currentNode={currentNode} storyTree={storyTree} />
 			</div>
 		</BG>
 	</div>);
 };
 
+const Buttons = ({currentNode, storyTree}) => {
+	let text = currentNode.value && currentNode.value.text;
+	if ( ! text) return "TODO";
+	if (text[0]==="|")	{
+		let choices = text.split("|").filter(c => c);
+		return choices.map(c => <Button color='primary' key={c}>{c}</Button>);
+	}
+	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>;
+};
+
 const StoryLine = ({node}) => {
-	return <div key={i}>{node.value? <MDText source={node.value.text || ""+node.value.index} /> : "-"}</div>;
+	let text = node.value && node.value.text;
+	if ( ! text) return null;
+	// Is it a choice?
+	if (text[0]==='|') {
+		return null;
+	}
+	// spot scenes
+	let se = substr(node.value.index, -2);
+	if (se === ".0" && text[0] !== '#') {
+		text = "## "+text;
+	}	
+	return <MDText source={text} />;
 };
 
 
