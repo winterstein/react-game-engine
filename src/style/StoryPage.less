@@ -1,4 +1,69 @@
 
-.book-page {
+// #story {
+//     background: url(/img/src/bg/schooldeskgraffiti-767781.jpg);
+//     background-size: cover;
+// }
+
+#mainDiv {
+	background-image: url(/img/src/bg/blackboard-texture.jpg);
+	background-color: #222;
+	background-size: cover;
+}
+
+.open-book {
+	background-image: url(/img/src/bg/open-book-on-table.jpg);
+	background-color: #222;
+	background-size: contain;
+	width: 897px; // ?! 994px;
+
 	font-family: 'Indie Flower', cursive;
+	font-size: 1.4em;
+	h1, h2, h3, h4, h5 {
+		font-family: inherit;
+	}
+	.right-page {
+		z-index: 100;
+		padding-top: 50px;
+		margin-left: 110px;
+		width: 545px;
+	}
+	em {
+		text-decoration: underline;
+	}
+	height: 100vh;
+	position: relative;
+	img.bg {
+		position: absolute;
+		top:0; bottom:0; left:0; right:0;
+		z-index: -1;
+	}
+} // ./open-book
+
+
+.chatline {
+	border: 2px solid white;
+	border-radius: 10px;
+	box-shadow: 2px 2px 2px 2px rgba(99,99,99,0.5);
+	min-height: 80px;
+	padding: 5px;
+	background: white;
+	.who {
+		font-family: Arial, Helvetica, sans-serif;
+	}
+	.said {
+
+	}
+	img {
+		margin-top: -75px;
+		float: right;
+		height: 150px;
+		max-width: 200px;
+	}
+}
+
+.leftnav {
+	h3 {
+		font-family: 'Indie Flower', cursive;
+		text-transform: uppercase;
+	}
 }

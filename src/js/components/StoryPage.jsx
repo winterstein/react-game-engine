@@ -38,108 +38,10 @@ import BG from '../base/components/BG';
 import Tree from '../base/data/Tree';
 import ChatLine from './ChatLine';
 import deepCopy from '../base/utils/deepCopy';
-
+import StoryTree from '../data/StoryTree';
 
 let ticker = new StopWatch({tickLength:700});
 const spaceKey = new Key(" ");
-
-class StoryTree {
-	/**
-	 * @type {Tree} Never null
-	 */
-	history;
-
-	constructor(text) {
-		this.text = text;
-		this.root = new Tree({value:"root"});
-		this.history = new Tree();		
-		this.tSentence4id = {};
-		let sections = text.split(/^##\s/m);
-		sections.forEach((section,i) => {
-			let tSection = Tree.add(this.root, {id:nonce(), index:""+i});
-			let scenes = section.split(/^###\s/m);
-			scenes.forEach((scene,j) => {
-				let tScene = Tree.add(tSection, {id:nonce(), index:i+"."+j});
-				// branches for local dialog variants
-				let twigs = scene.split(/^####\s/m);
-				twigs.forEach((twig,b) => {
-					// NB the 1st twig is probably "pre-twigging"
-					let twigi = i+"."+j+(b? "."+("abcdefgh"[b-1]) : "");
-					let tTwig = Tree.add(tScene, {id:nonce(), index:twigi});
-					let sentences = twig.split(/\n *\n/);
-					sentences.forEach((sentence,k) => {
-						sentence = sentence.trim();
-						if ( ! sentence) return; // skip blank lines
-						let tSentence = Tree.add(tTwig, {index:twigi+"."+k, id:nonce(), text:sentence});
-						this.tSentence4id[tSentence.value.id] = tSentence;
-					});
-				}); // ./twigs
-			});
-		}); // ./sections
-		Tree.add(this.history, this.root.value);
-	}
-} // ./StoryTree
-
-/**
- * 
- * @param {StoryTree} storyTree 
- * @returns {Tree} in root
- */
-StoryTree.next = storyTree => {
-	// what comes next? find latest then step on
-	let olds = Tree.flatten(storyTree.history);
-	let last = olds[olds.length-1]; 
-	Tree.assIsa(last);
-	let nodes = Tree.flatten(storyTree.root);
-	let nextNode;
-	for(let i=0; i<nodes.length; i++) {
-		if (nodes[i].value && last.value && nodes[i].value.id === last.value.id) {
-			nextNode = nodes[i+1];
-			break;
-		}
-	}
-	if ( ! nextNode) {
-		// all done
-		return null;
-	}
-	// shallow copy the node, so e.g. we can edit choices
-	let nextNodeValue = Object.assign({}, nextNode.value);
-	// skip this node?
-	if (nextNodeValue.text && nextNodeValue.text[0] === "{") {
-		let ok = nextTest(nextNodeValue.text);
-		if ( ! ok) {
-			console.warn("TODO skip", nextNode);
-		}
-	}
-	// add to history
-	Tree.add(storyTree.history, nextNodeValue);
-	// return
-	return nextNode;
-};
-const nextTest = test => {
-	let m = test.match("{if (.+)}");
-	let test2 = m && m[1];
-	if ( ! test2) {
-		console.warn("nextTest - no test?! "+test);
-		return true;
-	}
-	// HACK inventory check?
-	let m2 = test2.match("(\\w+) in inventory");
-	if (m2 && m2[1]) {
-		const inventory = Game.getInventory(Game.get());
-		let haveit = inventory[m2[1]];
-		if (haveit) console.log("nextTest: yes! "+test);
-		return !! haveit;
-	}
-	return true;
-};
-window.nextTest = nextTest; // debug
-
-StoryTree.current = storyTree => {
-	let olds = Tree.flatten(storyTree.history);
-	let last = olds[olds.length-1]; 
-	return last;
-};
 
 
 const Emoji = ({children}) => <span aria-label='emoji' role='img'>{children}</span>;
@@ -147,7 +49,7 @@ const Emoji = ({children}) => <span aria-label='emoji' role='img'>{children}</sp
 const StoryPage = () => {
 	const chapterNum = 1;
 	let pvChapter = DataStore.fetch(['misc','chapter',chapterNum], () => {
-		return ServerIO.load("/data/book/chapter-test.md");
+		return ServerIO.load("/data/book/chapter1.md");
 	});
 	if ( ! pvChapter.value) return <Misc.Loading/>;
 
@@ -161,21 +63,30 @@ const StoryPage = () => {
 
 	// get a text node
 	let currentNode = StoryTree.current(storyTree);
-	while(currentNode && ! (currentNode.value && currentNode.value.text)) {
+	while(currentNode) {
+		// skip over no text and also test {if...} nodes
+		// NB: choice nodes which begin | are not skipped
+		if (currentNode.value && currentNode.value.text && currentNode.value.text[0] !== '{') {
+			break;
+		}
 		currentNode = StoryTree.next(storyTree);
 	}
+	const seenNodes = Tree.flatten(storyTree.history);
+	const currentText = currentNode && currentNode.value.text || '';
 
 	setTimeout(() => DataStore.update(), 500);	
 	
-	return (<div className='open-book container'>
-		<BG src='/img/src/bg/open-book.jpg' size='fit' opacity={1} height='100vh'>
-			<div className='right-page'>				
-				{Tree.flatten(storyTree.history).map((t,i) => <StoryLine key={i} node={t} />)}
+	return (<div className='open-book container'>		
+		
+		<div className='right-page'>				
+			{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
+			
+			{currentText.match(/^[a-zA-Z0-9 ]+:/)? <ChatLine line={currentText} /> : null}
 
-				<hr/>
-				<Buttons currentNode={currentNode} storyTree={storyTree} />
-			</div>
-		</BG>
+			<hr/>
+			<Buttons currentNode={currentNode} storyTree={storyTree} />
+			
+		</div>
 	</div>);
 };
 
@@ -202,7 +113,7 @@ const doChoice = ({currentNode, storyTree, c, thenbit}) => {
 	StoryTree.next(storyTree);
 };
 
-const StoryLine = ({node}) => {
+const StoryLine = ({node, isLatest}) => {
 	let text = node.value && node.value.text;
 	if ( ! text) return null;
 	// Is it a choice?
@@ -213,10 +124,10 @@ const StoryLine = ({node}) => {
 	if (text[0]==='{') {
 		return null;
 	}
-	// Is it dialogue?
-	if (text.match(/^[a-zA-Z0-9 ]+:/)) {
-		return <ChatLine line={text} />;
-	}
+	// // Is it dialogue?
+	// if (text.match(/^[a-zA-Z0-9 ]+:/) && isLatest) {
+	// 	return <ChatLine line={text} />;
+	// }
 	// spot scenes
 	let se = substr(node.value.index, -2);
 	if (se === ".0" && text[0] !== '#') {

@@ -5,6 +5,14 @@
 
 ### At Home (home)
 
+#### {if lion in inventory}
+
+Never going to happen
+
+Nor this
+
+#### {endif}
+
 1st line of normal text - Hello world!
 
 Mom: (v happy) A line of dialogue! Followed by a choice.
