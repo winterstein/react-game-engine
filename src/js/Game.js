@@ -51,6 +51,17 @@ Game.getPlayer = () => {
 	return Game.get().player;
 };
 
+/**
+ * 
+ * @param {Game} game 
+ * @returns {!Object} item-name:number
+ */
+Game.getInventory = game => {
+	if ( ! game) game = Game.get();
+	if ( ! game.inventory) game.inventory = {};
+	return game.inventory;
+};
+
 const doReset = () => {
 	let g = new Game();
 	DataStore.setValue(['data','Game'], g, false);	

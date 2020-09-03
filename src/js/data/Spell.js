@@ -11,7 +11,7 @@ class Spell extends DataClass {
 	
 	constructor(base) {		
 		super();
-		this._init(base);
+		DataClass._init(this, base);
 	}
 }
 DataClass.register(Spell,'Spell');

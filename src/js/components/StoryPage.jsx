@@ -126,6 +126,7 @@ const nextTest = test => {
 	// HACK inventory check?
 	let m2 = test2.match("(\\w+) in inventory");
 	if (m2 && m2[1]) {
+		const inventory = Game.getInventory(Game.get());
 		let haveit = inventory[m2[1]];
 		if (haveit) console.log("nextTest: yes! "+test);
 		return !! haveit;
@@ -190,14 +191,12 @@ const Buttons = ({currentNode, storyTree}) => {
 	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>;
 };
 
-// HACK
-window.inventory = {};
-
 const doChoice = ({currentNode, storyTree, c, thenbit}) => {	
 	// TODO modify history not source
 	currentNode.value.text = c;
 	// HACK add to inventory
 	if (thenbit===">> inventory") {
+		const inventory = Game.getInventory(Game.get());
 		inventory[c] = (inventory[c] || 0) + 1;
 	}
 	StoryTree.next(storyTree);

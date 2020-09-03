@@ -46,7 +46,7 @@ class Command extends DataClass {
 
 	constructor(subject, verb, object, value, params) {
 		super(); // base
-		this._init(params);
+		DataClass._init(this, params);
 		this.subject = subject;
 		this.verb = assMatch(verb, String);
 		this.object = object;

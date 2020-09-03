@@ -100,7 +100,7 @@ const getRoom = (x,y) => {
 window.getRoom = getRoom;
 
 const setupMonster = () => {
-	let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
+	let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}), false);
 	if ( ! monster.x || monster.dead) {
 		let mx,my;
 		for(let i=0; i<1000; i++) {
@@ -209,9 +209,9 @@ const MiniMap = ({}) => {
 	let radius = 10; // diameter = 2radius + 1, cos odd is easier
 	let rows = _.range(2*radius+1).map(i => player.y - radius + i);
 	let cols = _.range(2*radius+1).map(i => player.x - radius + i);
-	return (<table><tbody>
+	return (<table style={{lineHeight:1}}><tbody>
 		{rows.map(y => <tr key={y}>{cols.map(x => 
-			<td style={{width:"16px",height:"16px",overflow:"hidden",backgroundColor:bcol(x,y),fontSize:"16px"}} key={x+"_"+y} title={x+"_"+y}>
+			<td style={{width:"18px",height:"18px",overflow:"hidden",backgroundColor:bcol(x,y),fontSize:"16px"}} key={x+"_"+y} title={x+"_"+y}>
 				{what(x,y)}
 			</td>
 		)}</tr>)}

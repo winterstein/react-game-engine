@@ -108,14 +108,14 @@ class MainDiv extends Component {
 			</div>);
 		}
 	
-		return (<>
+		return (<div style={{height:'100vh',width:'100vw'}}>
 			<MessageBar />
-			<LeftNav />
-			<div className='page' id={page}>								
+			<LeftNav className='pull-left' />
+			<div className='page pull-left' style={{width:'calc(100vw - 150px)'}} id={page}>
 				<Page path={path} />
 			</div>
 			<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />
-		</>);
+		</div>);
 	} // ./render()
 } // ./MainDiv
 
