@@ -20,6 +20,7 @@ import TestPage from '../base/components/TestPage';
 import FightPage from './FightPage';
 import StoryPage from './StoryPage';
 import ExplorePage from './ExplorePage';
+import LeftNav from './LeftNav';
 
 // DataStore
 C.setupDataStore();
@@ -109,7 +110,8 @@ class MainDiv extends Component {
 	
 		return (<>
 			<MessageBar />
-			<div className='page' id={page}>						
+			<LeftNav />
+			<div className='page' id={page}>								
 				<Page path={path} />
 			</div>
 			<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />

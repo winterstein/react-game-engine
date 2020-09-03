@@ -43,6 +43,14 @@ class Game extends DataClass {
 } // ./Game
 DataClass.register(Game, 'Game');
 
+/**
+ * @returns {?Sprite}
+ */
+Game.getPlayer = () => {
+	// TODO manage
+	return Game.get().player;
+};
+
 const doReset = () => {
 	let g = new Game();
 	DataStore.setValue(['data','Game'], g, false);	
