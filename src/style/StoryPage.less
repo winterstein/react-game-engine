@@ -15,7 +15,7 @@
 	background-color: #222;
 	background-size: contain;
 	width: 897px; // ?! 994px;
-
+	height: 100%;
 	font-family: 'Indie Flower', cursive;
 	font-size: 1.4em;
 	h1, h2, h3, h4, h5 {
@@ -26,6 +26,17 @@
 		padding-top: 50px;
 		margin-left: 110px;
 		width: 545px;
+		height: 820px;
+		position: relative;
+		.story-zone {
+			max-height: calc(100% - 275px);
+			overflow-y: scroll;
+		}
+		.control-zone {
+			height:50px;
+			position: absolute;
+			bottom: 10px;
+		}
 	}
 	em {
 		text-decoration: underline;
@@ -47,6 +58,9 @@
 	min-height: 80px;
 	padding: 5px;
 	background: white;
+	position: absolute;
+	bottom: 125px;
+	width: 98%;
 	.who {
 		font-family: Arial, Helvetica, sans-serif;
 	}

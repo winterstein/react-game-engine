@@ -11,8 +11,14 @@ import Login from 'you-again';
 import DataStore from '../base/plumbing/DataStore';
 import { space, substr } from '../base/utils/miscutils';
 
+/**
+ * regex for dialogue, e.g. Mom: (happy) We're off!
+ * match = [all, person, emotion, said]
+ */
+export const rSpeech = /^([a-zA-Z0-9 ]+): ?(\([a-z ]+\)|)(.+)/;
+
 const ChatLine = ({ line }) => {
-	let m = line.match(/^([a-zA-Z0-9 ]+): ?(\([a-z ]+\)|)(.+)/);
+	let m = line.match(rSpeech);
 	if (!m) {
 		console.warn("ChatLine - no pattern match: " + line);
 		return <div>{line}</div>;

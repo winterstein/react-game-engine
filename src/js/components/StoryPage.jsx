@@ -36,9 +36,10 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
 import Tree from '../base/data/Tree';
-import ChatLine from './ChatLine';
+import ChatLine, { rSpeech } from './ChatLine';
 import deepCopy from '../base/utils/deepCopy';
 import StoryTree from '../data/StoryTree';
+import ScrollToBottom from './ScrollToBottom';
 
 let ticker = new StopWatch({tickLength:700});
 const spaceKey = new Key(" ");
@@ -79,12 +80,16 @@ const StoryPage = () => {
 	return (<div className='open-book container'>		
 		
 		<div className='right-page'>				
-			{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
+			<div className='story-zone'>
+				<ScrollToBottom>
+					{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
+				</ScrollToBottom>
+			</div>
 			
 			{currentText.match(/^[a-zA-Z0-9 ]+:/)? <ChatLine line={currentText} /> : null}
 
 			<hr/>
-			<Buttons currentNode={currentNode} storyTree={storyTree} />
+			<div className='control-zone'><Buttons currentNode={currentNode} storyTree={storyTree} /></div>
 			
 		</div>
 	</div>);
@@ -124,15 +129,27 @@ const StoryLine = ({node, isLatest}) => {
 	if (text[0]==='{') {
 		return null;
 	}
-	// // Is it dialogue?
-	// if (text.match(/^[a-zA-Z0-9 ]+:/) && isLatest) {
-	// 	return <ChatLine line={text} />;
-	// }
+	// Is it dialogue? remove the emotion marker
+	let m = text.match(rSpeech);
+	if (m) {
+		text = m[1]+': "'+m[3].trim()+'"';
+	}
 	// spot scenes
 	let se = substr(node.value.index, -2);
 	if (se === ".0" && text[0] !== '#') {
 		text = "## "+text;
-	}	
+	}
+	// one word at a time
+	if (isLatest) {
+		let [stopWatch] = useState(new StopWatch());
+		StopWatch.update(stopWatch);
+		let dt = StopWatch.time(stopWatch);
+		let nw = Math.round(dt / 25);
+		text = text.substr(0,nw); //words.join(" ");
+		// avoid half styling 
+		text = text.replace(/[~*]+(\w+)$/,"$1");
+	}
+
 	return <MDText source={text} />;
 };
 

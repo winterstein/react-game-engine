@@ -1,7 +1,7 @@
 import DataClass from "./base/data/DataClass";
 
 /**
- * @typedef EpochMSecs
+ * @typedef {number} EpochMSecs
  * epoch milliseconds
  */
 
@@ -54,7 +54,7 @@ StopWatch.dt = sw => {
 };
 
 /**
-	 * @return The time in milliseconds since this stopwatch was started, minus
+	 * @return {EpochMSecs} The time in milliseconds since this stopwatch was started, minus
 	 *         any pauses.
 	 */
 StopWatch.time = sw => {
@@ -66,7 +66,7 @@ StopWatch.time = sw => {
 
 /**
  * Update and fetch tick. Also updates dt
- * @returns {?Number} null if the last call to tick was less than tickLength.
+ * @returns {?EpochMSecs} null if the last call to tick was less than tickLength.
  */
 StopWatch.update = sw => {	
 	let newTick = StopWatch.time(sw);
@@ -79,6 +79,11 @@ StopWatch.update = sw => {
 	return sw.tick;
 };
 
+/**
+ * Call `StopWatch.update()` first. Like time, except it steps up.
+ * @param {StopWatch} sw 
+ * @returns {EpochMSecs}
+ */
 StopWatch.tick = sw => sw.tick;
 
 /**
