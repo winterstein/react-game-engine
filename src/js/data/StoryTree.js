@@ -31,6 +31,7 @@ class StoryTree {
 					for (let k=0; k<sentences.length; k++) {
 						const sentence = sentences[k].trim();
 						if ( ! sentence) continue; // skip blank lines
+						if (sentence.substr(0,2)==='//') continue; // skip comments
 						if (k===0) {
 							// e.g. #### {if foo in inventory} goes on the twig, so it can have child sentences to skip
 							tTwig.value.text = sentence;

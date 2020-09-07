@@ -2,7 +2,7 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ReactDOM from 'react-dom';
 import Enum from 'easy-enums';
 import _ from 'lodash';
@@ -67,6 +67,12 @@ const SplashScreen = () => {
 		}}>Launch</Button></div>;
 	}
 	useEffect(playThemeSong);
+	// // shrink to normal - not working - svg is hidden
+	// let style = {transform:"scale(5)"};
+	// if (playingFlag) {
+	// 	style.transform="scale(1)";
+	// 	style.transition="all 5s";
+	// }
 	return <div>
 		<DrawReactSVG src='/img/src/celtic/celtic-swirl.svg' width='400px' height='400px' duration={1000} />
 		<h2>The Kilfearn Chronicles</h2>
@@ -84,9 +90,12 @@ let themeSong = new Howl({
 	}
 });
 
+let playingFlag;
 const playThemeSong = () => {
 	console.log("Play...");
 	themeSong.play();
+	playingFlag = true;
+	DataStore.update();
 };
 
 export default SplashScreen;

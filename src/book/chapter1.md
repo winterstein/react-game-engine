@@ -10,7 +10,9 @@ Mom: (v happy) Today's the day! Fresh country air here we come!
 Today is the *worst* day ever. We are leaving home, and my school, and all my friends...      
 and in fact we're leaving everything, to go live in Kilfearn, which is a field in the middle of nowhere.
 
-The first challenge is loading the car. We did not realise how much stuff we had until we tried to pack it up. 
+The first challenge is packing. We did not realise how much stuff we had until we tried to pack it up. 
+
+![](/img/src/scene/tons-of-junk.jpg)
 
 Mom tried to use the move as an excuse to get us to throw out some of our toys. But we swore to defend them. Then Dad tried to get Mom to throw out some of her clothes. 
 
@@ -30,7 +32,9 @@ Mom: Okay, pick what toy you want to have in the car.
 
 A van and two burly men came round. They threw all our stuff in their van, like it was just so much junk. 
 
-(doodle, lamp, vase, etc being thrown in)
+// (doodle, lamp, vase, etc being thrown in)
+
+![](/img/src/scene/load-truck.jpg)
 
 They handed Dad a ticket and drove off.
 
