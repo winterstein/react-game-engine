@@ -2,7 +2,7 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Enum from 'easy-enums';
 import _ from 'lodash';
@@ -39,7 +39,6 @@ import Tree from '../base/data/Tree';
 import ChatLine, { rSpeech } from './ChatLine';
 import deepCopy from '../base/utils/deepCopy';
 import StoryTree from '../data/StoryTree';
-import ScrollToBottom from './ScrollToBottom';
 
 let ticker = new StopWatch({tickLength:700});
 const spaceKey = new Key(" ");
@@ -81,9 +80,8 @@ const StoryPage = () => {
 		
 		<div className='right-page'>				
 			<div className='story-zone'>
-				<ScrollToBottom>
-					{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
-				</ScrollToBottom>
+				{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
+				<ScrollIntoView watch={seenNodes.length} />
 			</div>
 			
 			{currentText.match(/^[a-zA-Z0-9 ]+:/)? <ChatLine line={currentText} /> : null}
@@ -95,14 +93,27 @@ const StoryPage = () => {
 	</div>);
 };
 
+
+const ScrollIntoView = ({watch}) => {
+	const endRef = useRef();	
+	// const scrollToBottom = () => {
+		if (endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
+	// };	
+	// useEffect(scrollToBottom, [watch]);
+	
+	return <div ref={endRef} />;
+};
+
 const Buttons = ({currentNode, storyTree}) => {
 	let text = currentNode.value && currentNode.value.text;
 	if ( ! text) return "TODO";
 	if (text[0]==="|")	{
 		const i = text.indexOf("| ");
-		let thenbit = text.substr(i+1).trim();
-		let choices = text.substr(0, i).split("|").filter(c => c);
-		return choices.map(c => <Button color='primary' onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>);
+		let thenbit = i>0? text.substr(i+1).trim() : "";
+		let choicebit = i>0? text.substr(0, i) : text;
+		let choices = choicebit.split("|").filter(c => c);
+		// TODO bump right to avoid accidental next clicks
+		return choices.map(c => <Button className="ml-2 mr-2" color='primary' onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>);
 	}
 	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>;
 };

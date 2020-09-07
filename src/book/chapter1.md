@@ -10,7 +10,9 @@ Mom: (v happy) Today's the day! Fresh country air here we come!
 Today is the *worst* day ever. We are leaving home, and my school, and all my friends...      
 and in fact we're leaving everything, to go live in Rosbreck, which is a field in the middle of nowhere.
 
-The first challenge is loading the car. We did not realise how much stuff we had until we tried to pack it up. Mom tried to use the move as an excuse to get us to throw out some of our toys. But we swore to defend them. Then Dad tried to get Mom to throw out some of her clothes. 
+The first challenge is loading the car. We did not realise how much stuff we had until we tried to pack it up. 
+
+Mom tried to use the move as an excuse to get us to throw out some of our toys. But we swore to defend them. Then Dad tried to get Mom to throw out some of her clothes. 
 
 Dad: You can't even fit into half of them. 
 
@@ -22,7 +24,7 @@ So in the end we compromised by putting most of our things in storage to be deli
 
 Mom: Okay, pick what toy you want to have in the car.
 
-|Dinosaur|Owl|Lion|
+|Dinosaur|Owl|Lion| >> inventory
 
 ### Packing
 
@@ -52,7 +54,7 @@ Morphing Person: Welcome to The Garden. Do not be worried. This is a safe place.
 
 Morphing Person: I am omega, or 𝜔 for short. I have summoned you here for a purpose. You are a Wayfarer and it is time for your skills to awaken.
 
-Omega: There is something going on in ??. 
+Omega: There is something going on in Rosbreck. 
 
 Moody Girl: Can I go yet? There's no point explaining anything to him before he's had a first crossing.
 
