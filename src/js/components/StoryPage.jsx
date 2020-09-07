@@ -150,8 +150,8 @@ const StoryLine = ({node, isLatest}) => {
 	if (se === ".0" && text[0] !== '#') {
 		text = "## "+text;
 	}
-	// one word at a time
-	if (isLatest) {
+	// one word at a time (but not for dialogue as that'd distract from the popup)
+	if (isLatest && ! m) {
 		let [stopWatch] = useState(new StopWatch());
 		StopWatch.update(stopWatch);
 		let dt = StopWatch.time(stopWatch);

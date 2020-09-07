@@ -21,6 +21,7 @@ import FightPage from './FightPage';
 import StoryPage from './StoryPage';
 import ExplorePage from './ExplorePage';
 import LeftNav from './LeftNav';
+import SplashScreen from './SplashScreen';
 
 // DataStore
 C.setupDataStore();
@@ -32,7 +33,8 @@ const PAGES = {
 	test: TestPage,
 	fight: FightPage,
 	story: StoryPage,
-	explore: ExplorePage
+	explore: ExplorePage,
+	splash:	SplashScreen
 };
 
 const DEFAULT_PAGE = 'fight';

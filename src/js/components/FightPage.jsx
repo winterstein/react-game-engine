@@ -34,6 +34,7 @@ import ReactVivus from 'react-vivus';
 import { space, randomPick, modifyHash } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
+import { CHARACTERS } from '../Character';
 // import svg from '../img/angry-robot.svg';
 
 const DrawReact = ({ src, height = "200px", width = "200px" }) => {
@@ -392,27 +393,8 @@ const makeFight = () => {
 	// let game = Game.get(); game is tied to pixi which we aren't using
 	let fight = new Fight();
 	fight.team = [
-		new Sprite({ 
-			name: "Alice", src: "/img/src/alice.svg", 
-			spells: [
-				new Spell({name:'Honey Badger',damage:30, affinity:'mammal', carrier:SpriteLib.badger()}), 
-				new Spell({name:'Bunny', damage:5, affinity:'mammal', carrier:SpriteLib.bunny()}), 
-				new Spell({name:'Wolf', damage:15, affinity:'mammal', carrier:SpriteLib.wolf()}), 
-				new Spell({name:'super healing herbs',damage:-200, affinity:'plant'}),
-				new Spell({name:'Ladybird', affinity:'bug'}),
-				new Spell({ name:'fierce snake',damage:70, affinity:'reptile'})
-			], 
-			health: 100, x: 20, y: 50, affinity: 'mammal' 
-		}),
-		new Sprite({ name: "Bob", src: "/img/src/bob.svg", 
-			spells: [
-				new Spell({name:'Fish',affinity:'fish',damage:10, carrier:SpriteLib.fish()}), 
-				new Spell({name:'Chicken',affinity:'bird',damage:10, carrier:SpriteLib.chicken()}), 
-				new Spell({name:'Goose',affinity:'bird',damage:15, carrier:SpriteLib.goose()}), 
-				new Spell({name:'nettle',affinity:'plant',damage:40})
-			], 
-			health: 100, x: 30, y: 300, affinity: 'bird'
-		}),
+		CHARACTERS.james,
+		CHARACTERS.katie,
 		new Sprite({ name: "Honey Badger", src: "/img/src/honey-badger.w150.png", 
 			spells: [
 				new Spell({name:'Rampage',damage:40,affinity:'mammal'}),

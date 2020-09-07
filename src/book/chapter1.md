@@ -8,7 +8,7 @@
 Mom: (v happy) Today's the day! Fresh country air here we come!
 
 Today is the *worst* day ever. We are leaving home, and my school, and all my friends...      
-and in fact we're leaving everything, to go live in Rosbreck, which is a field in the middle of nowhere.
+and in fact we're leaving everything, to go live in Kilfearn, which is a field in the middle of nowhere.
 
 The first challenge is loading the car. We did not realise how much stuff we had until we tried to pack it up. 
 
@@ -54,7 +54,7 @@ Morphing Person: Welcome to The Garden. Do not be worried. This is a safe place.
 
 Morphing Person: I am omega, or 𝜔 for short. I have summoned you here for a purpose. You are a Wayfarer and it is time for your skills to awaken.
 
-Omega: There is something going on in Rosbreck. 
+Omega: There is something going on in Kilfearn. 
 
 Moody Girl: Can I go yet? There's no point explaining anything to him before he's had a first crossing.
 
