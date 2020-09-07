@@ -9,6 +9,7 @@ const LeftNav = ({className}) => {
 	const inventory = Game.getInventory(Game.get());
 	return (<div className={space('leftnav m-0',className,'text-white')} 
 		style={{height:'100%',width:'150px'}} >
+		<h3><a href='#splash'>Splash</a></h3>
 		<h3><a href='#story'>Story</a></h3>
 		<h3><a href='#explore'>Explore</a></h3>
 		<h3><a href='#fight'>Fight</a></h3>

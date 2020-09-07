@@ -77,6 +77,7 @@ const FightPage = () => {
 	let target;
 	if (Monster.isa(activeSprite)) {
 		target = fight.team[0]; //selected??
+		if (target) focalSprite = target;
 	} else {
 		if (Sprite.isa(focalSprite)) {
 			target = focalSprite;
@@ -101,7 +102,7 @@ const FightPage = () => {
 				{focalSprite ? (<Card body className='game-card'><CardTitle><h3>{focalSprite.name}</h3></CardTitle>
 					{focalSprite.affinity ? <h3>{EMOJI[focalSprite.affinity]}</h3> : null}
 					<div>
-						Health: {Math.round(focalSprite.health)} {focalSprite.fullHealth? "("+Math.round(100*focalSprite.health / focalSprite.fullHealth)+"%)" : null}
+						Health: {Math.round(focalSprite.health)} {focalSprite.maxHealth? "("+Math.round(100*focalSprite.health / focalSprite.maxHealth)+"%)" : null}
 					</div>
 					{focalSprite.affinities ? <table><tbody>
 						<tr>{KAffinity.values.map(a => <td key={a}>{EMOJI[a]}</td>)}</tr>
@@ -128,13 +129,13 @@ const FightPage = () => {
 	</div>);
 };
 
-const ImgSprite = ({ sprite, width, height}) => {
+const ImgSprite = ({ sprite, width, height, style}) => {
 	if ( ! width && sprite.src) width=48;
 	if ( ! height && sprite.src) height=48;
 	if (width) width = width+"px";
 	if (height) height = height+"px";
-	return (<div style={{ position: "absolute", top: sprite.y, left: sprite.x, width, height, overflow: "hidden" }}>
-		{sprite.src? <img src={sprite.src} /> : (sprite.label || sprite.name || getType(sprite) || sprite.id)}</div>);
+	return (<div className='peep' style={{ position: "absolute", top: sprite.y, left: sprite.x, width, height, overflow: "hidden" }}>
+		{sprite.src? <img src={sprite.src} style={style} /> : (sprite.label || sprite.name || getType(sprite) || sprite.id)}</div>);
 };
 
 const ActionButton = ({ action, active, target }) => {
@@ -291,12 +292,13 @@ Command.finish = command => {
 		fight.dead.push(command.subject);
 		fight.enemies = fight.enemies.filter(s => s !== command.subject);
 		fight.team = fight.team.filter(s => s !== command.subject);
-		// adjust height
-		fight.enemies.forEach((e,i) => e.y = 250*i);
+		adjustHeight(fight.enemies);
 		break;
 	}
 	console.log("...finished", Command.str(command));
 }; // ./finish
+
+const adjustHeight = sprites => sprites.forEach((e,i) => e.y = 250*i);
 
 /**
  * 
@@ -367,13 +369,13 @@ const Peep = ({i, sprite, selected, focus }) => {
 			style={{ position: 'absolute', width: '200px', top: sprite.y, left: sprite.x }}
 		>
 			{selected ? <b>{sprite.name}</b> : null}
-			{sprite.src.includes(".svg")? <DrawReact src={sprite.src} /> 
-				: (sprite.src? <img src={sprite.src} /> : null)}
+			{sprite.src.includes(".svg")? <DrawReact src={sprite.src} /> : <img src={sprite.src} style={{maxWidth:'200px',maxHeight:'200px',transform:"scaleX(-1)"}} />}
 			{sprite.label? <h4>{sprite.label}</h4> : null}
-			{selected? <div>Health: {Math.round(sprite.health)}</div> : null}
+			{selected || focus? <div>Health: {Math.round(sprite.health)}</div> : null}
 			{sprite.health <= 0 ? <div style={{ position: 'absolute', bottom: 0 }}><DrawReact src={'/img/src/fire.svg'} /></div> : null}
 		</div>);
 	}
+	console.warn("No src for sprite", sprite);	
 	return sprite.name;
 };
 
@@ -439,14 +441,17 @@ const makeFight = () => {
 			// affinities: { bug: 'weak', reptile: 'strong' }
 		})	
 	]; // end enemies
+	// layout
+	adjustHeight(fight.team);
+	adjustHeight(fight.enemies);
 	// random strong/weak
 	fight.enemies.forEach(enemy => {
 		enemy.affinities = {};
 		enemy.affinities[randomPick(KAffinity.values)] = 'weak';
 		enemy.affinities[randomPick(KAffinity.values)] = 'strong';
 	});
-	// setup fullHealth
-	Fight.sprites(fight).forEach(sp => sp.fullHealth = sp.fullHealth || sp.health);
+	// setup maxHealth
+	Fight.sprites(fight).forEach(sp => sp.maxHealth = sp.maxHealth || sp.health);
 
 	fight.turn = fight.team[0].id;
 	DataStore.setValue(["misc", "game", "fight"], fight, false);

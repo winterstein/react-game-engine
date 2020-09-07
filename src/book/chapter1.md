@@ -73,20 +73,23 @@ with a pool, a games room, a TV room, and a trampoline. This is... not the case.
 
 Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
 
-(explore house)
+(TODO explore house)
 
-Bedroom:
-	Cassie: Listen RatFace, you-touch-my-music-you-die. /She says this without looking up from her phone./
+#### {if place == house:bedroom}
+Cassie: Listen RatFace, you-touch-my-music-you-die. /She says this without looking up from her phone./
 
-	There are only two bedrooms.   
-	So I have to share with my sister.    
-	Aargh.    
-	Aaaaaaargh.   
+There are only two bedrooms.   
+So I have to share with my sister.    
+Aargh.    
+Aaaaaaargh.   
 
-	Meet my sister.
+Meet my sister.
 
-	Card:{name:Cassie, age:16, likes: BoyZone, Billy Thompson in class S5, selfies, dislikes: Younger brothers, Warning: Highly dangerous}
+Card:{name:Cassie, age:16, likes: BoyZone, Billy Thompson in class S5, selfies, dislikes: Younger brothers, Warning: Highly dangerous}
 
+{set meetCassieFlag}
+
+### {wait until meetCassieFlag}
 
 ## Monday
 
@@ -100,7 +103,7 @@ new app everyone's playing
 
 )
 
-The important thing when starting school is: Choose carefully where you sit. This is a key factor in both your social position and grades. You want to avoid (a) idiots who will drag your grades down, and (b) social lepers who will follow you around like a bad smell. Last year I arrived late and got hit with both -- the hotly uncontested seat between "Moron" Murphy, and Farty Fraser. Murphy doesn't know the difference between arithmetic and asthmatic. He would ask for an inhaler to do sums, and one time when Susie Jeffries _did_ have an asthma attack, he started shouting "Calculator! Calculator!". Farty Fraser -- well let's just say he _earned_ his nickname. Our group projects were not a success:
+The important thing when starting school is: Choose carefully where you sit. This is a key factor in both your social position and grades. You want to avoid (a) idiots who will drag your grades down, and (b) social lepers who will follow you around like a bad smell. Last year I arrived late and got hit with both -- the hotly uncontested seat between "Moron" Murphy, and Farty Fraser. Murphy doesn't know the difference between arithmetic and asthmatic. He would ask for an inhaler to do sums, and one time when Susie Jeffries _did_ have an asthma attack, he started shouting "Calculator! Calculator!". Farty Fraser -- well let's just say he _earned_ his nickname. Our group projects were not a success.
 
 ??painting with pong
 
@@ -108,7 +111,9 @@ So I arrive on time, to choose my seat wisely.
 
 Except, you don't know who anyone is, so it's a blind choice.
 
-Where will you sit? Table A B C D
+Where will you sit? 
+
+|Table A|Table B|Table C|Table D|
 
 Next, is the hard bit. I have to talk to someone. But they're all strangers. I suppose some of them could be great friends in waiting. 
 

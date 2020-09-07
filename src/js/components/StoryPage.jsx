@@ -58,7 +58,8 @@ const StoryPage = () => {
 	let title = (_title && _title[1]) || "";
 	
 	const storyTree = DataStore.getValue(['misc','StoryTree',chapterNum]) || DataStore.setValue(['misc','StoryTree',chapterNum], new StoryTree(chapter), false);
-	window.storyTree = storyTree;
+	window.storyTree = storyTree;	
+
 	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
 
 	// get a text node
@@ -73,6 +74,10 @@ const StoryPage = () => {
 	}
 	const seenNodes = Tree.flatten(storyTree.history);
 	const currentText = currentNode && currentNode.value.text || '';
+	
+	// space = next, unless there's a choice
+	spaceKey.press = e => StoryTree.next(storyTree);
+	if (currentText[0] === '|') spaceKey.press = null; // TODO beep
 
 	setTimeout(() => DataStore.update(), 500);	
 	
@@ -115,7 +120,7 @@ const Buttons = ({currentNode, storyTree}) => {
 		// TODO bump right to avoid accidental next clicks
 		return choices.map(c => <Button className="ml-2 mr-2" color='primary' onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>);
 	}
-	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... </Button>;
+	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... (space)</Button>;
 };
 
 const doChoice = ({currentNode, storyTree, c, thenbit}) => {	

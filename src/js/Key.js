@@ -2,13 +2,13 @@ import { assMatch } from "sjtest";
 import Enum from 'easy-enums';
 
 /**
- * For keyboard events
+ * For keyboard events. You can either provide a handler for press() or release(), or check for the isDown flag
  */
 class Key {
 	isDown;
-	isUp = true;
 	press = undefined;
 	release = undefined;
+	preventDefault;
 
 	constructor(value) {
 		assMatch(value, String);
@@ -17,10 +17,9 @@ class Key {
 		//The `downHandler`
 		key.downHandler = event => {
 			if (event.key === key.value) {
-				if (key.isUp && key.press) key.press();
+				if ( ! key.isDown && key.press) key.press();
 				key.isDown = true;
-				key.isUp = false;
-				event.preventDefault();
+				if (this.preventDefault) event.preventDefault();
 			}
 		};
 	
@@ -29,8 +28,7 @@ class Key {
 			if (event.key === key.value) {
 				if (key.isDown && key.release) key.release();
 				key.isDown = false;
-				key.isUp = true;
-				event.preventDefault();
+				if (this.preventDefault) event.preventDefault();
 			}
 		};
 	

@@ -14,7 +14,7 @@ let james = new Character({
 	name: "James",
 	surname: "Findlay",
 	age: 13,
-	src: "",
+	src: "/img/src/person/james.png",
 	spells: [
 		new Spell({name:'Honey Badger',damage:30, affinity:'mammal', carrier:SpriteLib.badger()}), 
 		new Spell({name:'Bunny', damage:5, affinity:'mammal', carrier:SpriteLib.bunny()}), 
@@ -56,6 +56,7 @@ let dad = new Character({
 let katie = new Character({
 	name: "Katie", 
 	surname: "McDougall",
+	src: "/img/src/person/katie.png",
 	age: 13,
 	spells: [
 		new Spell({name:'Fish',affinity:'fish',damage:10, carrier:SpriteLib.fish()}), 
