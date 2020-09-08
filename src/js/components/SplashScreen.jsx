@@ -95,7 +95,7 @@ const playThemeSong = () => {
 	console.log("Play...");
 	themeSong.play();
 	playingFlag = true;
-	DataStore.update();
+	// DataStore.update(); upsets react in useEffect
 };
 
 export default SplashScreen;
