@@ -12,27 +12,44 @@ import DataStore from '../base/plumbing/DataStore';
 import { space, substr } from '../base/utils/miscutils';
 
 /**
- * regex for dialogue, e.g. Mom: (happy) We're off!
- * match = [all, person, emotion, said]
+ * regex for dialogue, e.g. `Mom: (happy) We're off!` or `Omega "Morphing Person": Welcome`
+ * match = [all, person, label, emotion, said]
  */
-export const rSpeech = /^([a-zA-Z0-9 ]+): ?(\([a-z ]+\)|)(.+)/;
+const rSpeech = /^([a-zA-Z0-9 ]+)("[a-zA-Z0-9 ]+")?: ?(\([a-z ]+\)|)(.+)/;
 
 const ChatLine = ({ line }) => {
-	let m = line.match(rSpeech);
+	let m = splitLine(line);
 	if (!m) {
 		console.warn("ChatLine - no pattern match: " + line);
 		return <div>{line}</div>;
 	}
-	let who = m[1];
-	let emotion = m[2] ? substr(m[2], 1, -1) : null; // pop brackets
-	let said = m[3];
-	let img = '/img/src/person/' + space(who, emotion) + '.png';
+	let {who, label, emotion, said} = m;
+	let type = '.png';
+	if (who==='Omega' || who==='Narrator') type = '.gif';
+	let img = '/img/src/person/' + space(who, emotion) +type;
 	img = img.replaceAll(' ', '-').toLowerCase();
 	return <div className='chatline'>
-		<div className='who'>{who}</div>
-		<img src={img} alt={who} />
+		<div className='who'>{label}</div>
+		<img src={img} alt={label} />
 		<div className='said'>{said}</div>
 	</div>;
+};
+
+/**
+ * 
+ * @param {!string} line 
+ * @returns {?object} {who, label, emotion, said} or null
+ */
+export const splitLine = line => {
+	let m = line.match(rSpeech);
+	if (!m) {
+		return null;
+	}
+	let who = m[1].trim();
+	let label = m[2]? substr(m[2], 1, -1) : who; // pop quotes
+	let emotion = m[3]? substr(m[3], 1, -1) : null; // pop brackets
+	let said = m[4].trim();
+	return {who, label, emotion, said};
 };
 
 export default ChatLine;

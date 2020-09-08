@@ -75,7 +75,7 @@ const SplashScreen = () => {
 	// }
 	return <div>
 		<DrawReactSVG src='/img/src/celtic/celtic-swirl.svg' width='400px' height='400px' duration={1000} />
-		<h2>The Kilfearn Chronicles</h2>
+		<h1>The Kilfearn Chronicles</h1>
 		<Button color='primary'>New Game</Button>
 	</div>;
 };

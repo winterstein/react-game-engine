@@ -104,6 +104,21 @@ let david = new Character({
 });
 
 
+let omega = new Character({
+	name: "omega",
+	src: "/img/src/person/omega.gif",
+});
+
+
+let angel = new Character({
+	name:"Angel",
+	src: "/img/src/person/angel.png",
+	affinity: "bird",
+	spells: [
+		new Spell({name:'Eagle',affinity:'bird',damage:200}), 
+	], 
+});
+
 export const CHARACTERS = {
 	james, cassie, mom, dad, katie, donald, mina, david
 };

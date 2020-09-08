@@ -36,7 +36,7 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
 import Tree from '../base/data/Tree';
-import ChatLine, { rSpeech } from './ChatLine';
+import ChatLine, { splitLine } from './ChatLine';
 import deepCopy from '../base/utils/deepCopy';
 import StoryTree from '../data/StoryTree';
 
@@ -44,7 +44,7 @@ let ticker = new StopWatch({tickLength:700});
 const spaceKey = new Key(" ");
 
 
-const Emoji = ({children}) => <span aria-label='emoji' role='img'>{children}</span>;
+const Emoji = ({children}) => <span aria-label="emoji" role="img">{children}</span>;
 
 const StoryPage = () => {
 	const chapterNum = 1;
@@ -81,18 +81,18 @@ const StoryPage = () => {
 
 	setTimeout(() => DataStore.update(), 500);	
 	
-	return (<div className='open-book container'>		
+	return (<div className="open-book container">		
 		
-		<div className='right-page'>				
-			<div className='story-zone'>
+		<div className="right-page">				
+			<div className="story-zone">
 				{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
 				<ScrollIntoView watch={seenNodes.length} />
 			</div>
 			
-			{currentText.match(/^[a-zA-Z0-9 ]+:/)? <ChatLine line={currentText} /> : null}
+			{splitLine(currentText) && <ChatLine line={currentText} />}
 
 			<hr/>
-			<div className='control-zone'><Buttons currentNode={currentNode} storyTree={storyTree} /></div>
+			<div className="control-zone"><Buttons currentNode={currentNode} storyTree={storyTree} /></div>
 			
 		</div>
 	</div>);
@@ -101,8 +101,9 @@ const StoryPage = () => {
 
 const ScrollIntoView = ({watch}) => {
 	const endRef = useRef();	
+	// TODO watch to allow user scrolling back up
 	// const scrollToBottom = () => {
-		if (endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
+	if (endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
 	// };	
 	// useEffect(scrollToBottom, [watch]);
 	
@@ -117,10 +118,14 @@ const Buttons = ({currentNode, storyTree}) => {
 		let thenbit = i>0? text.substr(i+1).trim() : "";
 		let choicebit = i>0? text.substr(0, i) : text;
 		let choices = choicebit.split("|").filter(c => c);
-		// TODO bump right to avoid accidental next clicks
-		return choices.map(c => <Button className="ml-2 mr-2" color='primary' onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>);
+		// bump right to avoid accidental next clicks
+		return (<div className="ml-5">
+			{choices.map(c => 
+				<Button className="ml-2 mr-2" color="primary" onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>
+			)}
+		</div>);
 	}
-	return <Button color='primary' onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... (space)</Button>;
+	return <Button color="primary" onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... (space)</Button>;
 };
 
 const doChoice = ({currentNode, storyTree, c, thenbit}) => {	
@@ -146,9 +151,9 @@ const StoryLine = ({node, isLatest}) => {
 		return null;
 	}
 	// Is it dialogue? remove the emotion marker
-	let m = text.match(rSpeech);
+	let m = splitLine(text);
 	if (m) {
-		text = m[1]+': "'+m[3].trim()+'"';
+		text = m.label+': "'+m.said+'"';
 	}
 	// spot scenes
 	let se = substr(node.value.index, -2);
