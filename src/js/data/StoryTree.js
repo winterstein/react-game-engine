@@ -85,6 +85,17 @@ StoryTree.next = (storyTree) => {
 
 const CODE = /{([^}]+)}/;
 StoryTree.execute = (storyTree, code) => {
+	if (code.substr(0,2)==="if") {
+		return; // done already by next
+	}	
+	// HACK player.courage += 1
+	let m = code.match(/player.(\w+) *\+= *(\d+)/);
+	if (m) {
+		let player = Game.getPlayer();
+		assert(player, "No player?!");
+		player[m[1]] = (player[m[1]] || 0) + 1*m[2];
+		return;
+	}
 	alert(code);
 };
 
@@ -135,7 +146,7 @@ const next2 = (storyTree, nodes, last, goDeeper=true) => {
 };
 
 const nextTest = (storyTree, test) => {
-	let m = test.match("{if (.+)}");
+	let m = test.match("{if ([^}]+)}");
 	let test2 = m && m[1];
 	if ( ! test2) {
 		console.warn("nextTest - no test?! "+test);
@@ -145,7 +156,7 @@ const nextTest = (storyTree, test) => {
 	if (test2[0] === '|') {
 		let option = test2.substr(1, test2.length-2);
 		let lastPick = StoryTree.lastChoice(storyTree);
-		if (option == lastPick) {
+		if (option === lastPick) {
 			return true;
 		}
 		return false;
@@ -158,7 +169,7 @@ const nextTest = (storyTree, test) => {
 		if (haveit) console.log("nextTest: yes! "+test);
 		return !! haveit;
 	}
-	return true;
+	throw new Error("Unknown test code: "+test);
 };
 window.nextTest = nextTest; // debug
 

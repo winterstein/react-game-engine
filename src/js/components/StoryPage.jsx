@@ -39,10 +39,16 @@ import Tree from '../base/data/Tree';
 import ChatLine, { splitLine } from './ChatLine';
 import deepCopy from '../base/utils/deepCopy';
 import StoryTree from '../data/StoryTree';
+import { CHARACTERS } from '../Character';
 
 let ticker = new StopWatch({tickLength:700});
 const spaceKey = new Key(" ");
-
+// TODO refactor init and game loops
+const init = () => {
+	const game = Game.get();	
+	game.player = CHARACTERS.james;
+};
+init();
 
 const Emoji = ({children}) => <span aria-label="emoji" role="img">{children}</span>;
 
@@ -115,8 +121,8 @@ const ScrollIntoView = ({watch}) => {
 };
 
 const Buttons = ({currentNode, storyTree}) => {
-	let text = currentNode.value && currentNode.value.text;
-	if ( ! text) return "TODO";
+	let text = StoryTree.text(currentNode);
+	if ( ! text) return "END OF STORY (TODO)";
 	if (text[0]==="|")	{
 		const i = text.indexOf("| ");
 		let thenbit = i>0? text.substr(i+1).trim() : "";
@@ -135,6 +141,7 @@ const Buttons = ({currentNode, storyTree}) => {
 const doChoice = ({currentNode, storyTree, c, thenbit}) => {	
 	// TODO modify history not source
 	currentNode.value.text = c;
+	storyTree.lastChoice = c;
 	// HACK add to inventory
 	if (thenbit===">> inventory") {
 		const inventory = Game.getInventory(Game.get());
@@ -150,12 +157,10 @@ const StoryLine = ({node, isLatest}) => {
 	if (text[0]==='|') {
 		return null;
 	}
-	// Is it a test? The test and commands are handled in StoryTree.nextTest / next
-	if (text[0]==='{') {		
-		let restOfLine = text.replaceAll(/{[^}]+}/,'');
-		if ( ! restOfLine) return null;
-		text = restOfLine;
-	}
+	// Remove any code. The test and commands are handled in StoryTree.nextTest / next
+	let restOfLine = text.replaceAll(/{[^}]+}/g,'');
+	if ( ! restOfLine) return null;
+	text = restOfLine;	
 	// Is it dialogue? remove the emotion marker
 	let m = splitLine(text);
 	if (m) {
