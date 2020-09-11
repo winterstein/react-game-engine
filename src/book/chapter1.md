@@ -30,7 +30,17 @@ So in the end we compromised by putting most of our things in storage to be deli
 
 Mom: Okay, pick what toy you want to have in the car.
 
-|Dinosaur|Owl|Lion| >> inventory
+|Dinosaur teddy|Rubik's cube|Baby doll| >> inventory
+
+#### {if |Dinosaur teddy|}
+The dinosaur teddy is fierce but cuddly. You feel your `courage` increase. {courage += 1}
+
+#### {if |Rubik's cube|}
+Playing with the Rubik's cube will focus. Your `knowledge` increases slightly. {knowledge += 1}
+
+#### {if |Baby doll|}
+Care is something you can practice, just like sports. Playing with the baby doll will boost your `understanding`. {understanding += 1}
+
 
 ### Packing
 
@@ -49,6 +59,13 @@ And then, without further ado, we are off. There really should have been more ad
 But it's just the click of seatbelts, the clunk of car doors, and the rumble of the engine. 
 
 //(drive, city, field, cows skull, field)
+
+> It's a long drive. How will you pass the time?
+
+|Talk to your sister Cassie|Read a book|
+
+?? if Cassie
+#### {if /Read a book/}
 
 After a while, I drifted off to sleep. I had the weirdest dream.
 

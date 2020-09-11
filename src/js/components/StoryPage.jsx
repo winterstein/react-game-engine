@@ -49,7 +49,10 @@ const Emoji = ({children}) => <span aria-label="emoji" role="img">{children}</sp
 const StoryPage = () => {
 	const chapterNum = 1;
 	let pvChapter = DataStore.fetch(['misc','chapter',chapterNum], () => {
-		return ServerIO.load("/data/book/chapter1.md");
+		return ServerIO.load(
+			// "/data/book/chapter1.md"
+			"/data/book/chapter-test.md"
+		);
 	});
 	if ( ! pvChapter.value) return <Misc.Loading/>;
 
@@ -78,6 +81,7 @@ const StoryPage = () => {
 	// space = next, unless there's a choice
 	spaceKey.press = e => StoryTree.next(storyTree);
 	if (currentText[0] === '|') spaceKey.press = null; // TODO beep
+	// ??auto-space just before a choice
 
 	setTimeout(() => DataStore.update(), 500);	
 	
@@ -146,9 +150,11 @@ const StoryLine = ({node, isLatest}) => {
 	if (text[0]==='|') {
 		return null;
 	}
-	// Is it a test? handled in nextTest
-	if (text[0]==='{') {
-		return null;
+	// Is it a test? The test and commands are handled in StoryTree.nextTest / next
+	if (text[0]==='{') {		
+		let restOfLine = text.replaceAll(/{[^}]+}/,'');
+		if ( ! restOfLine) return null;
+		text = restOfLine;
 	}
 	// Is it dialogue? remove the emotion marker
 	let m = splitLine(text);

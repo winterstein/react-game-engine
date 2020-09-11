@@ -1,38 +1,12 @@
 
 # Diary of a School ~~Astronaut~~ Detective
 
-## Monday
+Courage boost {player.courage += 1} :) and knowledge {player.knowledge += 1}
 
-### At Home (home)
+Pick a teddy
 
-#### {if lion in inventory}
+|Dinosaur|Owl|Tiger and cub| >> inventory
 
-Never going to happen
-
-Nor this
-
-#### {endif}
-
-1st line of normal text - Hello world!
-
-Mom: (v happy) A line of dialogue! Followed by a choice.
-
-|Dinosaur|Owl|Lion| >> inventory
-
-Now a line that depends on your choice
-
-#### {if Dinosaur in inventory}
-
-A T-Rex? or a Stegosaurus?
-
-#### {if Owl in inventory}
-
-Twit Twoo
-
-#### {if Lion in inventory}
-
-Roar! says the lion
-
-#### {endif}
+{if |Dinosaur|} The dinosaur teddy is fierce but cuddly. You feel your courage increase. {player.courage += 1}
 
 Everyone gets this line

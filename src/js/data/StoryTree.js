@@ -66,12 +66,29 @@ StoryTree.next = (storyTree) => {
 	assert(nextNode !== last, last);
 	// shallow copy the node, so e.g. we can edit choices
 	let nextNodeValue = Object.assign({}, nextNode.value);
+	// execute any commands
+	let nnText = StoryTree.text(nextNode);	
+	while(nnText) {
+		let m = nnText.match(CODE);
+		if ( ! m) break;
+		let code = m[1];
+		// do it?
+		StoryTree.execute(storyTree, code);
+		nnText = nnText.substr(m.index + m[0].length);
+	}
 	// add to history
 	// TODO it'd be nice to preserve the tree structure -- history is just flat here
 	Tree.add(storyTree.history, nextNodeValue);
 	// return
 	return nextNode;
 };
+
+const CODE = /{([^}]+)}/;
+StoryTree.execute = (storyTree, code) => {
+	alert(code);
+};
+
+StoryTree.text = node => node && node.value && node.value.text;
 
 const next2 = (storyTree, nodes, last, goDeeper=true) => {
 	let nextNode;
@@ -105,9 +122,9 @@ const next2 = (storyTree, nodes, last, goDeeper=true) => {
 		return null;
 	}
 	// skip this node?
-	const nnText = nextNode.value && nextNode.value.text && nextNode.value.text;
+	const nnText = StoryTree.text(nextNode);
 	if (nnText && nnText[0] === "{") {
-		let ok = nextTest(nnText);
+		let ok = nextTest(storyTree, nnText);
 		if ( ! ok) {
 			console.warn("skip", nextNode);
 			return next2(storyTree, nodes, nextNode, false);
@@ -117,12 +134,21 @@ const next2 = (storyTree, nodes, last, goDeeper=true) => {
 	return nextNode;
 };
 
-const nextTest = test => {
+const nextTest = (storyTree, test) => {
 	let m = test.match("{if (.+)}");
 	let test2 = m && m[1];
 	if ( ! test2) {
 		console.warn("nextTest - no test?! "+test);
 		return true;
+	}
+	// last choice check? e.g. {if |dinosaur|}
+	if (test2[0] === '|') {
+		let option = test2.substr(1, test2.length-2);
+		let lastPick = StoryTree.lastChoice(storyTree);
+		if (option == lastPick) {
+			return true;
+		}
+		return false;
 	}
 	// HACK inventory check?
 	let m2 = test2.match("(\\w+) in inventory");
@@ -135,6 +161,8 @@ const nextTest = test => {
 	return true;
 };
 window.nextTest = nextTest; // debug
+
+StoryTree.lastChoice = storyTree => storyTree.lastChoice;
 
 StoryTree.current = storyTree => {
 	let olds = Tree.flatten(storyTree.history);
