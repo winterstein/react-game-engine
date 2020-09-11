@@ -70,6 +70,9 @@ const StoryPage = () => {
 	window.storyTree = storyTree;	
 
 	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
+	// if (bookmark) { TODO fast forward for ease of testing (but not playing 'cos game state, e.g. you picked Dinosaur)
+	// 	StoryTree.
+	// }
 
 	// get a text node
 	let currentNode = StoryTree.current(storyTree);
@@ -157,6 +160,12 @@ const StoryLine = ({node, isLatest}) => {
 	if (text[0]==='|') {
 		return null;
 	}
+	// HACK any stats bonuses?
+	// if (isLatest) { TODO a nice boost animation
+	let mb = text.match(/(\w+)\s*\+=\s*(\d+)/);
+	if (mb) {
+		text += " `("+mb[1]+" boost!)`";
+	}	
 	// Remove any code. The test and commands are handled in StoryTree.nextTest / next
 	let restOfLine = text.replaceAll(/{[^}]+}/g,'');
 	if ( ! restOfLine) return null;

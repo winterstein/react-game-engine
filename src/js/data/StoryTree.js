@@ -3,6 +3,7 @@ import Tree from "../base/data/Tree";
 import { nonce } from "../base/data/DataClass";
 import { assert } from "../base/utils/assert";
 import Game from "../Game";
+import { modifyHash } from "../base/utils/miscutils";
 
 class StoryTree {
 	/**
@@ -84,11 +85,13 @@ StoryTree.next = (storyTree) => {
 };
 
 const CODE = /{([^}]+)}/;
+
 StoryTree.execute = (storyTree, code) => {
+	// OMG its fugly hacks all the way down
 	if (code.substr(0,2)==="if") {
 		return; // done already by next
 	}	
-	// HACK player.courage += 1
+	// HACK e.g. player.courage += 1
 	let m = code.match(/player.(\w+) *\+= *(\d+)/);
 	if (m) {
 		let player = Game.getPlayer();
@@ -96,6 +99,15 @@ StoryTree.execute = (storyTree, code) => {
 		player[m[1]] = (player[m[1]] || 0) + 1*m[2];
 		return;
 	}
+	// change place?
+	m = code.match(/place *= *(\S+)/);
+	if (m) {
+		let place = m[1];
+		let bookmark =''; // TODO a way of passing where we are in storyTree
+		// for now - just rely on storyTree being shared
+		modifyHash(place.split('/'), {bookmark});
+		return;
+	}	
 	alert(code);
 };
 
@@ -169,6 +181,9 @@ const nextTest = (storyTree, test) => {
 		if (haveit) console.log("nextTest: yes! "+test);
 		return !! haveit;
 	}
+
+	// change place?
+
 	throw new Error("Unknown test code: "+test);
 };
 window.nextTest = nextTest; // debug

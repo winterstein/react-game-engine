@@ -1,14 +1,15 @@
 
 # Diary of a School ~~Astronaut~~ Detective
 
-Courage boost {player.courage += 1} and knowledge {player.knowledge += 1}
+Our new house is a dump.
 
-Pick a teddy
+{place = explore/house}
 
-|Dinosaur|Owl|Tiger and cub| >> inventory
+#### {if place == explore/house/bedroom}
+Cassie: Listen RatFace, you-touch-my-music-you-die.
 
-{if |Dinosaur|} The dinosaur teddy is fierce but cuddly. You feel your courage increase. {player.courage += 1}
+{place = diary}
 
-Everyone gets this line
+#### diary
 
-{if bogustest} an error
+Back to the diary :)

@@ -33,13 +33,13 @@ Mom: Okay, pick what toy you want to have in the car.
 |Dinosaur teddy|Rubik's cube|Baby doll| >> inventory
 
 #### {if |Dinosaur teddy|}
-The dinosaur teddy is fierce but cuddly. You feel your `courage` increase. {courage += 1}
+The dinosaur teddy is fierce but cuddly. I feel my `courage` increase. {player.courage += 1}
 
 #### {if |Rubik's cube|}
-Playing with the Rubik's cube will focus. Your `knowledge` increases slightly. {knowledge += 1}
+Playing with the Rubik's cube will focus my mind. {player.knowledge += 1}
 
 #### {if |Baby doll|}
-Care is something you can practice, just like sports. Playing with the baby doll will boost your `understanding`. {understanding += 1}
+Care is something you can practice, just like sports. Playing with the baby doll practices caring for others. {player.understanding += 1}
 
 
 ### Packing
@@ -60,12 +60,37 @@ But it's just the click of seatbelts, the clunk of car doors, and the rumble of 
 
 //(drive, city, field, cows skull, field)
 
-> It's a long drive. How will you pass the time?
+> It's a long drive. How will I pass the time?
 
-|Talk to your sister Cassie|Read a book|
+|Talk to my sister Cassie|Read a book|
 
-?? if Cassie
-#### {if /Read a book/}
+#### {if |Talk to my sister Cassie|}
+
+Cassie: So I know we didn't talk much at the old school, what with me being a senior.
+
+Cassie: But this is a new start. At the school in Kilfearn...
+
+Cassie: - I'm not going to talk to you *at all*. 
+
+Cassie: I don't want to see you. Or hear you. I am a lioness and you are a toad. Don't get in my way.
+
+My sister Cassie is all heart. Not.
+
+{player.connection2cassie +=1}
+
+#### {if |Read a book|}
+
+I read some of my book. 
+
+Book: The human race, to which so many of my readers belong, has been playing at children's games from the beginning, and will probably do it till the end...
+
+//Mr. and Mrs. Dursley of number 4, Privet Drive, were proud to say that they were perfectly normal, thank you very much.
+//The human race, to which so many of my readers belong, has been playing at children's games from the beginning, and will probably do it till the end...
+// Many years later, as he face the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice.
+
+{player.knowledge +=1}
+
+#### {endif}
 
 After a while, I drifted off to sleep. I had the weirdest dream.
 
@@ -102,7 +127,7 @@ with a pool, a games room, a TV room, and a trampoline. This is... not the case.
 
 Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
 
-### Explore: House
+### {place = explore:house}
 
 TODO a format for maps
 
@@ -123,9 +148,10 @@ So I have to share with my sister.
 Aargh.    
 Aaaaaaargh.   
 
-{set meetCassieFlag}
+{place = diary}
 
-### {wait until meetCassieFlag}
+
+### About Cassie
 
 Meet my sister.
 

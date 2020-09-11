@@ -63,6 +63,7 @@ let dungeon = new Dungeon({
     room_count: 12
 });
  
+window.dungeon = dungeon;
 dungeon.generate();
 dungeon.print(); //outputs wall map to console.log
 console.log("dungeon", dungeon);
@@ -80,6 +81,12 @@ const getWall = (x,y) => {
 	if ( ! row) return true; 
 	return row[x];
 };
+/**
+ * 
+ * @param {number} x 
+ * @param {number} y 
+ * @returns {?Room} NB: Current usage is just boolean falsy
+ */
 const getRoom = (x,y) => {
 	let s = {x:x-0.2,y:y-0.2,width:0.1,height:0.1};
 	let room = dungeon.children.find(c => {
