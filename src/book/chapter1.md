@@ -76,7 +76,7 @@ Cassie: I don't want to see you. Or hear you. I am a lioness and you are a toad.
 
 My sister Cassie is all heart. Not.
 
-{player.connection2cassie +=1}
+{player.connection.cassie += 1}
 
 #### {if |Read a book|}
 
@@ -88,9 +88,9 @@ Book: The human race, to which so many of my readers belong, has been playing at
 //The human race, to which so many of my readers belong, has been playing at children's games from the beginning, and will probably do it till the end...
 // Many years later, as he face the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice.
 
-{player.knowledge +=1}
+{player.knowledge += 1}
 
-#### {endif}
+#### {end:if}
 
 After a while, I drifted off to sleep. I had the weirdest dream.
 
@@ -127,36 +127,31 @@ with a pool, a games room, a TV room, and a trampoline. This is... not the case.
 
 Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
 
-### {place = explore:house}
+## {explore:home}
 
-TODO a format for maps
+#### {cassie}
 
-hallway
-bedroom-parents
-bedroom-kids
-bathroom
-kitchen
-front-garden
-back-garden
-
-#### {if place == house:bedroom}
 Cassie: Listen RatFace, you-touch-my-music-you-die. /She says this without looking up from her phone./
 
-There are only two bedrooms.   
+{end:explore:home}
+
+## About Cassie
+
+There are only two bedrooms.    
 So I have to share with my sister.    
 
 Aargh.    
 Aaaaaaargh.   
 
-{place = diary}
-
-
-### About Cassie
-
 Meet my sister.
 
-Card:{name:Cassie, age:16, likes: BoyZone, Billy Thompson in class S5, selfies, dislikes: Younger brothers, Warning: Highly dangerous}
-
+Card:
+	image:	/img/src/person/cordelia.jpg
+	name:	Cassie
+	age:	16
+	likes:	BoyZone, Billy Thompson in class S5, selfies
+	dislikes:	Younger brothers
+	Warning:	Highly dangerous
 
 
 ## Meanwhile (comic)

@@ -10,6 +10,7 @@ import SJTest, { assert } from 'sjtest';
 import Login from 'you-again';
 import DataStore from '../base/plumbing/DataStore';
 import { space, substr } from '../base/utils/miscutils';
+import MDText from '../base/components/MDText';
 
 /**
  * regex for dialogue, e.g. `Mom: (happy) We're off!` or `Omega "Morphing Person": Welcome`
@@ -31,7 +32,7 @@ const ChatLine = ({ line }) => {
 	return <div className='chatline'>
 		<div className='who'>{label}</div>
 		<img src={img} alt={label} />
-		<div className='said'>{said}</div>
+		<div className='said'><MDText source={said} /></div>
 	</div>;
 };
 

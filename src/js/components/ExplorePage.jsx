@@ -37,36 +37,130 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import Dungeon from 'dungeon-generator';
 import { assMatch } from '../base/utils/assert';
 import {collision} from './Collision';
+import { CHARACTERS } from '../Character';
+import StoryTree from '../data/StoryTree';
+import Tree from '../base/data/Tree';
 
-let dungeon = new Dungeon({
-    size: [100, 100], 
-    seed: nonce(),
-    rooms: {
-        initial: {
-            min_size: [3, 3],
-            max_size: [3, 3],
-            max_exits: 1,
-            position: [0, 0] //OPTIONAL pos of initial room 
-        },
-        any: {
-            min_size: [2, 2],
-            max_size: [5, 5],
-            max_exits: 4
-        }
-    },
-    max_corridor_length: 6,
-    min_corridor_length: 2,
-    corridor_density: 0.5, //corridors per room
-    symmetric_rooms: false, // exits must be in the center of a wall if true
-    interconnects: 1, //extra corridors to connect rooms and make circular paths. not 100% guaranteed
-    max_interconnect_length: 10,
-    room_count: 12
-});
- 
-window.dungeon = dungeon;
-dungeon.generate();
-dungeon.print(); //outputs wall map to console.log
-console.log("dungeon", dungeon);
+let dungeon = null;
+
+const setupPlace = (place) => {
+	if ( ! place) {
+		dungeon = new Dungeon({
+			size: [100, 100], 
+			seed: nonce(),
+			rooms: {
+				initial: {
+					min_size: [3, 3],
+					max_size: [3, 3],
+					max_exits: 1,
+					position: [0, 0] //OPTIONAL pos of initial room 
+				},
+				any: {
+					min_size: [2, 2],
+					max_size: [5, 5],
+					max_exits: 4
+				}
+			},
+			max_corridor_length: 6,
+			min_corridor_length: 2,
+			corridor_density: 0.5, //corridors per room
+			symmetric_rooms: false, // exits must be in the center of a wall if true
+			interconnects: 1, //extra corridors to connect rooms and make circular paths. not 100% guaranteed
+			max_interconnect_length: 10,
+			room_count: 12
+		});		 
+		dungeon.generate();
+		let monster = setupMonster();
+		console.log("dungeon", dungeon);		
+		return dungeon;
+	}
+
+	if (place==='home') {
+		dungeon = {
+			name: 'home',
+			start_pos:[4,13],
+			children: [
+				{
+					name:'garden',
+					position: [1, 1], 
+					room_size: [9,3]
+				},
+				{
+					name:'kitchen',
+					position: [1, 5], 
+					room_size: [4,2]
+				},
+				{
+					name:'bedroom1',
+					position: [6, 5], 
+					room_size: [4,2]
+				},
+				{
+					name:'toilet',
+					position: [8, 8], 
+					room_size: [2,1]
+				},
+				{
+					name:'bedroom2',
+					position: [6, 10], 
+					room_size: [4,3]
+				},
+				{
+					name:'livingroom',
+					position: [1, 8], 
+					room_size: [4,4]
+				},
+			],
+			walls: {
+				rows: [
+					"xxxxxxxxxxx",
+					"x.........x",
+					"x.........x",
+					"x.........x",
+					"xx-xxxxxxxx",
+					"x    x    x",
+					"x   cx    x",
+					"x   xx-xxxx",
+					"x      - tx",
+					"x    x-xxxx",
+					"x    x    x",
+					"x    x    x",
+					"xxxx-x    x",
+					".....xxxxxx",
+					"...........",
+					"rrrrrrrrrrr",
+				].map(r => r.split("").map(c => c===" "? false : c))				
+			},
+			spriteNameForx_y: {
+				"9_5": "cassie",
+				"7_11": "mom",
+				"2_9": "dad"
+			}
+		};
+		dungeon.maxy = dungeon.walls.rows.length - 1;
+		dungeon.maxx = dungeon.walls.rows[0].length - 1;
+		// nothing is seen yet
+		dungeon.seen = dungeon.walls.rows.map(r => r.map(c => false));
+		return dungeon;
+	}
+	throw new Error("TODO place "+place);
+};
+
+// /**
+//  * Make the map bigger - 2x width and ehight
+//  * @param {*} rows 
+//  */
+// let double = rows => {
+// 	const rows2 = [];
+// 	for (let i = 0; i < rows.length; i++) {
+// 		const r = rows[i];
+// 		const r2 = [];
+// 		r.forEach(c => { r2.push(c); r2.push(c); });
+// 		rows2.push(r2);
+// 		rows2.push(r2);
+// 	}
+// 	return rows2;
+// };
 
 let player;
 
@@ -75,12 +169,6 @@ const keyRight = new Key(KEYS.ArrowRight);
 const keyUp = new Key(KEYS.ArrowUp);
 const keyDown = new Key(KEYS.ArrowDown);
 
-const getWall = (x,y) => {
-	if (x<0 || y<0) return true; 
-	let row = dungeon.walls.rows[y];
-	if ( ! row) return true; 
-	return row[x];
-};
 /**
  * 
  * @param {number} x 
@@ -88,10 +176,11 @@ const getWall = (x,y) => {
  * @returns {?Room} NB: Current usage is just boolean falsy
  */
 const getRoom = (x,y) => {
-	let s = {x:x-0.2,y:y-0.2,width:0.1,height:0.1};
+	// let s = {x:x-0.2,y:y-0.2,width:0.1,height:0.1};
+	let s = {x,y,width:0,height:0};
 	let room = dungeon.children.find(c => {
 		// console.log(c);
-		let cs = {x:c.position[0], y:c.position[1], width:c.room_size[0], height:c.room_size[1]};
+		let cs = {x:c.position[0]+0.1, y:c.position[1]+0.1, width:c.room_size[0]-0.2, height:c.room_size[1]-0.2};
 		const hit = collision(s, cs);
 		if (hit) {
 			return true;
@@ -124,57 +213,103 @@ const setupMonster = () => {
 	return monster;
 };
 
+const setSeen = (x,y) => {	
+	if (true) return; // FIXME
+	for(let r=y-3; r++; r<y+3) {
+		let row = dungeon.seen[r];
+		if ( ! row) continue;
+		for(let c=x-3; c++; c<x+3) {
+			if (c<0 || c>dungeon.maxx) continue;
+			row[c] = true;
+		}
+	}
+};
+const isSeen = (x,y) => {
+	return true;
+	// let row = dungeon.seen[y];
+	// if ( ! row) return null;
+	// return row[x];
+};
+
+let storyNode = null;
+
 const ExplorePage = () => {
-	// dungeon.size; // [width, heihgt]
-	// dungeon.walls.get([x, y]); //return true if position is wall, false if empty
-	// console.log("dungeon", dungeon);
-	// for(let piece of dungeon.children) {
-	// 	piece.position; //[x, y] position of top left corner of the piece within dungeon
-	// 	piece.tag; // 'any', 'initial' or any other key of 'rooms' options property
-	// 	piece.size; //[width, height]
-	// 	piece.walls.get([x, y]); //x, y- local position of piece, returns true if wall, false if empty
-	// 	for (let exit of piece.exits) {
-	// 		let {x, y, dest_piece} = exit; // local position of exit and piece it exits to
-	// 		piece.global_pos([x, y]); // [x, y] global pos of the exit
-	// 	}
-	 
-	// 	piece.local_pos(dungeon.start_pos); //get local position within the piece of dungeon's global position
-	// }	 
-	let iRoom = dungeon.initial_room; //piece tagged as 'initial'
+	let path = DataStore.getValue(['location','path']);
+	let place = path && path[1];
+	if ( ! dungeon) {
+		setupPlace(place);
+		if (window.storyTree) {
+			storyNode = StoryTree.currentSource(window.storyTree);
+			console.log("storyNode", storyNode);
+			assert(storyNode, "No current node in s-tree?", window.storyTree);
+		}
+	}
+	window.dungeon = dungeon;
 	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
 	if ( ! player) {
-		player = new Sprite({name:"Alice",x:sx_sy[0], y:sx_sy[1]});		
+		player = Game.getPlayer(Game.get()) || CHARACTERS.james;
+		player.x = sx_sy[0];
+		player.y = sx_sy[1];
 	}	
-	let monster = setupMonster();
 
 	const onTick = ticker => {
 		// console.log("onTick", this, ticker);
 		let nx = player.x; 
 		let ny = player.y;
+		// seen
+		setSeen(nx,ny);
 		if (keyLeft.isDown) nx--;
 		if (keyRight.isDown) nx++;
 		if (keyUp.isDown) ny--;
 		if (keyDown.isDown) ny++;
-		if (getWall(nx,ny)) {
-			// collision
-			console.log("bump");
-		} else {
+		if (nx !== player.x || ny !== player.y) {
+			const w = what(nx,ny);
+			if (nx<0 || ny<0 || nx>dungeon.maxx || ny>dungeon.maxy) {
+				console.log("out");
+				return;
+			}
+			if (w==='x' || w===true) {
+				// collision
+				console.log("bump");
+				return;
+			} 
 			player.x = nx;
 			player.y = ny;
-			if (player.x===monster.x && player.y===monster.y) {
+			if (w===MONSTER) {
 				modifyHash(['fight']);
 			}
-			DataStore.update();
+			if (CHARACTERS[w]) {
+				maybeStartTalk(player, w);
+			}
 		}
+		DataStore.update();		
 	};
 
 	return (<div>
 		<GameLoop onTick={onTick}>
 			DUNGEON
 			<MiniMap player={player} />
+			{tempSpeakAgenda && <div>{Tree.str(tempSpeakAgenda)}</div>}
 		</GameLoop>
 	</div>);
 };
+
+const maybeStartTalk = (player, whoName) => {
+	console.warn(storyNode, player, whoName);
+	if ( ! storyNode) {
+		return;
+	}
+	// node for person?	
+	let whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text===whoName);
+	if (whoNodes.length !== 1) {
+		console.warn("Could not cleanly find node for "+whoName, storyNode);
+		return;
+	}
+	let whoNode = whoNodes[0];
+	tempSpeakAgenda = whoNode;
+};
+
+let tempSpeakAgenda;
 
 const GameLoop = ({onTick, onClose, children}) => {
 	assMatch(onTick, Function);
@@ -212,34 +347,81 @@ const GameLoop = ({onTick, onClose, children}) => {
 	return children;
 };
 
+const SQSIZE="30px";
+
 const MiniMap = ({}) => {
 	let radius = 10; // diameter = 2radius + 1, cos odd is easier
 	let rows = _.range(2*radius+1).map(i => player.y - radius + i);
 	let cols = _.range(2*radius+1).map(i => player.x - radius + i);
-	return (<table style={{lineHeight:1}}><tbody>
+	return (<table className='MiniMap' style={{lineHeight:1}}><tbody>
 		{rows.map(y => <tr key={y}>{cols.map(x => 
-			<td style={{width:"18px",height:"18px",overflow:"hidden",backgroundColor:bcol(x,y),fontSize:"16px"}} key={x+"_"+y} title={x+"_"+y}>
-				{what(x,y)}
+			<td title={space(""+x, ""+y, getRoom(x,y) && getRoom(x,y).name)} 
+				style={{width:SQSIZE,height:SQSIZE,overflow:"hidden",backgroundColor:bcol(x,y),fontSize:"24px"}}
+				key={x+"_"+y}
+			>
+				{drawChar(what(x,y))}
 			</td>
 		)}</tr>)}
 	</tbody></table>);
 };
 
-
-const what = (x,y) => {
-	if (x===player.x && y===player.y) return "🕵";
-	if (x===setupMonster().x && y===setupMonster().y) return "🧞";
-	return " ";
+const drawChar = w => {
+	if ( ! w) return null;
+	switch(w) {
+	case "cassie": return "👧";
+	case MONSTER: return MONSTER;
+	case "player": return "🚶";
+	case "-": return "🚪";
+	case ".": return null; // grass
+	case "t": return "🚽";
+	case "c": return "🍳";
+	case "mom": return "👩";
+	case "dad": return "👨";
+	case "r": return "═";
+	}
+	return w.length > 1? w[0] : w; // unicode emojis
 };
 
+/**
+ * 
+ * @param {*} x 
+ * @param {*} y 
+ * @returns {!string} what/who's there: wall|door|floor|grass|null (out of map)
+ */
+const what = (x,y) => {
+	// collision?
+	if (x===player.x && y===player.y) {
+		return "player";
+	}
+	if (x===setupMonster().x && y===setupMonster().y) return MONSTER;
+	let sn = dungeon.spriteNameForx_y && dungeon.spriteNameForx_y[x+"_"+y];
+	if (sn) return sn;
+	// move
+	if (x<0 || y<0) {
+		return null; 
+	}
+	let row = dungeon.walls.rows[y];
+	if ( ! row) return null; 
+	const c = row[x];
+	if ( ! c) return null;
+	return c;
+};
+const MONSTER = "🧞";
+
 const bcol = (x,y) => {
-	if (getWall(x,y)) {
-		return getRoom(x,y)? "red" : "blue";
+	const s = isSeen(x,y);
+	if (s===false) return "#fcc";
+	let w = what(x,y);	
+	if ( ! w) return "rgba(0,0,0,0)";	
+	switch(w) {
+	case true: case "x": return "#666";
+	case "-": return "#6cc";	// grass
+	case ".": return "#696";	// wall
+	case "r": return "#666";
 	}
-	if (getRoom(x,y)) {
-		return "green";
-	}
-	return "white";
+	let r = getRoom(x,y);
+	if (r) return "#6c6";
+	return "rgba(0,0,0,0)";
 };
 
 export default ExplorePage;

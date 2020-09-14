@@ -5,48 +5,73 @@ import { assert } from "../base/utils/assert";
 import Game from "../Game";
 import { modifyHash } from "../base/utils/miscutils";
 
+/**
+ * no blanks or comments
+ */
+const noBlanks = s => s && s.trim() && s.substr(0,2) !== '//';
+
 class StoryTree {
 	/**
 	 * @type {Tree} Never null
 	 */
 	history;
 
+
+	/**
+	* memory flags set by command 
+	* @type {Object}
+	 */
+	memory = {};
+
 	constructor(text) {
 		this.text = text;
-		this.root = new Tree({value:"root"});
+		this.root = new Tree({value:"root", depth:0});
 		this.history = new Tree();		
-		// this.tSentence4id = {};
-		let sections = text.split(/^##\s/m);
+		let sections = text.split(/^##\s/m).filter(noBlanks);
 		sections.forEach((section,i) => {
-			let tSection = Tree.add(this.root, {id:nonce(), index:""+i});
-			let scenes = section.split(/^###\s/m);
+			let [s1,rest] = firstSentenceRest(section);
+			let tSection = Tree.add(this.root, {id:nonce(), index:"section-"+i, depth:1, text:s1.trim()});
+			let scenes = rest.split(/^###\s/m).filter(noBlanks);
 			scenes.forEach((scene,j) => {
-				let tScene = Tree.add(tSection, {id:nonce(), index:i+"."+j});
+				[s1,rest] = firstSentenceRest(scene);
+				let tScene = Tree.add(tSection, {id:nonce(), index:i+".scene-"+j, depth:2, text:s1.trim()});
 				// branches for local dialog variants
-				let twigs = scene.split(/^####\s/m);
+				let twigs = rest.split(/^####\s/m).filter(noBlanks);
 				twigs.forEach((twig,b) => {
+					[s1,rest] = firstSentenceRest(twig);
 					// NB the 1st twig is probably "pre-twigging"
-					let twigi = i+"."+j+(b? "."+("abcdefgh"[b-1]) : "");
-					let tTwig = Tree.add(tScene, {id:nonce(), index:twigi});
-					let sentences = twig.split(/\n *\n/);
-					for (let k=0; k<sentences.length; k++) {
-						const sentence = sentences[k].trim();
-						if ( ! sentence) continue; // skip blank lines
-						if (sentence.substr(0,2)==='//') continue; // skip comments
-						if (k===0) {
-							// e.g. #### {if foo in inventory} goes on the twig, so it can have child sentences to skip
-							tTwig.value.text = sentence;
-						} else {
-							let tSentence = Tree.add(tTwig, {index:twigi+"."+k, text:sentence, id:nonce()});
-						}
-						// this.tSentence4id[tSentence.value.id] = tSentence;
-					} // ./sentences
+					let twigi = i+"."+j+".twig"+(b? "abcdefgh"[b-1] : "");
+					let tTwig = Tree.add(tScene, {id:nonce(), index:twigi, depth:3, text:s1.trim()});
+					let sentences = rest.split(/\n *\n/).filter(noBlanks);
+					sentences.forEach((sentence, k) => {
+						let tSentence = Tree.add(tTwig, {index:twigi+".sentence-"+k, text:sentence.trim(), id:nonce(), depth:4});						
+					}); // ./sentences
 				}); // ./twigs
 			}); // ./scenes
 		}); // ./sections
+		// e.g. #### {if foo in inventory} goes on the twig, so it can have child sentences to skip
+		// simplifyOnlyKids(this.root);
 		Tree.add(this.history, this.root.value);
+		console.log("read", Tree.str(this.root));
 	}
 } // ./StoryTree
+
+const firstSentenceRest = text => {
+	if ( ! text) return [null,''];
+	let i = text.indexOf('\n');
+	if (i===-1) return [text, ''];
+	return [text.substr(0,i), text.substr(i)];
+};
+
+const simplifyOnlyKids = tree => {
+	if ( ! tree.children) return;
+	tree.children.map(simplifyOnlyKids);	
+	if (tree.children.length===1) {
+		let onlyChild = tree.children[0];
+		tree.value.text = onlyChild.value.text;
+		tree.children = [];
+	}
+};
 
 /**
  * 
@@ -99,16 +124,44 @@ StoryTree.execute = (storyTree, code) => {
 		player[m[1]] = (player[m[1]] || 0) + 1*m[2];
 		return;
 	}
+	// HACK e.g. flag.metBigBad = true
+	m = code.match(/([a-zA-Z0-9\-_.]+) *\+?= *(\S+)/);
+	if (m) {
+		let vpath = m[1];		
+		StoryTree.setMemory(storyTree, vpath, m[2]);
+		return;
+	}	
 	// change place?
-	m = code.match(/place *= *(\S+)/);
+	m = code.match(/explore: *(\S+)/);
 	if (m) {
 		let place = m[1];
 		let bookmark =''; // TODO a way of passing where we are in storyTree
 		// for now - just rely on storyTree being shared
-		modifyHash(place.split('/'), {bookmark});
+		modifyHash(['explore'].concat(place.split('/')), {bookmark});
 		return;
 	}	
+	// end marker
+	if (code.substr(0,4)==='end:') {
+		console.log(code); // no action
+		return;
+	}
 	alert(code);
+};
+
+StoryTree.setMemory = (storyTree, vpath, val) => {
+	if ( ! storyTree.memory) storyTree.memory = {};
+	let mem = storyTree.memory;
+	let vbits = vpath.split('.');
+	for(let i=0; i<vbits.length-1; i++) {
+		let mem2 = mem[vbits[i]];
+		if ( ! mem2) {
+			mem2 = {};
+			mem[vbits[i]] = mem2;
+		}
+		mem = mem2;
+	}
+	mem[vbits[vbits.length-1]] = val;
+	console.log("setMemory", mem, vpath, val);
 };
 
 StoryTree.text = node => node && node.value && node.value.text;
@@ -161,7 +214,7 @@ const nextTest = (storyTree, test) => {
 	let m = test.match("{if ([^}]+)}");
 	let test2 = m && m[1];
 	if ( ! test2) {
-		console.warn("nextTest - no test?! "+test);
+		console.log("nextTest - no test "+test);
 		return true;
 	}
 	// last choice check? e.g. {if |dinosaur|}
@@ -190,10 +243,28 @@ window.nextTest = nextTest; // debug
 
 StoryTree.lastChoice = storyTree => storyTree.lastChoice;
 
+/**
+ * @param {StoryTree} storyTree 
+ * @returns {Tree} The current node _from history_
+ */
 StoryTree.current = storyTree => {
 	let olds = Tree.flatten(storyTree.history);
 	let last = olds[olds.length-1]; 
 	return last;
 };
+
+/**
+ * @param {StoryTree} storyTree 
+ * @returns {Tree} The current node _from source_
+ */
+StoryTree.currentSource = storyTree => {
+	let c = StoryTree.current(storyTree);
+	if ( ! c || ! c.value) return null;
+	let id = c.value.id;
+	let node = Tree.findByValue(storyTree.root, v => v.id===id);
+	assert(node, "StoryTree currentSource() no node?",id, storyTree);
+	return node;
+};
+
 
 export default StoryTree;

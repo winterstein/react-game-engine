@@ -11,8 +11,9 @@ const LeftNav = ({className}) => {
 		style={{height:'100%',width:'150px'}} >
 		<h3><a href='#splash'>Splash</a></h3>
 		<h3><a href='#story'>Story</a></h3>
+		<h3><a href='#story/chapter-test'>Story Test</a></h3>
 		<h3><a href='#explore'>Explore</a></h3>
-		<h3><a href='#fight'>Fight</a></h3>
+		<h3><a href='#fight'>Arena</a></h3>
 
 		<h3>People</h3>
 

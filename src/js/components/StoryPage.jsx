@@ -53,12 +53,9 @@ init();
 const Emoji = ({children}) => <span aria-label="emoji" role="img">{children}</span>;
 
 const StoryPage = () => {
-	const chapterNum = 1;
-	let pvChapter = DataStore.fetch(['misc','chapter',chapterNum], () => {
-		return ServerIO.load(
-			// "/data/book/chapter1.md"
-			"/data/book/chapter-test.md"
-		);
+	let chapterFile = DataStore.getValue('location','path')[1] || 'chapter1';
+	let pvChapter = DataStore.fetch(['misc','book',chapterFile], () => {
+		return ServerIO.load("/data/book/"+chapterFile+".md");
 	});
 	if ( ! pvChapter.value) return <Misc.Loading/>;
 
@@ -66,7 +63,8 @@ const StoryPage = () => {
 	let _title = chapter.match(/^# (.+)$/m);
 	let title = (_title && _title[1]) || "";
 	
-	const storyTree = DataStore.getValue(['misc','StoryTree',chapterNum]) || DataStore.setValue(['misc','StoryTree',chapterNum], new StoryTree(chapter), false);
+	const storyTree = DataStore.getValue(['misc','StoryTree',chapterFile]) || DataStore.setValue(['misc','StoryTree',chapterFile], new StoryTree(chapter), false);
+	StoryTree.currentStoryTree = storyTree;
 	window.storyTree = storyTree;	
 
 	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
@@ -79,8 +77,11 @@ const StoryPage = () => {
 	while(currentNode) {
 		// skip over no text and also test {if...} nodes
 		// NB: choice nodes which begin | are not skipped
-		if (currentNode.value && currentNode.value.text && currentNode.value.text[0] !== '{') {
-			break;
+		if (currentNode.value && currentNode.value.text) {
+			// HACK dont skip {explore nodes
+			if (currentNode.value.text[0] !== '{' || currentNode.value.text.substr(0,8) === '{explore') {
+				break;
+			}
 		}
 		currentNode = StoryTree.next(storyTree);
 	}
@@ -134,11 +135,11 @@ const Buttons = ({currentNode, storyTree}) => {
 		// bump right to avoid accidental next clicks
 		return (<div className="ml-5">
 			{choices.map(c => 
-				<Button className="ml-2 mr-2" color="primary" onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>
+				<Button size='lg' className="ml-2 mr-2" color="primary" onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>
 			)}
 		</div>);
 	}
-	return <Button color="primary" onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... (space)</Button>;
+	return <Button size='lg' color="primary" onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... (space)</Button>;
 };
 
 const doChoice = ({currentNode, storyTree, c, thenbit}) => {	
@@ -163,7 +164,7 @@ const StoryLine = ({node, isLatest}) => {
 	// HACK any stats bonuses?
 	// if (isLatest) { TODO a nice boost animation
 	let mb = text.match(/(\w+)\s*\+=\s*(\d+)/);
-	if (mb) {
+	if (mb && "courage knowledge ".includes(mb[1])) {
 		text += " `("+mb[1]+" boost!)`";
 	}	
 	// Remove any code. The test and commands are handled in StoryTree.nextTest / next

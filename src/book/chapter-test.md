@@ -1,15 +1,34 @@
 
-# Diary of a School ~~Astronaut~~ Detective
+# Diary Test
 
 Our new house is a dump.
 
-{place = explore/house}
+## {explore:home}
 
-#### {if place == explore/house/bedroom}
+### dad
+
+#### {if flag.metCassie}
+
+Dad: Ah yes Cassie
+
+{end explore:home}
+
+#### {else}
+
+Dad: Hello James
+
+
+### cassie
+
 Cassie: Listen RatFace, you-touch-my-music-you-die.
 
-{place = diary}
+James: OK
 
-#### diary
+Cassie: Hm.
+
+{flag.metCassie = true}
+
+
+## diary
 
 Back to the diary :)
