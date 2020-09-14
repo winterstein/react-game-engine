@@ -49,8 +49,8 @@ class StoryTree {
 				}); // ./twigs
 			}); // ./scenes
 		}); // ./sections
-		// e.g. #### {if foo in inventory} goes on the twig, so it can have child sentences to skip
-		// simplifyOnlyKids(this.root);
+		// avoid pointless nesting down through twigs etc
+		// simplifyOnlyKids(this.root); buggy
 		Tree.add(this.history, this.root.value);
 		console.log("read", Tree.str(this.root));
 	}
@@ -66,7 +66,7 @@ const firstSentenceRest = text => {
 const simplifyOnlyKids = tree => {
 	if ( ! tree.children) return;
 	tree.children.map(simplifyOnlyKids);	
-	if (tree.children.length===1) {
+	if (tree.children.length===1 && ! tree.value.text) {
 		let onlyChild = tree.children[0];
 		tree.value.text = onlyChild.value.text;
 		tree.children = [];
@@ -303,10 +303,11 @@ const nextTest2_eval = (storyTree, expr) => {
 StoryTree.lastChoice = storyTree => storyTree.lastChoice;
 
 /**
- * @param {StoryTree} storyTree 
+ * @param {?StoryTree} storyTree falsy returns undefined
  * @returns {Tree} The current node _from history_
  */
 StoryTree.current = storyTree => {
+	if ( ! storyTree) return;
 	let olds = Tree.flatten(storyTree.history);
 	let last = olds[olds.length-1]; 
 	return last;
