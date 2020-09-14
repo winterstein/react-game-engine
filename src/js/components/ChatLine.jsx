@@ -29,6 +29,9 @@ const ChatLine = ({ line }) => {
 	if (who==='Omega' || who==='Narrator') type = '.gif';
 	let img = '/img/src/person/' + space(who, emotion) +type;
 	img = img.replaceAll(' ', '-').toLowerCase();
+	// avoid any commands
+	said = said.replaceAll(/{[^}]+}/g,'');
+	
 	return <div className='chatline'>
 		<div className='who'>{label}</div>
 		<img src={img} alt={label} />

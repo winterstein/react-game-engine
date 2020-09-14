@@ -7,13 +7,15 @@ Our new house is a dump.
 
 ### dad
 
+Dad: Woot!
+
 #### {if flag.metCassie}
 
 Dad: Ah yes Cassie
 
 {end explore:home}
 
-#### {else}
+#### {if ! flag.metCassie}
 
 Dad: Hello James
 

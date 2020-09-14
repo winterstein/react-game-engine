@@ -91,11 +91,24 @@ StoryTree.next = (storyTree) => {
 	}
 	assert(nextNode !== last, last);
 	// shallow copy the node, so e.g. we can edit choices
-	let nextNodeValue = Object.assign({}, nextNode.value);
+	StoryTree.setCurrentNode(storyTree, nextNode);
+	// return
+	return nextNode;
+};
+
+/**
+ * Set the latest node in history, using a shallow copy of node.
+ * Executes any commands!
+ * @param {!StoryTree} storyTree 
+ * @param {!Tree} node 
+ */
+StoryTree.setCurrentNode = (storyTree, node) => {
+	// shallow copy the node, so e.g. we can edit choices
+	let nodeValue = Object.assign({}, node.value);
 	// execute any commands
-	let nnText = StoryTree.text(nextNode);	
+	let nnText = StoryTree.text(node);	
 	while(nnText) {
-		let m = nnText.match(CODE);
+		let m = nnText.match(regexCODE);
 		if ( ! m) break;
 		let code = m[1];
 		// do it?
@@ -104,12 +117,10 @@ StoryTree.next = (storyTree) => {
 	}
 	// add to history
 	// TODO it'd be nice to preserve the tree structure -- history is just flat here
-	Tree.add(storyTree.history, nextNodeValue);
-	// return
-	return nextNode;
+	Tree.add(storyTree.history, nodeValue);
 };
 
-const CODE = /{([^}]+)}/;
+export const regexCODE = /{([^}]+)}/;
 
 StoryTree.execute = (storyTree, code) => {
 	// OMG its fugly hacks all the way down
@@ -148,6 +159,12 @@ StoryTree.execute = (storyTree, code) => {
 	alert(code);
 };
 
+/**
+ * 
+ * @param {StoryTree} storyTree 
+ * @param {!string} vpath 
+ * @param {*} val 
+ */
 StoryTree.setMemory = (storyTree, vpath, val) => {
 	if ( ! storyTree.memory) storyTree.memory = {};
 	let mem = storyTree.memory;
@@ -164,6 +181,30 @@ StoryTree.setMemory = (storyTree, vpath, val) => {
 	console.log("setMemory", mem, vpath, val);
 };
 
+/**
+ * 
+ * @param {StoryTree} storyTree 
+ * @param {!string} vpath 
+ */
+StoryTree.memory = (storyTree, vpath) => {
+	if ( ! storyTree.memory) storyTree.memory = {};
+	let mem = storyTree.memory;
+	let vbits = vpath.split('.');
+	for(let i=0; i<vbits.length; i++) {
+		let mem2 = mem[vbits[i]];
+		if ( ! mem2) {
+			return;
+		}
+		mem = mem2;
+	}
+	return mem;
+}
+
+/**
+ * 
+ * @param {?Tree} node 
+ * @returns {?string} text if present on this node (ignores children)
+ */
 StoryTree.text = node => node && node.value && node.value.text;
 
 const next2 = (storyTree, nodes, last, goDeeper=true) => {
@@ -211,15 +252,29 @@ const next2 = (storyTree, nodes, last, goDeeper=true) => {
 };
 
 const nextTest = (storyTree, test) => {
-	let m = test.match("{if ([^}]+)}");
-	let test2 = m && m[1];
+	let m = test.match("{if (!?) *([^}]+)}");
+	let test2 = m && m[2];
 	if ( ! test2) {
+		// HACK
+		if (test==="{else}") {
+			// TODO 
+			console.log("TODO else");
+		}
 		console.log("nextTest - no test "+test);
 		return true;
 	}
+	let yesno = nextTest2_eval(storyTree, test2);
+	if (m[1]) { // not?
+		return ! yesno;
+	}
+	return yesno;
+};
+window.nextTest = nextTest; // debug
+
+const nextTest2_eval = (storyTree, expr) => {
 	// last choice check? e.g. {if |dinosaur|}
-	if (test2[0] === '|') {
-		let option = test2.substr(1, test2.length-2);
+	if (expr[0] === '|') {
+		let option = expr.substr(1, expr.length-2);
 		let lastPick = StoryTree.lastChoice(storyTree);
 		if (option === lastPick) {
 			return true;
@@ -227,19 +282,23 @@ const nextTest = (storyTree, test) => {
 		return false;
 	}
 	// HACK inventory check?
-	let m2 = test2.match("(\\w+) in inventory");
+	let m2 = expr.match("(\\w+) in inventory");
 	if (m2 && m2[1]) {
 		const inventory = Game.getInventory(Game.get());
 		let haveit = inventory[m2[1]];
-		if (haveit) console.log("nextTest: yes! "+test);
+		if (haveit) console.log("nextTest: have-it yes! "+test);
 		return !! haveit;
 	}
-
-	// change place?
-
-	throw new Error("Unknown test code: "+test);
+	// if flag.ateMushroom
+	let m = expr.match(/([a-zA-Z0-9\-_.]+)/);
+	if (m) {
+		let vpath = m[1];		
+		let memval = StoryTree.memory(storyTree, vpath);
+		if (memval) console.log("nextTest: memory yes! "+test);	
+		return !! memval;
+	}	
+	throw new Error("Unknown test code: "+test);	
 };
-window.nextTest = nextTest; // debug
 
 StoryTree.lastChoice = storyTree => storyTree.lastChoice;
 

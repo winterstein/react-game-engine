@@ -40,6 +40,7 @@ import {collision} from './Collision';
 import { CHARACTERS } from '../Character';
 import StoryTree from '../data/StoryTree';
 import Tree from '../base/data/Tree';
+import ChatLine, { splitLine } from './ChatLine';
 
 let dungeon = null;
 
@@ -285,11 +286,17 @@ const ExplorePage = () => {
 		DataStore.update();		
 	};
 
+	let currentStoryNode = StoryTree.current(window.storyTree);
+	let currentText = StoryTree.text(currentStoryNode);
+
 	return (<div>
 		<GameLoop onTick={onTick}>
 			DUNGEON
 			<MiniMap player={player} />
-			{tempSpeakAgenda && <div>{Tree.str(tempSpeakAgenda)}</div>}
+			{currentText && splitLine(currentText) && <ChatLine line={currentText} />}
+			
+			{currentStoryNode && <div className='text-info'>{Tree.str(currentStoryNode)}</div>}			
+			{tempSpeakAgenda && <div>{Tree.str(tempSpeakAgenda)}</div>}			
 		</GameLoop>
 	</div>);
 };
@@ -306,7 +313,11 @@ const maybeStartTalk = (player, whoName) => {
 		return;
 	}
 	let whoNode = whoNodes[0];
-	tempSpeakAgenda = whoNode;
+	if (tempSpeakAgenda !== whoNode) {
+		tempSpeakAgenda = whoNode;
+		StoryTree.setCurrentNode(window.storyTree, whoNode);
+		StoryTree.next(window.storyTree);
+	}
 };
 
 let tempSpeakAgenda;
