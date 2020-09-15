@@ -50,7 +50,7 @@ class StoryTree {
 			}); // ./scenes
 		}); // ./sections
 		// avoid pointless nesting down through twigs etc
-		// simplifyOnlyKids(this.root); buggy
+		simplifyOnlyKids(this.root); // buggy
 		Tree.add(this.history, this.root.value);
 		console.log("read", Tree.str(this.root));
 	}
@@ -66,10 +66,12 @@ const firstSentenceRest = text => {
 const simplifyOnlyKids = tree => {
 	if ( ! tree.children) return;
 	tree.children.map(simplifyOnlyKids);	
-	if (tree.children.length===1 && ! tree.value.text) {
+	if (tree.children.length===1 && tree.value && ! tree.value.text) {
 		let onlyChild = tree.children[0];
-		tree.value.text = onlyChild.value.text;
-		tree.children = [];
+		if ( ! Tree.children(onlyChild).length) {
+			tree.value.text = onlyChild.value.text;
+			tree.children = [];
+		}
 	}
 };
 
