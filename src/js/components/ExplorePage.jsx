@@ -2,45 +2,26 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import Enum from 'easy-enums';
-import _ from 'lodash';
-import SJTest, { assert } from 'sjtest';
-import Login from 'you-again';
-import DataStore from '../base/plumbing/DataStore';
-import C from '../C';
-import Game, { doLoad, doSave, doReset } from '../Game';
-import Misc from '../base/components/Misc';
-import Sprite from '../data/Sprite';
-import SpriteLib from '../data/SpriteLib';
-import Tile from '../data/Tile';
-import PixiComponent from './PixiComponent';
-import StopWatch from '../StopWatch';
-import PropControl, { setInputStatus } from '../base/components/PropControl';
-import * as PIXI from 'pixi.js';
-import Key, { KEYS } from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody, Row, Col, Card, CardTitle } from 'reactstrap';
-import { getPApp } from './Pixies';
-import DataClass, { nonce, getType } from '../base/data/DataClass';
-import GameAdmin, { doNewWorld } from './GameAdmin';
-import FullScreenButton from './FullScreenButton';
-import Fight from '../data/Fight';
-import Monster from '../data/Monster';
-
-import ReactVivus from 'react-vivus';
-import { space, randomPick, modifyHash } from '../base/utils/miscutils';
-import Command, { cmd } from '../data/Command';
-import printer from '../base/utils/printer';
-import ServerIO from '../base/plumbing/ServerIOBase';
-
 import Dungeon from 'dungeon-generator';
-import { assMatch } from '../base/utils/assert';
-import {collision} from './Collision';
-import { CHARACTERS } from '../Character';
-import StoryTree from '../data/StoryTree';
+import _ from 'lodash';
+import React, { useEffect, useState } from 'react';
+import { Container } from 'reactstrap';
+import { assert } from 'sjtest';
+import { nonce } from '../base/data/DataClass';
 import Tree from '../base/data/Tree';
-import ChatLine, { splitLine } from './ChatLine';
+import DataStore from '../base/plumbing/DataStore';
+import { assMatch } from '../base/utils/assert';
+import { modifyHash, space } from '../base/utils/miscutils';
+import { CHARACTERS } from '../Character';
+import Sprite from '../data/Sprite';
+import StoryTree from '../data/StoryTree';
+import Game from '../Game';
+import Key, { KEYS } from '../Key';
+import StopWatch from '../StopWatch';
+import ChatLine, { ChatControls, splitLine } from './ChatLine';
+import { collision } from './Collision';
+
+
 
 let dungeon = null;
 
@@ -289,16 +270,19 @@ const ExplorePage = () => {
 	let currentStoryNode = StoryTree.current(window.storyTree);
 	let currentText = StoryTree.text(currentStoryNode);
 
-	return (<div>
+
+
+	return (<Container>
 		<GameLoop onTick={onTick}>
 			DUNGEON
 			<MiniMap player={player} />
-			{currentText && splitLine(currentText) && <ChatLine line={currentText} />}
 			
-			{currentStoryNode && <div className='text-info'>{Tree.str(currentStoryNode)}</div>}			
-			{tempSpeakAgenda && <div>{Tree.str(tempSpeakAgenda)}</div>}			
+			{currentText && splitLine(currentText) && <ChatLine line={currentText} />}
+			<ChatControls currentNode={currentStoryNode} storyTree={window.storyTree} />
+
+			{currentStoryNode && <div className='text-info'>{Tree.str(currentStoryNode)}</div>}
 		</GameLoop>
-	</div>);
+	</Container>);
 };
 
 const maybeStartTalk = (player, whoName) => {
@@ -382,6 +366,7 @@ const drawChar = w => {
 	case "cassie": return "👧";
 	case MONSTER: return MONSTER;
 	case "player": return "🚶";
+	case "x": return null; // wall
 	case "-": return "🚪";
 	case ".": return null; // grass
 	case "t": return "🚽";
@@ -407,6 +392,9 @@ const what = (x,y) => {
 	if (x===setupMonster().x && y===setupMonster().y) return MONSTER;
 	let sn = dungeon.spriteNameForx_y && dungeon.spriteNameForx_y[x+"_"+y];
 	if (sn) return sn;
+	return whatFloor(x,y);
+};
+const whatFloor = (x,y) => {
 	// move
 	if (x<0 || y<0) {
 		return null; 
@@ -422,16 +410,16 @@ const MONSTER = "🧞";
 const bcol = (x,y) => {
 	const s = isSeen(x,y);
 	if (s===false) return "#fcc";
-	let w = what(x,y);	
+	let w = whatFloor(x,y);	
 	if ( ! w) return "rgba(0,0,0,0)";	
 	switch(w) {
-	case true: case "x": return "#666";
-	case "-": return "#6cc";	// grass
-	case ".": return "#696";	// wall
-	case "r": return "#666";
+	case true: case "x": return "#666"; // wall
+	case "-": return "#666";	// door
+	case ".": return "#696";	// grass
+	case "r": return "#666";	// road
 	}
-	let r = getRoom(x,y);
-	if (r) return "#6c6";
+	// let r = getRoom(x,y);
+	// if (r) return "#669";
 	return "rgba(0,0,0,0)";
 };
 

@@ -36,7 +36,7 @@ import ServerIO from '../base/plumbing/ServerIOBase';
 import MDText from '../base/components/MDText';
 import BG from '../base/components/BG';
 import Tree from '../base/data/Tree';
-import ChatLine, { splitLine } from './ChatLine';
+import ChatLine, { splitLine, ChatControls } from './ChatLine';
 import deepCopy from '../base/utils/deepCopy';
 import StoryTree from '../data/StoryTree';
 import { CHARACTERS } from '../Character';
@@ -49,8 +49,6 @@ const init = () => {
 	game.player = CHARACTERS.james;
 };
 init();
-
-const Emoji = ({children}) => <span aria-label="emoji" role="img">{children}</span>;
 
 const StoryPage = () => {
 	let chapterFile = DataStore.getValue('location','path')[1] || 'chapter1';
@@ -104,9 +102,7 @@ const StoryPage = () => {
 			</div>
 			
 			{splitLine(currentText) && <ChatLine line={currentText} />}
-
-			<hr/>
-			<div className="control-zone"><Buttons currentNode={currentNode} storyTree={storyTree} /></div>
+			<ChatControls currentNode={currentNode} storyTree={storyTree} />
 			
 		</div>
 	</div>);
@@ -122,36 +118,6 @@ const ScrollIntoView = ({watch}) => {
 	// useEffect(scrollToBottom, [watch]);
 	
 	return <div ref={endRef} />;
-};
-
-const Buttons = ({currentNode, storyTree}) => {
-	let text = StoryTree.text(currentNode);
-	if ( ! text) return "END OF STORY (TODO)";
-	if (text[0]==="|")	{
-		const i = text.indexOf("| ");
-		let thenbit = i>0? text.substr(i+1).trim() : "";
-		let choicebit = i>0? text.substr(0, i) : text;
-		let choices = choicebit.split("|").filter(c => c);
-		// bump right to avoid accidental next clicks
-		return (<div className="ml-5">
-			{choices.map(c => 
-				<Button size='lg' className="ml-2 mr-2" color="primary" onClick={e => doChoice({currentNode, storyTree, c, thenbit})} key={c}>{c}</Button>
-			)}
-		</div>);
-	}
-	return <Button size='lg' color="primary" onClick={e => StoryTree.next(storyTree)} ><Emoji>✏️</Emoji> ... (space)</Button>;
-};
-
-const doChoice = ({currentNode, storyTree, c, thenbit}) => {	
-	// TODO modify history not source
-	currentNode.value.text = c;
-	storyTree.lastChoice = c;
-	// HACK add to inventory
-	if (thenbit===">> inventory") {
-		const inventory = Game.getInventory(Game.get());
-		inventory[c] = (inventory[c] || 0) + 1;
-	}
-	StoryTree.next(storyTree);
 };
 
 const StoryLine = ({node, isLatest}) => {

@@ -200,7 +200,7 @@ StoryTree.memory = (storyTree, vpath) => {
 		mem = mem2;
 	}
 	return mem;
-}
+};
 
 /**
  * 
@@ -288,7 +288,7 @@ const nextTest2_eval = (storyTree, expr) => {
 	if (m2 && m2[1]) {
 		const inventory = Game.getInventory(Game.get());
 		let haveit = inventory[m2[1]];
-		if (haveit) console.log("nextTest: have-it yes! "+test);
+		if (haveit) console.log("nextTest: have-it yes! "+expr);
 		return !! haveit;
 	}
 	// if flag.ateMushroom
@@ -296,10 +296,10 @@ const nextTest2_eval = (storyTree, expr) => {
 	if (m) {
 		let vpath = m[1];		
 		let memval = StoryTree.memory(storyTree, vpath);
-		if (memval) console.log("nextTest: memory yes! "+test);	
+		if (memval) console.log("nextTest: memory yes! "+expr);	
 		return !! memval;
 	}	
-	throw new Error("Unknown test code: "+test);	
+	throw new Error("Unknown test code: "+expr);	
 };
 
 StoryTree.lastChoice = storyTree => storyTree.lastChoice;
