@@ -60,7 +60,7 @@ export const splitLine = line => {
 };
 
 
-const Buttons = ({ currentNode, storyTree }) => {
+const ChatControls2 = ({ currentNode, storyTree }) => {
 	let text = StoryTree.text(currentNode);
 	if (!text) return "END OF STORY (TODO)";
 	if (text[0] === "|") {
@@ -95,7 +95,7 @@ const doChoice = ({ currentNode, storyTree, c, thenbit }) => {
 
 export const ChatControls = ({ currentNode, storyTree }) => {
 	return (<><hr />
-		<div className="control-zone"><Buttons currentNode={currentNode} storyTree={storyTree} /></div>
+		<div className="control-zone"><ChatControls2 currentNode={currentNode} storyTree={storyTree} /></div>
 	</>);
 };
 

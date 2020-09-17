@@ -5,7 +5,7 @@ Our new house is a dump.
 
 ## {explore:home}
 
-### dad
+### {dad}
 
 Dad: Woot!
 
@@ -20,7 +20,7 @@ Dad: Ah yes Cassie
 Dad: Hello James
 
 
-### cassie
+### {cassie}
 
 Cassie: Listen RatFace, you-touch-my-music-you-die.
 

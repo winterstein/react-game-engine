@@ -213,18 +213,14 @@ const isSeen = (x,y) => {
 	// return row[x];
 };
 
-let storyNode = null;
+let sceneSrcNode;
 
 const ExplorePage = () => {
 	let path = DataStore.getValue(['location','path']);
 	let place = path && path[1];
 	if ( ! dungeon) {
 		setupPlace(place);
-		if (window.storyTree) {
-			storyNode = StoryTree.currentSource(window.storyTree);
-			console.log("storyNode", storyNode);
-			assert(storyNode, "No current node in s-tree?", window.storyTree);
-		}
+		sceneSrcNode = StoryTree.currentSource(window.storyTree);
 	}
 	window.dungeon = dungeon;
 	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
@@ -232,79 +228,112 @@ const ExplorePage = () => {
 		player = Game.getPlayer(Game.get()) || CHARACTERS.james;
 		player.x = sx_sy[0];
 		player.y = sx_sy[1];
-	}	
+	}		
+	const game = Game.get();
+	let watchme = {"game.talking": game.talking};
 
-	const onTick = ticker => {
-		// console.log("onTick", this, ticker);
-		let nx = player.x; 
-		let ny = player.y;
-		// seen
-		setSeen(nx,ny);
-		if (keyLeft.isDown) nx--;
-		if (keyRight.isDown) nx++;
-		if (keyUp.isDown) ny--;
-		if (keyDown.isDown) ny++;
-		if (nx !== player.x || ny !== player.y) {
-			const w = what(nx,ny);
-			if (nx<0 || ny<0 || nx>dungeon.maxx || ny>dungeon.maxy) {
-				console.log("out");
-				return;
+	// get a text node
+	let currentHistoryNode = StoryTree.current(window.storyTree);
+	let currentText;
+	if (game.talking) {		
+		while(currentHistoryNode) {
+			currentText = StoryTree.text(currentHistoryNode);
+			// skip over no text and also test {if...} nodes
+			// NB: choice nodes which begin | are not skipped
+			if (currentText) {
+				// HACK step through commands, stop on text
+				if ( ?? currentText[0] !== '{') {
+					break;
+				}
 			}
-			if (w==='x' || w===true) {
-				// collision
-				console.log("bump");
-				return;
-			} 
-			player.x = nx;
-			player.y = ny;
-			if (w===MONSTER) {
-				modifyHash(['fight']);
-			}
-			if (CHARACTERS[w]) {
-				maybeStartTalk(player, w);
-			}
+			currentHistoryNode = StoryTree.next(window.storyTree);
 		}
-		DataStore.update();		
-	};
-
-	let currentStoryNode = StoryTree.current(window.storyTree);
-	let currentText = StoryTree.text(currentStoryNode);
-
-
+		// NB talking = false is done in onTick
+	}
+	
 
 	return (<Container>
 		<GameLoop onTick={onTick}>
 			DUNGEON
 			<MiniMap player={player} />
 			
-			{currentText && splitLine(currentText) && <ChatLine line={currentText} />}
-			<ChatControls currentNode={currentStoryNode} storyTree={window.storyTree} />
-
-			{currentStoryNode && <div className='text-info'>{Tree.str(currentStoryNode)}</div>}
+			{game.talking && currentText && splitLine(currentText) && <ChatLine line={currentText} />}
+			{game.talking && <ChatControls currentNode={currentHistoryNode} storyTree={window.storyTree} />}
 		</GameLoop>
 	</Container>);
 };
 
-const maybeStartTalk = (player, whoName) => {
-	console.warn(storyNode, player, whoName);
+
+const onTick = ticker => {
+	// console.log("onTick", this, ticker);
+	let nx = player.x; 
+	let ny = player.y;
+	// seen
+	setSeen(nx,ny);
+	const game = Game.get();
+	if (game.talking) {
+		let currentStoryNode = StoryTree.current(window.storyTree);
+		if (currentStoryNode && StoryTree.isEnd(window.storyTree, currentStoryNode)) {
+			game.talking = false;
+			console.log("TALK DONE");
+			StoryTree.setCurrentNode(window.storyTree, sceneSrcNode);
+		}	
+		return; // in a talk
+	}
+	if (keyLeft.isDown) nx--;
+	if (keyRight.isDown) nx++;
+	if (keyUp.isDown) ny--;
+	if (keyDown.isDown) ny++;
+	if (nx !== player.x || ny !== player.y) {
+		const w = what(nx,ny);
+		if (nx<0 || ny<0 || nx>dungeon.maxx || ny>dungeon.maxy) {
+			console.log("out");
+			return;
+		}
+		if (w==='x' || w===true) {
+			// collision
+			console.log("bump");
+			return;
+		} 
+		if (w===MONSTER) {
+			modifyHash(['fight']);
+		}
+		if (CHARACTERS[w]) {
+			maybeStartTalk(game, player, w);
+			return; // no walking through people
+		}
+		player.x = nx;
+		player.y = ny;
+	}
+	DataStore.update();		
+};
+
+
+const maybeStartTalk = (game, player, whoName) => {	
+	// source story node?
+	let storyNode = StoryTree.currentSource(window.storyTree);
+	console.warn("maybeStartTalk", storyNode, player, whoName);
 	if ( ! storyNode) {
+		console.warn("no storynode");
 		return;
 	}
 	// node for person?	
-	let whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text===whoName);
+	let whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text==="{"+whoName+"}");
+	if (whoNodes.length === 0) {
+		whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text===whoName);
+		if (whoNodes.length) console.warn("Handling bad script syntax: please use `{name}` for on-bump-into bits");
+	}
 	if (whoNodes.length !== 1) {
 		console.warn("Could not cleanly find node for "+whoName, storyNode);
 		return;
 	}
 	let whoNode = whoNodes[0];
-	if (tempSpeakAgenda !== whoNode) {
-		tempSpeakAgenda = whoNode;
-		StoryTree.setCurrentNode(window.storyTree, whoNode);
-		StoryTree.next(window.storyTree);
-	}
+	console.warn("YES StartTalk", whoName, whoNode);
+	StoryTree.setCurrentNode(window.storyTree, whoNode);
+	StoryTree.next(window.storyTree);
+	game.talking = true;	
 };
 
-let tempSpeakAgenda;
 
 const GameLoop = ({onTick, onClose, children}) => {
 	assMatch(onTick, Function);
