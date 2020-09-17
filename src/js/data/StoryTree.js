@@ -1,6 +1,6 @@
 
 import Tree from "../base/data/Tree";
-import { nonce } from "../base/data/DataClass";
+import DataClass, { nonce } from "../base/data/DataClass";
 import { assert, assMatch } from "../base/utils/assert";
 import Game from "../Game";
 import { modifyHash } from "../base/utils/miscutils";
@@ -12,7 +12,7 @@ import DataStore from "../base/plumbing/DataStore";
  */
 const noBlanks = s => s && s.trim() && s.substr(0, 2) !== '//';
 
-class StoryTree {
+class StoryTree extends DataClass {
 	/**
 	 * @type {Tree} Never null
 	 */
@@ -26,6 +26,7 @@ class StoryTree {
 	memory = {};
 
 	constructor(text) {
+		super();
 		this.text = text;
 		this.root = new Tree({ value: "root", depth: 0 });
 		this.history = new Tree();
@@ -63,6 +64,7 @@ class StoryTree {
 		console.log("read", Tree.str(this.root));
 	}
 } // ./StoryTree
+DataClass.register(StoryTree, "StoryTree");
 
 const firstSentenceRest = text => {
 	if (!text) return [null, ''];
@@ -81,6 +83,32 @@ const simplifyOnlyKids = tree => {
 			tree.children = [];
 		}
 	}
+};
+
+/**
+ * Advance until a text node, or null
+ * @param {StoryTree} storyTree 
+ * @param {Tree} node 
+ */
+StoryTree.nextToText = (storyTree, node) => {
+	StoryTree.assIsa(storyTree);
+	Tree.assIsa(node);
+	while(node) {
+		let nText = StoryTree.text(node) || '';
+		// start/end explore? Then stop
+		if (nText.match(/^{(end[: ] *|)explore}/)) {
+			console.log("don't next through start/end explore: "+nText);
+			return null;
+		}
+		// avoid any commands
+		nText = nText.replaceAll(/{[^}]+}/g, '');
+		if (nText) {
+			break;
+		}
+		console.log("nextToText through "+nText+" "+node.value.id);
+		node = StoryTree.next(storyTree);
+	}
+	return node;
 };
 
 /**
@@ -107,14 +135,30 @@ StoryTree.next = (storyTree) => {
 	// the space of nodes available
 	let nodes = Tree.flatten(lastRoot);
 	Tree.assIsa(lastSrc);
-	let nextNodeSrc = next2(storyTree, nodes, lastSrc, true);
-	if ( ! nextNodeSrc) {
-		const last = StoryTree.current(storyTree);
-		last.end = true; // mark it as an end
-		console.log("END", JSON.stringify(last));
-		return null;
+	let nextNodeSrc;
+	let goDeeper = true;
+	while(lastSrc) {
+		nextNodeSrc = next2(storyTree, nodes, lastSrc, goDeeper);
+		if ( ! nextNodeSrc) {
+			const last = StoryTree.current(storyTree);
+			last.end = true; // mark it as an end
+			console.log("END", JSON.stringify(last));
+			return null;
+		}
+		assert(nextNodeSrc !== lastSrc, lastSrc);
+		// test: skip this node?
+		let ok = true;
+		const nnText = StoryTree.text(nextNodeSrc);
+		if (nnText && nnText[0] === "{") {
+			ok = nextTest(storyTree, nnText);			
+		}
+		if (ok) {
+			break; // yeh
+		}
+		// skip onwards...
+		lastSrc = nextNodeSrc;
+		goDeeper = false;
 	}
-	assert(nextNodeSrc !== lastSrc, lastSrc);
 	// shallow copy the node, so e.g. we can edit choices
 	StoryTree.setCurrentNode(storyTree, nextNodeSrc);
 	// return
@@ -157,6 +201,7 @@ export const regexCODE = /{([^}]+)}/;
 StoryTree.execute = (storyTree, code, historyNode) => {
 	assMatch(code, String);
 	assMatch(historyNode, Tree);
+	code = code.trim(); // just in case
 	// a name? This is a syntactic sugar test for explore
 	if (CHARACTERS[code]) {
 		historyNode.loop = true; // You can't next out of this
@@ -184,7 +229,7 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		return;
 	}
 	// change place?
-	m = code.match(/explore: *(\S+)/);
+	m = code.match(/^explore: *(\S+)/);
 	if (m) {
 		historyNode.loop = true; // You can't next out of this
 		src4history(storyTree, historyNode).loop = true;
@@ -192,14 +237,31 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		let bookmark = ''; // TODO a way of passing where we are in storyTree
 		// for now - just rely on storyTree being shared
 		modifyHash(['explore'].concat(place.split('/')), { bookmark });
+		console.log("Explore!");
 		return;
 	}
-	// end marker
-	if (code.substr(0, 4) === 'end:') {
-		console.log(code); // no action
+	// end marker (with a bit of flex on syntax)
+	if (code==='end' || code.substr(0, 4) === 'end:' || code.substr(0, 4) === 'end ') {
+		// end explore?
+		if (code.match(/^end[: ] *explore/)) {
+			// set the node to the next section
+			let exploreSectionSrcNode = storyTree.sceneSrcNode; // HACK - maybe look up the root chain for an explore StoryTree.currentSource(storyTree);			
+			assert(StoryTree.text(exploreSectionSrcNode).includes("explore"), exploreSectionSrcNode.value);
+			// the space of nodes available
+			let srcNodes = Tree.flatten(storyTree.root);					
+			let nextSectionSrcNode = next2(storyTree, srcNodes, exploreSectionSrcNode, false);
+			assert(nextSectionSrcNode, srcNodes);
+			StoryTree.setCurrentNode(storyTree, nextSectionSrcNode);
+			console.log("Back to the Diary!");
+			modifyHash(['story']);
+			return;	
+		}
+		// end a section? no action
+		console.log(code);
 		return;
 	}
-	alert(code);
+	// unrecognised
+	alert("TODO execute for "+code);
 };
 
 const src4history = (storyTree, historyNode) => {
@@ -278,38 +340,30 @@ const next2 = (storyTree, srcNodes, lastSrc, goDeeper = true) => {
 		}
 	} else {
 		// skip (eg a test failed)
-		// NB: we can't just take the next node -- we may have to skip over several leaves
-		// we need nextNode's next sibling
+		// NB: we can't just take the next node in the flat list -- we may have to skip over several leaves
+		// we need nextNode's next sibling		
 		let parentNode = srcNodes.find(n => n.children && n.children.includes(lastSrc));
 		assert(parentNode, "No parent?!", lastSrc);
 		let i = parentNode.children.indexOf(lastSrc);
-		nextNode = parentNode.children[i + 1];
+		nextNode = parentNode.children[i + 1];	
 		// out of kids? go up a level
-		if (!nextNode) {
-			assert(i + 1 === parentNode.children.length, "huh odd kids", parentNode);
+		if ( ! nextNode) {
 			console.log("Out of kids - go up a level", parentNode);
 			return next2(storyTree, srcNodes, parentNode, false);
 		}
 	}
-	if (!nextNode) {
+	if ( ! nextNode) {
 		// all done
 		console.log("No next for", lastSrc);
 		return null;
-	}
-	// skip this node?
-	const nnText = StoryTree.text(nextNode);
-	if (nnText && nnText[0] === "{") {
-		let ok = nextTest(storyTree, nnText);
-		if (!ok) {
-			console.warn("skip", nnText, Tree.str(nextNode));
-			return next2(storyTree, srcNodes, nextNode, false);
-		}
 	}
 	// return
 	return nextNode;
 };
 
 const nextTest = (storyTree, test) => {
+	StoryTree.assIsa(storyTree);
+	assMatch(test, String);
 	const testCode = test.substr(1, test.length - 2).trim(); // pop the {}s
 	let m = test.match("if (!?) *([^}]+)");
 	let test2 = m && m[2];

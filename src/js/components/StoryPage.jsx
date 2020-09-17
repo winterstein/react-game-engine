@@ -51,7 +51,7 @@ const init = () => {
 init();
 
 const StoryPage = () => {
-	let chapterFile = DataStore.getValue('location','path')[1] || 'chapter1';
+	let chapterFile = DataStore.getUrlValue('chapter') || 'chapter1';
 	let pvChapter = DataStore.fetch(['misc','book',chapterFile], () => {
 		return ServerIO.load("/data/book/"+chapterFile+".md");
 	});
@@ -65,24 +65,14 @@ const StoryPage = () => {
 	StoryTree.currentStoryTree = storyTree;
 	window.storyTree = storyTree;	
 
-	let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
+	// let bookmark = DataStore.getUrlValue('bookmark') || DataStore.setUrlValue('bookmark', "", false);
 	// if (bookmark) { TODO fast forward for ease of testing (but not playing 'cos game state, e.g. you picked Dinosaur)
 	// 	StoryTree.
 	// }
 
 	// get a text node
 	let currentNode = StoryTree.current(storyTree);
-	while(currentNode) {
-		// skip over no text and also test {if...} nodes
-		// NB: choice nodes which begin | are not skipped
-		if (currentNode.value && currentNode.value.text) {
-			// HACK dont skip {explore nodes
-			if (currentNode.value.text[0] !== '{' || currentNode.value.text.substr(0,8) === '{explore') {
-				break;
-			}
-		}
-		currentNode = StoryTree.next(storyTree);
-	}
+	currentNode = StoryTree.nextToText(storyTree, currentNode);
 	const seenNodes = Tree.flatten(storyTree.history);
 	const currentText = currentNode && currentNode.value.text || '';
 	
@@ -111,12 +101,15 @@ const StoryPage = () => {
 
 const ScrollIntoView = ({watch}) => {
 	const endRef = useRef();	
+	let [once, setOnce] = useState();
 	// TODO watch to allow user scrolling back up
-	// const scrollToBottom = () => {
-	if (endRef.current) endRef.current.scrollIntoView({ behavior: "smooth" });
-	// };	
-	// useEffect(scrollToBottom, [watch]);
-	
+	if (endRef.current) {
+		endRef.current.scrollIntoView();
+	}
+	// if (endRef.current && ! once) {
+	// 	endRef.current.scrollIntoView(); //{ behavior: "smooth" });
+	// 	setOnce(true);
+	// }	
 	return <div ref={endRef} />;
 };
 
@@ -147,8 +140,8 @@ const StoryLine = ({node, isLatest}) => {
 	if (se === ".0" && text[0] !== '#') {
 		text = "## "+text;
 	}
-	// one word at a time (but not for dialogue as that'd distract from the popup)
-	if (isLatest && ! m) {
+	// one word at a time (but not for dialogue as that'd distract from the popup, or images)
+	if (isLatest && ! m && text[0] !== '!' && text[0] !== '<') {
 		let [stopWatch] = useState(new StopWatch());
 		StopWatch.update(stopWatch);
 		let dt = StopWatch.time(stopWatch);

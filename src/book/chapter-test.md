@@ -19,6 +19,8 @@ Dad: Ah yes Cassie
 
 Dad: Hello James
 
+{end explore:home}
+
 
 ### {cassie}
 

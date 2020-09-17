@@ -33,7 +33,7 @@ Mom: Okay, pick what toy you want to have in the car.
 |Dinosaur teddy|Rubik's cube|Baby doll| >> inventory
 
 #### {if |Dinosaur teddy|}
-The dinosaur teddy is fierce but cuddly. I feel my `courage` increase. {player.courage += 1}
+The dinosaur teddy is fierce but cuddly. I feel my courage increase. {player.courage += 1}
 
 #### {if |Rubik's cube|}
 Playing with the Rubik's cube will focus my mind. {player.knowledge += 1}
@@ -70,7 +70,7 @@ Cassie: So I know we didn't talk much at the old school, what with me being a se
 
 Cassie: But this is a new start. At the school in Kilfearn...
 
-Cassie: - I'm not going to talk to you *at all*. 
+Cassie: ...I'm not going to talk to you *at all*. 
 
 Cassie: I don't want to see you. Or hear you. I am a lioness and you are a toad. Don't get in my way.
 
@@ -121,7 +121,9 @@ The dream ends, and I wake up in the car.
 Cassie: You drool in your sleep. It's disgusting.
 
 We arrive. I had hoped the new home might be something special. To make up for it being out in the boondocks, it should be a mansion, 
-with a pool, a games room, a TV room, and a trampoline. This is... not the case. My hopes are dashed, and then the pieces of hope are trodden on.
+with a pool, a games room, a TV room, and a trampoline. 
+
+This is... not the case. My hopes are dashed, and then the pieces of hope are trodden on.
 
 ### Arrive
 
@@ -145,63 +147,5 @@ Aaaaaaargh.
 
 Meet my sister.
 
-Card:
-	image:	/img/src/person/cordelia.jpg
-	name:	Cassie
-	age:	16
-	likes:	BoyZone, Billy Thompson in class S5, selfies
-	dislikes:	Younger brothers
-	Warning:	Highly dangerous
-
-
-## Meanwhile (comic)
-
-Mother: Don't stay up late. It's school tomorrow.
-
-Eilidh: Yeah, I'll just be a minute.
-
-Eilidh: Heh, I thought I'd switched off.
-
-Eilidh: What the...?
-
-## Fight! Eilidh v ??
-
-### lose
-
-??: So. This one is no pet cat. Master has raised the stakes.
-
-### win
-
-Eilidh: Where am I?
-
-
-## Monday
-
-1st day of school. 
-
-(walk into school, kids ahead chatting... 
-
-cat is missing
-
-new app everyone's playing
-
-)
-
-The important thing when starting school is: Choose carefully where you sit. This is a key factor in both your social position and grades. You want to avoid (a) idiots who will drag your grades down, and (b) social lepers who will follow you around like a bad smell. Last year I arrived late and got hit with both -- the hotly uncontested seat between "Moron" Murphy, and Farty Fraser. Murphy doesn't know the difference between arithmetic and asthmatic. He would ask for an inhaler to do sums, and one time when Susie Jeffries _did_ have an asthma attack, he started shouting "Calculator! Calculator!". Farty Fraser -- well let's just say he _earned_ his nickname. Our group projects were not a success.
-
-??painting with pong
-
-So I arrive on time, to choose my seat wisely. 
-
-Except, you don't know who anyone is, so it's a blind choice.
-
-Where will you sit? 
-
-|Table A|Table B|Table C|Table D|
-
-Next, is the hard bit. I have to talk to someone. But they're all strangers. I suppose some of them could be great friends in waiting. 
-
-What this new app?
-
-
+Cassie: Name: Cassie<br/>Age:	16<br/>Likes:	BoyZone, Billy Thompson in class S5, selfies<br/>Dislikes:	Younger brothers<br/>Warning:	Highly dangerous
 

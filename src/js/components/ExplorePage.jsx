@@ -101,7 +101,7 @@ const setupPlace = (place) => {
 					"x.........x",
 					"xx-xxxxxxxx",
 					"x    x    x",
-					"x   cx    x",
+					"x    x    x",
 					"x   xx-xxxx",
 					"x      - tx",
 					"x    x-xxxx",
@@ -213,14 +213,12 @@ const isSeen = (x,y) => {
 	// return row[x];
 };
 
-let sceneSrcNode;
-
 const ExplorePage = () => {
 	let path = DataStore.getValue(['location','path']);
 	let place = path && path[1];
 	if ( ! dungeon) {
 		setupPlace(place);
-		sceneSrcNode = StoryTree.currentSource(window.storyTree);
+		window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
 	}
 	window.dungeon = dungeon;
 	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
@@ -233,21 +231,11 @@ const ExplorePage = () => {
 	let watchme = {"game.talking": game.talking};
 
 	// get a text node
-	let currentHistoryNode = StoryTree.current(window.storyTree);
+	let currentNode = StoryTree.current(window.storyTree);
 	let currentText;
-	if (game.talking) {		
-		while(currentHistoryNode) {
-			currentText = StoryTree.text(currentHistoryNode);
-			// skip over no text and also test {if...} nodes
-			// NB: choice nodes which begin | are not skipped
-			if (currentText) {
-				// HACK step through commands, stop on text
-				if ( ?? currentText[0] !== '{') {
-					break;
-				}
-			}
-			currentHistoryNode = StoryTree.next(window.storyTree);
-		}
+	if (game.talking) {
+		currentNode = StoryTree.nextToText(window.storyTree, currentNode);
+		currentText = StoryTree.text(currentNode);
 		// NB talking = false is done in onTick
 	}
 	
@@ -258,7 +246,7 @@ const ExplorePage = () => {
 			<MiniMap player={player} />
 			
 			{game.talking && currentText && splitLine(currentText) && <ChatLine line={currentText} />}
-			{game.talking && <ChatControls currentNode={currentHistoryNode} storyTree={window.storyTree} />}
+			{game.talking && <ChatControls currentNode={currentNode} storyTree={window.storyTree} />}
 		</GameLoop>
 	</Container>);
 };
@@ -276,8 +264,9 @@ const onTick = ticker => {
 		if (currentStoryNode && StoryTree.isEnd(window.storyTree, currentStoryNode)) {
 			game.talking = false;
 			console.log("TALK DONE");
-			StoryTree.setCurrentNode(window.storyTree, sceneSrcNode);
+			StoryTree.setCurrentNode(window.storyTree, window.storyTree.sceneSrcNode);
 		}	
+		DataStore.update();	
 		return; // in a talk
 	}
 	if (keyLeft.isDown) nx--;
@@ -305,7 +294,7 @@ const onTick = ticker => {
 		player.x = nx;
 		player.y = ny;
 	}
-	DataStore.update();		
+	DataStore.update();	
 };
 
 

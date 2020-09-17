@@ -37,7 +37,7 @@ const ChatLine = ({ line }) => {
 
 	return <div className="chatline">
 		<div className="who">{label}</div>
-		<img src={img} alt={label} />
+		<img src={img} alt={label} className="animate__animated animate__faster animate__slideInRight" />
 		<div className="said"><MDText source={said} /></div>
 	</div>;
 };
@@ -70,8 +70,11 @@ const ChatControls2 = ({ currentNode, storyTree }) => {
 		let choices = choicebit.split("|").filter(c => c);
 		// bump right to avoid accidental next clicks
 		return (<div className="ml-5">
-			{choices.map(c =>
-				<Button size="lg" className="ml-2 mr-2" color="primary" onClick={e => doChoice({ currentNode, storyTree, c, thenbit })} key={c}>{c}</Button>
+			{choices.map((c,j) =>
+				<Button size="lg" className={"ml-2 mr-2 animate__animated animate__delay-"+j+"s animate__slideInUp"} color="primary" 
+					onClick={e => doChoice({ currentNode, storyTree, c, thenbit })} key={c}>
+					{c}
+				</Button>
 			)}
 		</div>);
 	}
