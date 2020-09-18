@@ -114,7 +114,7 @@ She makes a gesture, and the garden fades out.
 
 ### Driving
 
-(car) 
+<img src='/img/src/car.png' />
 
 The dream ends, and I wake up in the car.
 
@@ -131,9 +131,27 @@ Our new house is a dump. The paint is peeling. There is a smell of damp. But I d
 
 ## {explore:home}
 
+#### {spider}
+
+Spider: This is my bathroom.
+
+James: OK, I see that. I'll leave you alone now.
+
+#### {dad}
+
+Dad: Let's get unpacked. Starting with a bottle of something.
+
+#### {mom}
+
+Mom: Isn't it... Er, well... We can do a lot to improve it!
+
+|"Like what?"|"Like demolish it with a bulldozer?"|
+
+Mom: Maybe a coat of paint.
+
 #### {cassie}
 
-Cassie: Listen RatFace, you-touch-my-music-you-die. /She says this without looking up from her phone./
+Cassie: Listen RatFace, you-touch-my-music-you-die. (She says this without looking up from her phone.)
 
 {end:explore:home}
 
@@ -147,5 +165,8 @@ Aaaaaaargh.
 
 Meet my sister.
 
-Cassie: Name: Cassie<br/>Age:	16<br/>Likes:	BoyZone, Billy Thompson in class S5, selfies<br/>Dislikes:	Younger brothers<br/>Warning:	Highly dangerous
+Cassie: (face) Name: Cassie<br/>Age:	16<br/>Likes:	BoyZone, Billy Thompson in class S5, selfies<br/>Dislikes:	Younger brothers<br/>Warning:	Highly dangerous
 
+## End of Chapter 1
+
+{story:chapter2}

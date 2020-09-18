@@ -103,7 +103,7 @@ const setupPlace = (place) => {
 					"x    x    x",
 					"x    x    x",
 					"x   xx-xxxx",
-					"x      - tx",
+					"x      -stx",
 					"x    x-xxxx",
 					"x    x    x",
 					"x    x    x",
@@ -116,7 +116,8 @@ const setupPlace = (place) => {
 			spriteNameForx_y: {
 				"9_5": "cassie",
 				"7_11": "mom",
-				"2_9": "dad"
+				"2_9": "dad",
+				"8_8": "spider"
 			}
 		};
 		dungeon.maxy = dungeon.walls.rows.length - 1;
@@ -392,6 +393,7 @@ const drawChar = w => {
 	case "mom": return "👩";
 	case "dad": return "👨";
 	case "r": return "═";
+	case "s": return "🕷"; // spider
 	}
 	return w.length > 1? w[0] : w; // unicode emojis
 };

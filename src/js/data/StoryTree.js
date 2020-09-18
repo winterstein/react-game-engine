@@ -240,6 +240,14 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		console.log("Explore!");
 		return;
 	}
+	// change story?
+	m = code.match(/^story: *(\S+)/);
+	if (m) {
+		let chapter = m[1];
+		modifyHash(['story'], { chapter });
+		console.log("More Story! "+chapter);
+		return;
+	}
 	// end marker (with a bit of flex on syntax)
 	if (code==='end' || code.substr(0, 4) === 'end:' || code.substr(0, 4) === 'end ') {
 		// end explore?
