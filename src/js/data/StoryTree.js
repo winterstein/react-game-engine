@@ -248,6 +248,13 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		console.log("More Story! "+chapter);
 		return;
 	}
+	// fight!
+	m = code.match(/^fight: *(\S+)/);
+	if (m) {
+		// TODO A v B, e.g. {fight:team v |robot|monster|x2}
+		modifyHash(['fight']);
+		return;
+	}
 	// end marker (with a bit of flex on syntax)
 	if (code==='end' || code.substr(0, 4) === 'end:' || code.substr(0, 4) === 'end ') {
 		// end explore?

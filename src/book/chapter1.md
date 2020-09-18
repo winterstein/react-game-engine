@@ -114,13 +114,13 @@ She makes a gesture, and the garden fades out.
 
 ### Driving
 
-<img src='/img/src/car.png' />
+![](/img/src/bg/car.png)
 
 The dream ends, and I wake up in the car.
 
 Cassie: You drool in your sleep. It's disgusting.
 
-We arrive. I had hoped the new home might be something special. To make up for it being out in the boondocks, it should be a mansion, 
+We arrive. I had hoped the new home might be something special. To make up for it being lost out in the nowhere, it should be a mansion, 
 with a pool, a games room, a TV room, and a trampoline. 
 
 This is... not the case. My hopes are dashed, and then the pieces of hope are trodden on.
@@ -129,19 +129,21 @@ This is... not the case. My hopes are dashed, and then the pieces of hope are tr
 
 Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
 
+Explore the ~~dump~~ house...
+
 ## {explore:home}
 
-#### {spider}
+### {spider}
 
 Spider: This is my bathroom.
 
 James: OK, I see that. I'll leave you alone now.
 
-#### {dad}
+### {dad}
 
 Dad: Let's get unpacked. Starting with a bottle of something.
 
-#### {mom}
+### {mom}
 
 Mom: Isn't it... Er, well... We can do a lot to improve it!
 
@@ -149,7 +151,7 @@ Mom: Isn't it... Er, well... We can do a lot to improve it!
 
 Mom: Maybe a coat of paint.
 
-#### {cassie}
+### {cassie}
 
 Cassie: Listen RatFace, you-touch-my-music-you-die. (She says this without looking up from her phone.)
 

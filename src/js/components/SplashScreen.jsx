@@ -38,8 +38,8 @@ import printer from '../base/utils/printer';
 import { Howl, Howler } from 'howler';
 
 
-const DrawReactSVG = ({ src, height = "200px", width = "200px", duration = 70 }) => {
-	let [id] = useState(nonce(6));
+const DrawReactSVG = ({id, src, height = "200px", width = "200px", duration = 70 }) => {
+	if ( ! id) [id] = useState(nonce(6));
 	return (<ReactVivus
 		id={id}
 		option={{
@@ -73,11 +73,12 @@ const SplashScreen = () => {
 	// 	style.transform="scale(1)";
 	// 	style.transition="all 5s";
 	// }
-	return <div>
-		<DrawReactSVG src='/img/src/celtic/celtic-swirl.svg' width='400px' height='400px' duration={1000} />
-		<h1>The Kilfearn Chronicles</h1>
-		<Button color='primary'>New Game</Button>
-	</div>;
+	return <><div className='animation-window'>
+		<DrawReactSVG id='splash-img' src='/img/src/celtic/celtic-swirl.svg' width='500px' height='400px' duration={1000} />
+	</div>
+			<h1>The Kilfearn Chronicles</h1>
+			<Button color='primary'>New Game</Button>
+	</>;
 };
 
 let themeSong = new Howl({

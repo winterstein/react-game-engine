@@ -103,6 +103,16 @@ let david = new Character({
 	], 
 });
 
+let eilidh = new Character({
+	name:"Eilidh",
+	surname:"Fraser",
+	affinity: "bird",
+	spells: [
+		new Spell({name:'Punch',damage:10}), 
+		new Spell({name:'Kick',damage:15}), 
+	], 
+});
+
 
 let omega = new Character({
 	name: "omega",
@@ -119,8 +129,16 @@ let angel = new Character({
 	], 
 });
 
+let spider = new Character({
+	name:"Spider",
+	src: "/img/src/person/spider.png",
+	affinity: "bug"
+});
+
 export const CHARACTERS = {
-	james, cassie, mom, dad, katie, donald, mina, david
+	james, cassie, mom, dad, katie, donald, mina, david,
+	spider,
+	eilidh
 };
 
 

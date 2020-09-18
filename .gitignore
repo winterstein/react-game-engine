@@ -14,3 +14,4 @@ dependencies
 .settings
 config/version.properties
 build-lib
+tmp-lib

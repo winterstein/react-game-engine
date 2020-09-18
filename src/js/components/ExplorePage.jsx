@@ -24,6 +24,7 @@ import { collision } from './Collision';
 
 
 let dungeon = null;
+let monster = null;
 
 const setupPlace = (place) => {
 	if ( ! place) {
@@ -52,7 +53,7 @@ const setupPlace = (place) => {
 			room_count: 12
 		});		 
 		dungeon.generate();
-		let monster = setupMonster();
+		monster = setupMonster();		
 		console.log("dungeon", dungeon);		
 		return dungeon;
 	}
@@ -219,7 +220,7 @@ const ExplorePage = () => {
 	let place = path && path[1];
 	if ( ! dungeon) {
 		setupPlace(place);
-		window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
+		if (window.storyTree) window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
 	}
 	window.dungeon = dungeon;
 	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
@@ -301,14 +302,17 @@ const onTick = ticker => {
 
 const maybeStartTalk = (game, player, whoName) => {	
 	// source story node?
-	let storyNode = StoryTree.currentSource(window.storyTree);
+	let storyNode = window.storyTree.sceneSrcNode; // currentSource(window.storyTree);
 	console.warn("maybeStartTalk", storyNode, player, whoName);
 	if ( ! storyNode) {
 		console.warn("no storynode");
 		return;
 	}
 	// node for person?	
-	let whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text==="{"+whoName+"}");
+	// NB: flatten() is more forgiving than children(), but means you cant have if blocks around name chunks
+	// a tree walk setup would be ideal. but sod that complexity
+	let nodes = Tree.children(storyNode);
+	let whoNodes = nodes.filter(n => n.value && n.value.text==="{"+whoName+"}");
 	if (whoNodes.length === 0) {
 		whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text===whoName);
 		if (whoNodes.length) console.warn("Handling bad script syntax: please use `{name}` for on-bump-into bits");
@@ -393,7 +397,7 @@ const drawChar = w => {
 	case "mom": return "👩";
 	case "dad": return "👨";
 	case "r": return "═";
-	case "s": return "🕷"; // spider
+	case "spider": return "🕷"; // spider
 	}
 	return w.length > 1? w[0] : w; // unicode emojis
 };
@@ -409,7 +413,7 @@ const what = (x,y) => {
 	if (x===player.x && y===player.y) {
 		return "player";
 	}
-	if (x===setupMonster().x && y===setupMonster().y) return MONSTER;
+	if (monster && x===monster.x && y===monster.y) return MONSTER;
 	let sn = dungeon.spriteNameForx_y && dungeon.spriteNameForx_y[x+"_"+y];
 	if (sn) return sn;
 	return whatFloor(x,y);
