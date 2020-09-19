@@ -1,37 +1,17 @@
 
 # Diary Test
 
-Our new house is a dump.
+Lets try a random fight
 
-## {explore:home}
+## {fight:james+katie v |Angry Robot|Pineapple Bot|x3}
 
-### {dad}
+### {win}
 
-Dad: Woot!
+James: We did it!
 
-#### {if flag.metCassie}
+### {lose}
 
-Dad: Ah yes Cassie
-
-{end explore:home}
-
-#### {if ! flag.metCassie}
-
-Dad: Hello James
-
-{end explore:home}
-
-
-### {cassie}
-
-Cassie: Listen RatFace, you-touch-my-music-you-die.
-
-James: OK
-
-Cassie: Hm.
-
-{flag.metCassie = true}
-
+Katie: Rats!
 
 ## diary
 
