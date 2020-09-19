@@ -1,41 +1,12 @@
 
-
-## Meanwhile
-
-That night I have a weird dream. I'm not in the dream - it's like I'm watching a show on TV. And it's a horror show.
-
-(some house)
-
-Mother: Don't stay up late. It's school tomorrow.
-
-Eilidh: Yeah, I'll just be a minute.
-
-Infected Phone: (glows weirdly)
-
-Eilidh: Heh, I thought I'd switched that off.
-
-Infected Phone: (the glow intensifies)
-
-Eilidh: What the...?
-
-There is a flash of light - and then silence. A bad kind of silence. If silence could have a flavour, this one would taste of sulphur.
-
-## {fight:eilidh v harvest-bot-1}
-
-### {lose}
-
-??: So. This one is no pet cat. Master has raised the stakes.
-
-### {win}
-
-Eilidh: Where am I?
-
-
 ## Monday, September 2nd
 
-1st day of school. 
+### 1st day of school
 
-(walk into school, kids ahead chatting... 
+Cassie is late getting up, so I walk into school alone.
+
+I pass small groups of friends chatting.
+
 
 cat is missing
 
@@ -67,3 +38,37 @@ Next, is the hard bit. I have to talk to someone. But they're all strangers. I s
 
 ...What this new app?
 
+
+
+
+## That night
+
+That night I have a weird dream. I'm not in the dream - it's like I'm watching a show on TV. And it's a horror show.
+
+One of the girls from school has a starring role.
+
+(some house)
+
+Mother: Don't stay up late. It's school tomorrow.
+
+Eilidh: Yeah, I'll just be a minute.
+
+Infected Phone: (glows weirdly)
+
+Eilidh: Heh, I thought I'd switched that off.
+
+Infected Phone: (the glow intensifies)
+
+Eilidh: What the...?
+
+There is a flash of light - and then silence. A bad kind of silence. If silence could have a flavour, this one would taste of sulphur.
+
+## {fight:eilidh v harvest-bot}
+
+### {lose}
+
+Harvest Bot: So. This one is no pet cat. Master has raised the stakes.
+
+### {win}
+
+Eilidh: W - Where am I?
