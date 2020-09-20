@@ -14,7 +14,7 @@ let james = new Character({
 	name: "James",
 	surname: "Findlay",
 	age: 13,
-	src: "/img/src/person/james.png",
+	src: "/img/src/person/james.svg",
 	spells: [
 		new Spell({name:'Bunny', damage:5, affinity:'mammal', carrier:SpriteLib.bunny()}), 
 		new Spell({name:'Wolf', damage:15, affinity:'mammal', carrier:SpriteLib.wolf()}), 
