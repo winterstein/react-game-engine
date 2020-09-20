@@ -123,13 +123,6 @@ const FightPage = () => {
 		Options:
 		{activeSprite && activeSprite.spells && activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)}
 		<ActionButton action={'Guard'} active={activeSprite} />
-
-		{/* <div><small>Commands:
-			<ol>
-				{Command._q.map((c, i) => <li key={i}>{Command.str(c)}</li>)}
-			</ol>
-		</small></div> */}
-
 	</div>);
 };
 
@@ -419,6 +412,9 @@ const makeFight = ({world,rhs,lhs}) => {
 		}
 		let monster = MONSTERS[en];
 		if (monster) {
+			monster = new Monster(monster); // copy
+			monster.id = "M"+nonce(6); // a new id please
+			monster.x = 500;
 			fight.enemies.push(monster); 
 			return;
 		}
