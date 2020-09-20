@@ -133,8 +133,8 @@ const StoryLine = ({node, isLatest}) => {
 	// Is it dialogue? remove the emotion marker
 	let mDialogue = splitLine(text);
 	if (mDialogue) {
-		return null;
-		// text = mDialogue.label+': "'+mDialogue.said+'"';
+		// return null;
+		text = mDialogue.label+': "'+mDialogue.said+'"';
 	}
 	// spot scenes
 	let se = substr(node.value.index, -2);
