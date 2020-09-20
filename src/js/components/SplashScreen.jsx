@@ -66,7 +66,7 @@ const SplashScreen = () => {
 			DataStore.update();
 		}}>Launch</Button></div>;
 	}
-	useEffect(playThemeSong);
+	// useEffect(playThemeSong);
 	// // shrink to normal - not working - svg is hidden
 	// let style = {transform:"scale(5)"};
 	// if (playingFlag) {
@@ -81,22 +81,23 @@ const SplashScreen = () => {
 	</>;
 };
 
-let themeSong = new Howl({
-	src: ['/snd/ran-n-bone-man-human.mp3'],
-	autoplay: true,
-	loop: true,
-	volume: 0.5,
-	onend: function () {
-		console.log('Finished!');
-	}
-});
+// TODO
+// let themeSong = new Howl({
+// 	src: ['/snd/ran-n-bone-man-human.mp3'],
+// 	autoplay: true,
+// 	loop: true,
+// 	volume: 0.5,
+// 	onend: function () {
+// 		console.log('Finished!');
+// 	}
+// });
 
-let playingFlag;
-const playThemeSong = () => {
-	console.log("Play...");
-	themeSong.play();
-	playingFlag = true;
-	// DataStore.update(); upsets react in useEffect
-};
+// let playingFlag;
+// const playThemeSong = () => {
+// 	console.log("Play...");
+// 	themeSong.play();
+// 	playingFlag = true;
+// 	// DataStore.update(); upsets react in useEffect
+// };
 
 export default SplashScreen;
