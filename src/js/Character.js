@@ -134,6 +134,12 @@ let spider = new Character({
 	affinity: "bug"
 });
 
+let narrator = new Character({
+	name:"Narrator",
+	src: "none"
+});
+
+
 let honeybadger = new Character({ name: "Honey Badger", src: "/img/src/honey-badger.w150.png", 
 	spells: [
 		new Spell({name:'Rampage',damage:40,affinity:'mammal'}),
@@ -146,6 +152,7 @@ let honeybadger = new Character({ name: "Honey Badger", src: "/img/src/honey-bad
 
 
 export const CHARACTERS = {
+	narrator,
 	james, cassie, mom, dad, katie, donald, mina, david,
 	spider,
 	honeybadger,

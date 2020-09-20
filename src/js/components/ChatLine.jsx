@@ -14,6 +14,7 @@ import MDText from '../base/components/MDText';
 import StoryTree from '../data/StoryTree';
 import Game from '../Game';
 import { Button } from 'reactstrap';
+import { CHARACTERS } from '../Character';
 
 /**
  * regex for dialogue, e.g. `Mom: (happy) We're off!` or `Omega "Morphing Person": Welcome`
@@ -29,15 +30,28 @@ const ChatLine = ({ line }) => {
 	}
 	let { who, label, emotion, said } = m;
 	let type = '.png';
+	let whoCanon = who.toLowerCase().replaceAll(' ','-');
+	let character = CHARACTERS[whoCanon];
 	if (who === 'Omega' || who === 'Narrator') type = '.gif';
-	let img = '/img/src/person/' + space(who, emotion) + type;
+	let img;
+	if (character) {
+		img = character.src;
+	}
+	if (img !== "none") {
+		img = '/img/src/person/' + space(who, emotion) + type;
+	}
 	img = img.replaceAll(' ', '-').toLowerCase();
+	// HACK - track people you know
+	if (who===label && character) {
+		if ( ! Game.get().cast) Game.get().cast = {};
+		Game.get().cast[who] = true;
+	}
 	// avoid any commands
 	said = said.replaceAll(/{[^}]+}/g, '');
 
 	return <div className="chatline">
 		<div className="who">{label}</div>
-		<img src={img} alt={label} className="animate__animated animate__faster animate__slideInRight" />
+		{img && img!=="none" && <img src={img} alt={label} className="animate__animated animate__faster animate__slideInRight" />}
 		<div className="said"><MDText source={said} /></div>
 	</div>;
 };
@@ -45,7 +59,7 @@ const ChatLine = ({ line }) => {
 /**
  * 
  * @param {!string} line 
- * @returns {?object} {who, label, emotion, said} or null
+ * @returns {?object} {who, label, emotion, said} or null label defaults to who (not null)
  */
 export const splitLine = line => {
 	let m = line.match(rSpeech);

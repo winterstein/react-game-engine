@@ -5,18 +5,27 @@
 
 Cassie is late getting up, so I walk into school alone.
 
-I pass small groups of friends chatting.
+I pass small groups of students and catch bits of conversation.
 
+Chatty Girl: Did you see the village notice board? Another cat has gone missing.
 
-cat is missing
+Serious Girl: Oh no. Whose cat was it?
 
-new app everyone's playing
+I walk on.
 
-)
+Boy With Glasses: Have you tried the app?
+
+Athletic Boy: No, I have to focus on my training.
+
+Boy With Glasses: But you *have* to install it. *Everyone's* on it.
+
+TODO ... TODO ...
+
+### The classroom
 
 The important thing when starting school is - Choose carefully where you sit. 
 
-This is a key factor in both your social position and grades. You want to avoid (a) idiots who will drag your grades down, and (b) lepers who will follow you around like a bad smell. 
+This is a key factor in both your social position and grades. You want to avoid idiots who'll drag your grades down, and losers who'll follow you around like a bad smell. 
 
 Last year I arrived late and got hit with both -- the hotly uncontested seat between "Moron" Murphy, and Farty Fraser. 
 
@@ -37,6 +46,16 @@ Where will you sit?
 Next, is the hard bit. I have to talk to someone. But they're all strangers. I suppose some of them could be great friends in waiting. 
 
 ...What this new app?
+
+
+"Oh Katie, you've got an apple. Swap?"
+
+"Sorry Evie. Red's got chocolate - she'll not trade. Try Green."
+
+
+Hey you're the new boy from the city. We're -
+
+ - Oh don't tell him our names, See if he can guess.
 
 
 

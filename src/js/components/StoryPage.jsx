@@ -131,9 +131,10 @@ const StoryLine = ({node, isLatest}) => {
 	if ( ! restOfLine) return null;
 	text = restOfLine;	
 	// Is it dialogue? remove the emotion marker
-	let m = splitLine(text);
-	if (m) {
-		text = m.label+': "'+m.said+'"';
+	let mDialogue = splitLine(text);
+	if (mDialogue) {
+		return null;
+		// text = mDialogue.label+': "'+mDialogue.said+'"';
 	}
 	// spot scenes
 	let se = substr(node.value.index, -2);
@@ -141,7 +142,7 @@ const StoryLine = ({node, isLatest}) => {
 		text = "## "+text;
 	}
 	// one word at a time (but not for dialogue as that'd distract from the popup, or images)
-	if (isLatest && ! m && text[0] !== '!' && text[0] !== '<') {
+	if (isLatest && ! mDialogue && text[0] !== '!' && text[0] !== '<') {
 		let [stopWatch] = useState(new StopWatch());
 		StopWatch.update(stopWatch);
 		let dt = StopWatch.time(stopWatch);

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Login from 'you-again';
 import { assert } from 'sjtest';
-import { modifyHash } from '../base/utils/miscutils';
+import { isMobile, modifyHash } from '../base/utils/miscutils';
 import _ from 'lodash';
 // Plumbing
 import DataStore from "../base/plumbing/DataStore";
@@ -110,10 +110,10 @@ class MainDiv extends Component {
 			</div>);
 		}
 	
-		return (<div style={{height:'100vh',width:'100vw'}}>
+		return (<div style={{height:'100vh',width:'100vw'}} className='flex-row'>
 			<MessageBar />
-			<LeftNav className='pull-left' />
-			<div className='page pull-left' style={{width:'calc(100vw - 150px)'}} id={page}>
+			{isMobile()? null /* TODO */ : <LeftNav className='pull-left' />}
+			<div className='page flex-grow' id={page} >
 				<Page path={path} />
 			</div>
 			<LoginWidget logo={C.app.service} title={'Welcome to '+C.app.name} services={['twitter', 'facebook']} />

@@ -54,7 +54,7 @@ Game.getPlayer = () => {
 /**
  * 
  * @param {Game} game 
- * @returns {!Object} item-name:number
+ * @returns {!Object} item-name: number / details
  */
 Game.getInventory = game => {
 	if ( ! game) game = Game.get();
