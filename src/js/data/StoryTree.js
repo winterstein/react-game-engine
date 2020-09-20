@@ -249,10 +249,11 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		return;
 	}
 	// fight!
-	m = code.match(/^fight: *(\S+)/);
+	m = code.match(/^fight: *(.+)/);
 	if (m) {
-		// TODO A v B, e.g. {fight:team v |robot|monster|x2}
-		modifyHash(['fight']);
+		// A v B, e.g. {fight:team v |robot|monster|x2}
+		let [a,b] = m[1].split(/\s+v\s+/);
+		modifyHash(['fight'], {lhs:a,rhs:b});
 		return;
 	}
 	// end marker (with a bit of flex on syntax)

@@ -16,12 +16,11 @@ let james = new Character({
 	age: 13,
 	src: "/img/src/person/james.png",
 	spells: [
-		new Spell({name:'Honey Badger',damage:30, affinity:'mammal', carrier:SpriteLib.badger()}), 
 		new Spell({name:'Bunny', damage:5, affinity:'mammal', carrier:SpriteLib.bunny()}), 
 		new Spell({name:'Wolf', damage:15, affinity:'mammal', carrier:SpriteLib.wolf()}), 
-		new Spell({name:'super healing herbs',damage:-200, affinity:'plant'}),
+		new Spell({name:'super healing herbs',damage:-100, affinity:'plant'}),
 		new Spell({name:'Ladybird', affinity:'bug'}),
-		new Spell({ name:'fierce snake',damage:70, affinity:'reptile'})
+		new Spell({ name:'fierce snake',damage:50, affinity:'reptile'})
 	],
 	health: 100, 
 	maxHealth: 100,
@@ -135,9 +134,21 @@ let spider = new Character({
 	affinity: "bug"
 });
 
+let honeybadger = new Character({ name: "Honey Badger", src: "/img/src/honey-badger.w150.png", 
+	spells: [
+		new Spell({name:'Rampage',damage:40,affinity:'mammal'}),
+		new Spell({name:'Chaos',damage:30,affinity:'mammal'}),
+		new Spell({name:'Stink Attack',damage:60,affinity:'mammal'}),
+	], 
+	health: 200,
+	affinity: 'mammal'
+});
+
+
 export const CHARACTERS = {
 	james, cassie, mom, dad, katie, donald, mina, david,
 	spider,
+	honeybadger,
 	eilidh
 };
 

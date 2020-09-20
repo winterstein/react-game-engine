@@ -3,7 +3,7 @@
 
 Lets try a random fight
 
-## {fight:james+katie v |Angry Robot|Pineapple Bot|x3}
+## {fight:james+katie v monster+monster+monster}
 
 ### {win}
 

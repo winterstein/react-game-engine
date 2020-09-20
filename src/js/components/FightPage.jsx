@@ -35,6 +35,7 @@ import { space, randomPick, modifyHash } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import { CHARACTERS } from '../Character';
+import MONSTERS from '../MONSTERS';
 // import svg from '../img/angry-robot.svg';
 
 const DrawReact = ({ src, height = "200px", width = "200px" }) => {
@@ -66,9 +67,12 @@ const FightPage = () => {
 	}
 
 	let world = "foo"; //DataStore.getUrlValue("world");
-	fight = DataStore.getValue("misc", "game", "fight");
-	if (!fight) {
-		fight = makeFight();
+	let lhs = DataStore.getUrlValue("lhs");
+	let rhs = DataStore.getUrlValue("rhs");
+	fight = Game.get().fight;
+	if ( ! fight) {
+		fight = makeFight({world,lhs,rhs});
+		Game.get().fight = fight;
 	}
 	let sprites = Fight.sprites(fight);
 	let activeSprite = sprites.find(s => s.id === fight.turn);
@@ -391,56 +395,38 @@ const EMOJI = {
 	plant: "🌿"
 };
 
-const makeFight = () => {
+const makeFight = ({world,rhs,lhs}) => {
 	// let game = Game.get(); game is tied to pixi which we aren't using
-	let fight = new Fight();
-	fight.team = [
-		CHARACTERS.james,
-		CHARACTERS.katie,
-		new Sprite({ name: "Honey Badger", src: "/img/src/honey-badger.w150.png", 
-			spells: [
-				new Spell({name:'Rampage',damage:40,affinity:'mammal'}),
-				new Spell({name:'Chaos',damage:30,affinity:'mammal'}),
-				new Spell({name:'Stink Attack',damage:60,affinity:'mammal'}),
-				new Spell({name:'Healing Herbs',affinity:'plant',damage:-40})
-			], 
-			health: 200, x: 30, y: 550, 
-			affinity: 'mammal'
-		})
-	];
+	let fight = new Fight();	
 
-	fight.enemies = [
-		new Monster({
-			name: "Angry Robot", src: "/img/src/angry-robot.svg", spells: ['Laser Glare', 'Sonic Punch'], health: 100, x: 500, y: 50,
-			// affinities: { mammal: 'weak', bird: 'strong' }
-		}),
-		new Monster({
-			name: "Angry Smelly Robot", src:'/img/src/smelly-bot.w200.png', 
-			spells: [new Spell({name:'Smelly Punch', damage:20}), 'Sharp Kick'], 
-			health: 40, x: 500, y: 300,
-			// affinities: { plant: 'weak', mammal: 'strong' }
-		}),
-		new Monster({
-			name: "Pineapple Bot", src:'/img/src/pineapple-bot.w200.png', 
-			spells: [
-				new Spell({name:'concerswing', damage:1}),
-				new Spell({name:'spikyturn', damage:21}),
-				new Spell({name:'pufferfish', damage:50}),		
-				new Spell({name:'frogkick', damage:30})
-			],			 
-			health: 140, x: 500, y: 550,
-			// affinities: { bird: 'weak', fish: 'strong' }
-		}),
-		new Monster({
-			name: "Angry Jellyfish", src:'/img/src/jellyfish.h200.png', 
-			spells: [
-				new Spell({name:'stinging grasp', damage:19}),
-				new Spell({name:'scare stare', damage:2}),
-			],
-			health: 14, x: 450, y: 650,
-			// affinities: { bug: 'weak', reptile: 'strong' }
-		})	
-	]; // end enemies
+	// Your side!
+	if ( ! lhs ) lhs ="team";
+	if (lhs === "team") {
+		console.warn("TODO who are team?");
+		lhs ="james+katie+honeybadger";
+	}	
+	let teamNames = lhs.split("+");
+	fight.team = teamNames.map(n => CHARACTERS[n]).filter(x => !!x);
+
+	// The enemy!
+	fight.enemies = []; // end enemies
+	if ( ! rhs ) rhs = "monster+monster+monster";
+	let enemyNames = rhs.split("+");
+	enemyNames.forEach(en => {
+		if (en==="monster") {
+			// random!
+			en = randomPick(Object.keys(MONSTERS));
+		}
+		let monster = MONSTERS[en];
+		if (monster) {
+			fight.enemies.push(monster); 
+			return;
+		}
+		// or?		
+		// x
+		let m = en.match(/x(\d)$/);
+	});	
+
 	// layout
 	adjustHeight(fight.team);
 	adjustHeight(fight.enemies);
