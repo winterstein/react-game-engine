@@ -45,8 +45,7 @@ const DrawReact = ({ src, height = "200px", width = "200px" }) => {
 		option={{
 			file: src,
 			type: 'oneByOne',
-			// animTimingFunction: 'EASE',
-			duration: 70,
+			duration: 25,
 			onReady: console.log
 		}}
 		style={{ height, width }}
@@ -366,7 +365,9 @@ const Peep = ({i, sprite, selected, focus }) => {
 			style={{ position: 'absolute', width: '200px', top: sprite.y, left: sprite.x }}
 		>
 			{selected ? <b>{sprite.name}</b> : null}
-			{sprite.src.includes(".svg")? <DrawReact src={sprite.src} /> : <img src={sprite.src} style={{maxWidth:'200px',maxHeight:'200px',transform:"scaleX(-1)"}} />}
+			<div style={{transform:"scaleX(-1)"}}>
+				{sprite.src.includes(".svg")? <DrawReact src={sprite.src} /> : <img alt={sprite.name} src={sprite.src} style={{maxWidth:'200px',maxHeight:'200px'}} />}
+			</div>
 			{sprite.label? <h4>{sprite.label}</h4> : null}
 			{selected || focus? <div>Health: {Math.round(sprite.health)}</div> : null}
 			{sprite.health <= 0 ? <div style={{ position: 'absolute', bottom: 0 }}><DrawReact src={'/img/src/fire.svg'} /></div> : null}
@@ -432,8 +433,11 @@ const makeFight = ({world,rhs,lhs}) => {
 		enemy.affinities[randomPick(KAffinity.values)] = 'weak';
 		enemy.affinities[randomPick(KAffinity.values)] = 'strong';
 	});
-	// setup maxHealth
-	Fight.sprites(fight).forEach(sp => sp.maxHealth = sp.maxHealth || sp.health);
+	// setup health and maxHealth
+	Fight.sprites(fight).forEach(sp => {
+		sp.maxHealth = sp.maxHealth || sp.health || 100;
+		if ( ! sp.health) sp.health = sp.maxHealth;
+	});
 
 	fight.turn = fight.team[0].id;
 	DataStore.setValue(["misc", "game", "fight"], fight, false);

@@ -105,11 +105,12 @@ let david = new Character({
 let eilidh = new Character({
 	name:"Eilidh",
 	surname:"Fraser",
-	affinity: "bird",
+	src: "/img/src/person/eilidh.svg",
 	spells: [
 		new Spell({name:'Punch',damage:10}), 
 		new Spell({name:'Kick',damage:15}), 
 	], 
+	maxHealth: 30
 });
 
 

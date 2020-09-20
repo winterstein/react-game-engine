@@ -41,7 +41,7 @@ Except, you don't know who anyone is, so it's a blind choice.
 
 Where will you sit? 
 
-|Table A|Table B|Table C|Table D|
+|Table A|Table B|Table C|
 
 Next, is the hard bit. I have to talk to someone. But they're all strangers. I suppose some of them could be great friends in waiting. 
 
@@ -82,7 +82,7 @@ Eilidh: What the...?
 
 There is a flash of light - and then silence. A bad kind of silence. If silence could have a flavour, this one would taste of sulphur.
 
-## {fight:eilidh v harvest-bot}
+## {fight:eilidh v collector-bot}
 
 ### {lose}
 

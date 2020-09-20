@@ -37,7 +37,7 @@ const PAGES = {
 	splash:	SplashScreen
 };
 
-const DEFAULT_PAGE = 'fight';
+const DEFAULT_PAGE = 'story';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 
