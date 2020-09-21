@@ -7,19 +7,21 @@ Cassie is late getting up, so I walk into school alone.
 
 I pass small groups of students and catch bits of conversation.
 
-Chatty Girl: Did you see the village notice board? Another cat has gone missing.
+Katie "Chatty Girl": Did you see the village notice board? Another cat has gone missing.
 
-Serious Girl: Oh no. Whose cat was it?
+Mina "Serious Girl": Oh no. Whose cat was it?
 
 I walk on.
 
-Boy With Glasses: Have you tried the app?
+David "Boy With Glasses": Have you tried the app?
 
-Athletic Boy: No, I have to focus on my training.
+Donald "Athletic Boy": No, I have to focus on my training.
 
-Boy With Glasses: But you *have* to install it. *Everyone's* on it.
+David "Boy With Glasses": But you *have* to install it. *Everyone's* on it.
 
-TODO ... TODO ...
+TODO
+
+TODO ...
 
 ### The classroom
 
