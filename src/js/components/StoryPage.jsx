@@ -99,10 +99,10 @@ const StoryPage = () => {
 };
 
 /**
- * 
+ * @param {?boolean} once Only scroll once. It is a good idea to set this _or_ `watch`, but not both.
  * @param {?string} watch Scroll again if this changes. You cannot set this and `once`.
  */
-const ScrollIntoView = ({once, watch}) => {
+const ScrollIntoView = ({once, watch, top=false}) => {
 	const endRef = useRef();	
 	assert( ! (once && watch));
 	if (once) watch = "once";	
@@ -110,7 +110,7 @@ const ScrollIntoView = ({once, watch}) => {
 	if (endRef.current) {
 		// do once to allow the user to scroll away?
 		if ( ! done || done !== watch) {
-			endRef.current.scrollIntoView();
+			endRef.current.scrollIntoView(top);
 			setDone(watch);
 		}		
 	}

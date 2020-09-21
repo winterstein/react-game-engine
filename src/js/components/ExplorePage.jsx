@@ -351,7 +351,8 @@ const GameLoop = ({onTick, onClose, children}) => {
 
 	useEffect(() => {
 		// init
-		gl.ticker = new StopWatch();	
+		gl.ticker = new StopWatch();
+		gl.ticker.tickLength = 1000/5; // slow steps
 		// update loop - use request ani frame
 		gameLoop();
 		// clean up

@@ -7,7 +7,7 @@ import DataClass from "./base/data/DataClass";
 
 class StopWatch extends DataClass {
 	
-	/** @type {Number} */
+	/** @type {Number} M-secs between ticks (so tick stays the same then jumps up) */
 	tickLength = 1000 / 20;
 
 	/** 
