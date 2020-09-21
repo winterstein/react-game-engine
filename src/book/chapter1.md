@@ -54,11 +54,11 @@ Mom: Don't lose that.
 
 ### Driving
 
-And then, without further ado, we are off. There really should have been more ado: A speech by the mayor; weeeping friends... 
+And then, without further ado, we are off. 
+
+There really should have been more ado: A speech by the mayor; weeeping friends... 
 
 But it's just the click of seatbelts, the clunk of car doors, and the rumble of the engine. 
-
-//(drive, city, field, cows skull, field)
 
 > It's a long drive. How will I pass the time?
 
@@ -82,11 +82,7 @@ My sister Cassie is all heart. Not.
 
 I read some of my book. 
 
-Book: The human race, to which so many of my readers belong, has been playing at children's games from the beginning, and will probably do it till the end...
-
-//Mr. and Mrs. Dursley of number 4, Privet Drive, were proud to say that they were perfectly normal, thank you very much.
-//The human race, to which so many of my readers belong, has been playing at children's games from the beginning, and will probably do it till the end...
-// Many years later, as he face the firing squad, Colonel Aureliano Buendía was to remember that distant afternoon when his father took him to discover ice.
+Book: Mr. and Mrs. Dursley of number 4, Privet Drive, were proud to say that they were perfectly normal, thank you very much.
 
 {player.knowledge += 1}
 
