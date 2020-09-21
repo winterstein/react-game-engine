@@ -31,7 +31,10 @@ let cassie = new Character({
 	name: "Cassie", 
 	surname: "Findlay",
 	age: 16,
-	src: "/img/src/person/cassie.png", 
+	src: "/img/src/person/cassie.svg", 
+	emotion: {
+		unhappy: "/img/src/person/cassie-unhappy.svg", 
+	},
 	photo: "/img/src/person/cordelia.jpg",
 	spells: [
 	], 
@@ -43,19 +46,27 @@ let cassie = new Character({
 let mom = new Character({
 	name: "Mom", 
 	surname: "Findlay",
-	src: "/img/src/person/mom.png"
+	src: "/img/src/person/mom.svg",
+	emotion: {
+		happy: "/img/src/person/mom-happy.svg", 
+		vhappy: "/img/src/person/mom-vhappy.svg", 
+	},
 });
 let dad = new Character({
 	name: "Dad", 
 	surname: "Findlay",
-	src: "/img/src/person/dad.png"
+	src: "/img/src/person/dad.svg"
 });
 
 
 let katie = new Character({
 	name: "Katie", 
 	surname: "McDougall",
-	src: "/img/src/person/katie.png",
+	src: "/img/src/person/katie.svg",
+	emotion: {
+		happy: "/img/src/person/katie-happy.svg", 
+		vhappy: "/img/src/person/katie-v-happy.svg", 
+	},
 	age: 13,
 	spells: [
 		new Spell({name:'Fish',affinity:'fish',damage:10, carrier:SpriteLib.fish()}), 
@@ -84,6 +95,7 @@ let mina = new Character({
 	name: "Mina", 
 	surname: "Singh",
 	age: 13,
+	src: "/img/src/person/mina.svg",
 	spells: [
 		new Spell({name:'Healing Herbs',affinity:'plant',damage:-40}),
 		new Spell({name:'Nettle',affinity:'plant',damage:40})
@@ -106,9 +118,12 @@ let eilidh = new Character({
 	name:"Eilidh",
 	surname:"Fraser",
 	src: "/img/src/person/eilidh.svg",
+	emotion: {
+		scared: "/img/src/person/eilidh-scared.svg",
+	},
 	spells: [
-		new Spell({name:'Punch',damage:10}), 
-		new Spell({name:'Kick',damage:15}), 
+		new Spell({name:'Punch',damage:5}), 
+		new Spell({name:'Kick',damage:10}), 
 	], 
 	maxHealth: 30
 });
@@ -120,9 +135,9 @@ let omega = new Character({
 });
 
 
-let angel = new Character({
-	name:"Angel",
-	src: "/img/src/person/angel.png",
+let dardariel = new Character({
+	name:"Dardariel",
+	src: "/img/src/person/dardariel.png",
 	affinity: "bird",
 	spells: [
 		new Spell({name:'Eagle',affinity:'bird',damage:200}), 
@@ -157,7 +172,8 @@ export const CHARACTERS = {
 	james, cassie, mom, dad, katie, donald, mina, david,
 	spider,
 	honeybadger,
-	eilidh
+	eilidh,
+	omega, dardariel
 };
 
 

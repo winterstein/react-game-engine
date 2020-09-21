@@ -29,16 +29,16 @@ const ChatLine = ({ line }) => {
 		return <div>{line}</div>;
 	}
 	let { who, label, emotion, said } = m;
-	let type = '.png';
 	let whoCanon = who.toLowerCase().replaceAll(' ','-');
 	let character = CHARACTERS[whoCanon];
-	if (who === 'Omega' || who === 'Narrator') type = '.gif';
 	let img;
 	if (character) {
-		img = character.src;
+		if (emotion && character.emotion) img = character.emotion[emotion];
+		if ( ! img) img = character.src;
 	}
-	if (img !== "none") {
-		img = '/img/src/person/' + space(who, emotion) + type;
+	// fallback
+	if ( ! img) {
+		img = '/img/src/person/' + space(who, emotion) + ".png";
 	}
 	img = img.replaceAll(' ', '-').toLowerCase();
 	// HACK - track people you know
@@ -58,8 +58,10 @@ const ChatLine = ({ line }) => {
 
 /**
  * 
- * @param {!string} line 
+ * @param {!string} line e.g. Lucifer "Charming Devil": (happy) Hello
  * @returns {?object} {who, label, emotion, said} or null label defaults to who (not null)
+ * 
+ * emotion is lowercase, no spaces - eg "vhappy"
  */
 export const splitLine = line => {
 	let m = line.match(rSpeech);
@@ -69,6 +71,8 @@ export const splitLine = line => {
 	let who = m[1].trim();
 	let label = m[2] ? substr(m[2], 1, -1) : who; // pop quotes
 	let emotion = m[3] ? substr(m[3], 1, -1) : null; // pop brackets
+	// emotion: lower case, no spaces
+	if (emotion) emotion = emotion.toLowerCase().replaceAll(/\s/g, "");
 	let said = m[4].trim();
 	return { who, label, emotion, said };
 };

@@ -88,7 +88,7 @@ const StoryPage = () => {
 		<div className="right-page">				
 			<div className="story-zone">
 				{seenNodes.map((t,i) => <StoryLine key={i} node={t} isLatest={i+1 === seenNodes.length} />)}
-				<ScrollIntoView watch={seenNodes.length} />
+				<ScrollIntoView watch={seenNodes.length+lastText} />
 			</div>
 			
 			{splitLine(currentText) && <ChatLine line={currentText} />}
@@ -98,20 +98,29 @@ const StoryPage = () => {
 	</div>);
 };
 
-
-const ScrollIntoView = ({watch}) => {
+/**
+ * 
+ * @param {?string} watch Scroll again if this changes. You cannot set this and `once`.
+ */
+const ScrollIntoView = ({once, watch}) => {
 	const endRef = useRef();	
-	let [once, setOnce] = useState();
-	// TODO watch to allow user scrolling back up
+	assert( ! (once && watch));
+	if (once) watch = "once";	
+	let [done, setDone] = useState();			
 	if (endRef.current) {
-		endRef.current.scrollIntoView();
+		// do once to allow the user to scroll away?
+		if ( ! done || done !== watch) {
+			endRef.current.scrollIntoView();
+			setDone(watch);
+		}		
 	}
-	// if (endRef.current && ! once) {
-	// 	endRef.current.scrollIntoView(); //{ behavior: "smooth" });
-	// 	setOnce(true);
-	// }	
 	return <div ref={endRef} />;
 };
+
+/**
+ * HACK to do scroll once with write-in
+ */
+let lastText;
 
 const StoryLine = ({node, isLatest}) => {
 	let text = node.value && node.value.text;
@@ -149,8 +158,10 @@ const StoryLine = ({node, isLatest}) => {
 		let nw = Math.round(dt / 25);
 		text = text.substr(0,nw); //words.join(" ");
 		// avoid half styling 
-		text = text.replace(/[~*]+(\w+)$/,"$1");
+		text = text.replace(/[~*]+(\w+)$/,"$1");		
 	}
+	// HACK for scroll-into-view once
+	if (isLatest) lastText = text;	
 
 	return <MDText source={text} />;
 };
