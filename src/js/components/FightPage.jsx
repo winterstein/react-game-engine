@@ -68,10 +68,6 @@ const FightPage = () => {
 		document.addEventListener('contextmenu', event => event.preventDefault());
 		rightClickDisabledFlag = true;
 	}
-	// is there story to go with this?
-	if (window.storyTree) {
-		window.storyTree.fightSrcNode = StoryTree.currentSource(window.storyTree);
-	}
 
 	let world = "foo"; //DataStore.getUrlValue("world");
 	let lhs = DataStore.getUrlValue("lhs");
@@ -80,6 +76,10 @@ const FightPage = () => {
 	if ( ! fight) {
 		fight = makeFight({world,lhs,rhs});
 		Game.get().fight = fight;
+		// is there story to go with this?
+		if (window.storyTree) {		
+			window.storyTree.fightSrcNode = StoryTree.currentSource(window.storyTree);
+		}
 	}
 	let sprites = Fight.sprites(fight);
 	let activeSprite = sprites.find(s => s.id === fight.turn);
