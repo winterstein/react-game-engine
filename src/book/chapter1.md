@@ -86,11 +86,9 @@ Book: Mr. and Mrs. Dursley of number 4, Privet Drive, were proud to say that the
 
 {player.knowledge += 1}
 
-#### {end:if}
+### Dream
 
 After a while, I drifted off to sleep. I had the weirdest dream.
-
-### Dream
 
 I'm in a garden. It's a nice garden. There are flowers and butterflies of every colour. I'm seated in a chair facing two most peculiar people. One is a friendly looking old man who smiles at me. The other is a girl with long dark hair, who looks off to the side, as if the whole garden is just *too* boring. 
 

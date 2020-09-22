@@ -300,9 +300,9 @@ const onTick = ticker => {
 };
 
 
-const maybeStartTalk = (game, player, whoName) => {	
+export const maybeStartTalk = (game, player, whoName, storyNode) => {	
 	// source story node?
-	let storyNode = window.storyTree.sceneSrcNode; // currentSource(window.storyTree);
+	if ( ! storyNode) storyNode = window.storyTree.sceneSrcNode; // currentSource(window.storyTree);
 	console.warn("maybeStartTalk", storyNode, player, whoName);
 	if ( ! storyNode) {
 		console.warn("no storynode");
@@ -326,6 +326,7 @@ const maybeStartTalk = (game, player, whoName) => {
 	StoryTree.setCurrentNode(window.storyTree, whoNode);
 	StoryTree.next(window.storyTree);
 	game.talking = true;	
+	return true;
 };
 
 

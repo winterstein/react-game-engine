@@ -6,6 +6,7 @@ import Game from "../Game";
 import { modifyHash } from "../base/utils/miscutils";
 import { CHARACTERS } from "../Character";
 import DataStore from "../base/plumbing/DataStore";
+import MONSTERS from "../MONSTERS";
 
 /**
  * no blanks or comments
@@ -95,9 +96,9 @@ StoryTree.nextToText = (storyTree, node) => {
 	Tree.assIsa(node);
 	while(node) {
 		let nText = StoryTree.text(node) || '';
-		// start/end explore? Then stop
-		if (nText.match(/^{(end[: ] *|)explore}/)) {
-			console.log("don't next through start/end explore: "+nText);
+		// start/end explore|fight? Then stop
+		if (nText.match(/^{(end[: ] *|)(explore|fight)}/)) {
+			console.log("don't next through start/end : "+nText);
 			return null;
 		}
 		// avoid any commands
@@ -202,11 +203,18 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 	assMatch(code, String);
 	assMatch(historyNode, Tree);
 	code = code.trim(); // just in case
-	// a name? This is a syntactic sugar test for explore
-	if (CHARACTERS[code]) {
+	// a character name? This is a syntactic sugar test for explore
+	if (CHARACTERS[code] || MONSTERS[code]) {
 		historyNode.loop = true; // You can't next out of this
 		src4history(storyTree, historyNode).loop = true;
 		console.log(code + " is a name - no execute action"); // no action
+		return;
+	}
+	// HACK fight states - same as explore character-name bits
+	if (code==="win" || code==="lose") {
+		historyNode.loop = true; // is this needed??
+		src4history(storyTree, historyNode).loop = true;
+		console.log(code + " is a fight state - no execute action"); // no action
 		return;
 	}
 	// OMG its fugly hacks all the way down
@@ -259,16 +267,18 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 	// end marker (with a bit of flex on syntax)
 	if (code==='end' || code.substr(0, 4) === 'end:' || code.substr(0, 4) === 'end ') {
 		// end explore?
-		if (code.match(/^end[: ] *explore/)) {
+		if (code.match(/^end[: ] *(explore|fight)/)) {
 			// set the node to the next section
-			let exploreSectionSrcNode = storyTree.sceneSrcNode; // HACK - maybe look up the root chain for an explore StoryTree.currentSource(storyTree);			
-			assert(StoryTree.text(exploreSectionSrcNode).includes("explore"), exploreSectionSrcNode.value);
+			// HACK - ??maybe instead look up the root chain for an explore StoryTree.currentSource(storyTree);			
+			let exploreSectionSrcNode = code.includes("explore")? storyTree.sceneSrcNode : storyTree.fightSrcNode; 
+			// assert(StoryTree.text(exploreSectionSrcNode).find(/(explore|fight)/), exploreSectionSrcNode.value);
 			// the space of nodes available
 			let srcNodes = Tree.flatten(storyTree.root);					
 			let nextSectionSrcNode = next2(storyTree, srcNodes, exploreSectionSrcNode, false);
 			assert(nextSectionSrcNode, srcNodes);
-			StoryTree.setCurrentNode(storyTree, nextSectionSrcNode);
+			assert(nextSectionSrcNode !== exploreSectionSrcNode, nextSectionSrcNode);
 			console.log("Back to the Diary!");
+			StoryTree.setCurrentNode(storyTree, nextSectionSrcNode);
 			modifyHash(['story']);
 			return;	
 		}
@@ -390,7 +400,7 @@ const nextTest = (storyTree, test) => {
 			console.log("TODO else");
 		}
 		// a name? This is ExplorePage's start/stop marker
-		if (CHARACTERS[testCode]) {
+		if (CHARACTERS[testCode] || MONSTERS[testCode]) {
 			console.log(test + " is a name - stop next");
 			return false;
 		}

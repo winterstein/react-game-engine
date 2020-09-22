@@ -15,6 +15,7 @@ import StoryTree from '../data/StoryTree';
 import Game from '../Game';
 import { Button } from 'reactstrap';
 import { CHARACTERS } from '../Character';
+import MONSTERS from '../MONSTERS';
 
 /**
  * regex for dialogue, e.g. `Mom: (happy) We're off!` or `Omega "Morphing Person": Welcome`
@@ -30,7 +31,7 @@ const ChatLine = ({ line }) => {
 	}
 	let { who, label, emotion, said } = m;
 	let whoCanon = who.toLowerCase().replaceAll(' ','-');
-	let character = CHARACTERS[whoCanon];
+	let character = CHARACTERS[whoCanon] || MONSTERS[whoCanon];
 	let img;
 	if (character) {
 		if (emotion && character.emotion) img = character.emotion[emotion];

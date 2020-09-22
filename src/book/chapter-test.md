@@ -1,18 +1,22 @@
 
 # Diary Test
 
-Lets try a random fight
+There is a flash of light.
 
-## {fight:james+katie v monster+monster+monster}
+## {fight:eilidh v collector-bot}
 
 ### {win}
 
-James: We did it!
+Eilidh: W - Where am I?
+
+{end:fight}
 
 ### {lose}
 
-Katie: Rats!
+Collector Bot: So. This one is no pet cat. Master has raised the stakes.
 
-## diary
+{end:fight}
 
-Back to the diary :)
+## Back to the story
+
+Hello again

@@ -36,6 +36,10 @@ import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import { CHARACTERS } from '../Character';
 import MONSTERS from '../MONSTERS';
+import ChatLine, { ChatControls, splitLine } from './ChatLine';
+import {maybeStartTalk} from './ExplorePage';
+import StoryTree from '../data/StoryTree';
+
 // import svg from '../img/angry-robot.svg';
 
 const DrawReact = ({ src, height = "200px", width = "200px" }) => {
@@ -64,6 +68,10 @@ const FightPage = () => {
 		document.addEventListener('contextmenu', event => event.preventDefault());
 		rightClickDisabledFlag = true;
 	}
+	// is there story to go with this?
+	if (window.storyTree) {
+		window.storyTree.fightSrcNode = StoryTree.currentSource(window.storyTree);
+	}
 
 	let world = "foo"; //DataStore.getUrlValue("world");
 	let lhs = DataStore.getUrlValue("lhs");
@@ -89,8 +97,18 @@ const FightPage = () => {
 		}
 	}
 	let c0 = Command.peek();
-	let badger = SpriteLib.badger();
-	badger.x = 200; badger.y = 200;
+	// let badger = SpriteLib.badger();
+	// badger.x = 200; badger.y = 200;
+
+	// get a text node	
+	const game = Game.get();
+	let currentNode = StoryTree.current(window.storyTree);
+	let currentText;
+	if (game.talking) {
+		currentNode = StoryTree.nextToText(window.storyTree, currentNode);
+		currentText = StoryTree.text(currentNode);
+		// NB talking = false is done in onTick
+	}	
 
 	return (<div style={{ position: 'relative', userSelect: "none", overflow: "hidden" }}>
 		<div className='flex-row'>
@@ -119,9 +137,13 @@ const FightPage = () => {
 			Active: {activeSprite && activeSprite.name}
 		</pre>				
 
-		Options:
-		{activeSprite && activeSprite.spells && activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)}
-		<ActionButton action={'Guard'} active={activeSprite} />
+		{game.talking && currentText && splitLine(currentText) && <ChatLine line={currentText} />}
+		{game.talking && <ChatControls currentNode={currentNode} storyTree={window.storyTree} />}
+		
+		{ ! game.talking && activeSprite && activeSprite.spells && 
+			activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)
+		}
+		{ ! game.talking && <ActionButton action={'Guard'} active={activeSprite} /> }
 	</div>);
 };
 
@@ -275,13 +297,18 @@ Command.finish = command => {
 		}
 		break;
 	case "lose":
-		alert("Defeat!");
+		let talking = maybeStartTalk(Game.get(), null, "lose", window.storyTree.fightSrcNode);		
+		if ( ! talking) {
+			alert("defeat");
+		}
 		break;
-	case "win":
-		alert("Victory!");
+	case "win":		
 		let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
 		monster.dead = true;
-		modifyHash(['explore']);
+		talking = maybeStartTalk(Game.get(), null, "win", window.storyTree.fightSrcNode);
+		if ( ! talking) {
+			alert("Victory!");
+		}
 		break;
 	case "die":
 		if ( ! fight.dead) fight.dead=[];

@@ -125,7 +125,7 @@ let eilidh = new Character({
 		new Spell({name:'Punch',damage:5}), 
 		new Spell({name:'Kick',damage:10}), 
 	], 
-	maxHealth: 30
+	maxHealth: 5
 });
 
 

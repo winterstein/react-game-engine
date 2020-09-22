@@ -88,7 +88,9 @@ There is a flash of light - and then silence. A bad kind of silence. If silence 
 
 ### {lose}
 
-Harvest Bot: So. This one is no pet cat. Master has raised the stakes.
+Collector Bot: Processing data...
+
+Collector Bot: This one is no pet cat. Master has expanded the input scope.
 
 ### {win}
 
