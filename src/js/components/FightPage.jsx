@@ -297,7 +297,7 @@ Command.finish = command => {
 		}
 		break;
 	case "lose":
-		let talking = maybeStartTalk(Game.get(), null, "lose", window.storyTree.fightSrcNode);		
+		let talking = window.storyTree && maybeStartTalk(Game.get(), null, "lose", window.storyTree.fightSrcNode);		
 		if ( ! talking) {
 			alert("defeat");
 		}
@@ -305,7 +305,7 @@ Command.finish = command => {
 	case "win":		
 		let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
 		monster.dead = true;
-		talking = maybeStartTalk(Game.get(), null, "win", window.storyTree.fightSrcNode);
+		talking = window.storyTree && maybeStartTalk(Game.get(), null, "win", window.storyTree.fightSrcNode);
 		if ( ! talking) {
 			alert("Victory!");
 		}
@@ -356,6 +356,8 @@ Command.updateCommand = (command, dmsecs) => {
 
 
 const doAction = ({ action, active, target }) => {
+	assert(action);
+	assert(active, "no active for "+action);
 	const actionName = Spell.isa(action)? action.name.toLowerCase() : action.toLowerCase();
 	let attackCommand = new Command(active, "attack", target, action);
 	attackCommand.damage = action.damage || 10;
