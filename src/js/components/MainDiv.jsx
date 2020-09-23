@@ -22,6 +22,7 @@ import StoryPage from './StoryPage';
 import ExplorePage from './ExplorePage';
 import LeftNav from './LeftNav';
 import SplashScreen from './SplashScreen';
+import Messaging from '../base/plumbing/Messaging';
 
 // DataStore
 C.setupDataStore();
@@ -40,6 +41,10 @@ const PAGES = {
 const DEFAULT_PAGE = 'story';
 
 const loginResponsePath = ['misc', 'login', 'response'];
+
+if (isMobile()) {
+	Messaging.notifyUser({type:"warning",text:"Not ready for mobile yet"});
+}
 
 /**
 		Top-level: tabs
