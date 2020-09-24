@@ -66,7 +66,7 @@ Command.str = c => space(c.id, DataClass.str(c.subject), c.verb, c.object, c.val
 	c.startTick && c.latestTick && "done: "+printer.str(100*(c.latestTick - c.startTick)/c.duration)+"% of "+c.duration
 );
 /**
- * 
+ * Call this from within a game loop
  * @param {import('../StopWatch').EpochMSecs} tick
  * @returns {?Command} falsy if the queue is empty
  */
@@ -118,11 +118,9 @@ Command._q = [];
 export const cmd = (command) => {
 	Command.assIsa(command);
 	assert( ! Command._q.includes(command), "Command.js - Already queued!",command);
-	// if (goFirst) {
-	// 	Command._q.unshift(command);
-	// } else {
 	Command._q.push(command);
-	// }
+	console.log("queue", Command.str(command));
+	// do now?
 	if (Command._q.length===1) {
 		assert( ! command.started, "No - Already started?!", command);
 		Command.start(command);

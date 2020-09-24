@@ -1,18 +1,110 @@
 
+// holds ring + controls
+#arena {
+	position:relative;
+	user-select:none;
+	overflow:visible; // allow the selection effect to spill out
+	// outline: solid 1px blue;
+    width: 1000px;
+    height: 750px;
+    font-size: 17px;
+}
+#arena-wrapper {
+	.flex-row()
+}
+#ring {
+	position:relative;
+    width: 100%;
+    height: 670px;
+	// outline: solid 1px green;
+	.progress {
+		height: 0.7rem;
+		opacity: 0.9;
+		width: 75%;
+		background-color:rgba(122,122,122,0.5);
+	}
+}
+
 .selected {
 	border: solid 2px rgba(200,0,0,0.5);
 }
-.focus {
-	box-shadow: 0 0 5px 5px rgba(0,0,255,0.5);
-}
+// .focus {
+// 	box-shadow: 0 0 5px 5px rgba(0,0,255,0.5);
+// }
 
 
-.game-card {
-	width:300px;
-	box-shadow: 2px 2px 2px 2px rgba(0,0,255,0.5);
-}
+// .game-card {
+// 	width:300px;
+// 	box-shadow: 2px 2px 2px 2px rgba(0,0,255,0.5);
+// }
 
 .peep {
 	transition: all 0.25s;
 	color: white;
 }
+
+
+// body {
+// 	margin: 0;
+// 	display: flex;
+// 	justify-content: center;
+// 	align-items: center;
+// 	height: 100vh;
+//   }
+
+
+
+.rotate-shadows {
+	// width: 2@width;
+	// height: 2@width;
+	position: relative;
+}
+  .rotate-shadows:after,
+  .rotate-shadows-under:before {
+	content: "";
+	border-radius: 50%;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	transform-origin: center center;
+  }
+  
+@alpha: 0.3;
+@width: 10px;
+
+  .rotate-shadows:after {
+	box-shadow:  0 @width 0 rgba(250, 250, 0, @alpha),  @width 0 0 rgba(250, 200, 0, @alpha),  0 -@width 0 rgba(250, 150, 0, @alpha),  -@width 0 0 rgba(250, 100, 0, @alpha);
+	animation: rotate-after 3s -0.5s linear infinite;
+  }
+  @keyframes rotate-after {
+	0% {transform: rotateZ(0deg) scaleX(1.2) scaleY(1.2);}
+	50% {transform: rotateZ(180deg) scaleX(1) scaleY(1.1);}
+	100% {transform: rotateZ(360deg) scaleX(1.2) scaleY(1.2);}
+  }
+// @keyframes rotate-before {
+// 	0% {transform: rotateZ(0deg) scaleX(1.2) scaleY(1.2);}
+// 	50% {transform: rotateZ(-180deg) scaleX(1) scaleY(1.1);}
+// 	100% {transform: rotateZ(-360deg) scaleX(1.2) scaleY(1.2);}
+//   }
+
+  .rotate-shadows-under:before {
+	box-shadow:  0 @width 0 rgba(0, 250, 250, @alpha),  @width 0 0 rgba(0, 200, 200, @alpha),  0 -@width 0 rgba(0, 150, 200, @alpha),  -@width 0 0 rgba(0, 200, 250, @alpha);
+	top:57%;
+	height:50%;
+	animation: rotate-before-under 3s -0.5s linear infinite;
+  }
+//   .rotate-shadows.rotate-shadows-under:after {
+// 	box-shadow: none;
+//   }
+  @keyframes rotate-before-under {
+	0% {transform: rotateZ(0deg) scaleX(1) scaleY(0.2);}
+	25% {transform: rotateZ(-10deg) scaleX(0.9) scaleY(0.3);}
+	50% {transform: rotateZ(0deg) scaleX(1) scaleY(0.2);}
+	75% {transform: rotateZ(10deg) scaleX(0.9) scaleY(0.3);}
+	100% {transform: rotateZ(0deg) scaleX(1) scaleY(0.2);}
+  }
+
+
+  

@@ -21,7 +21,7 @@ import PropControl, { setInputStatus } from '../base/components/PropControl';
 import * as PIXI from 'pixi.js';
 // import * as PIXISound from 'pixi-sound';
 import Key, { KEYS } from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody, Row, Col, Card, CardTitle } from 'reactstrap';
+import { Alert, Button, Modal, ModalHeader, ModalBody, Row, Col, Card, CardTitle, Progress } from 'reactstrap';
 import { getPApp } from './Pixies';
 import DataClass, { nonce, getType } from '../base/data/DataClass';
 import GameAdmin, { doNewWorld } from './GameAdmin';
@@ -110,40 +110,48 @@ const FightPage = () => {
 		// NB talking = false is done in onTick
 	}	
 
-	return (<div style={{ position: 'relative', userSelect: "none", overflow: "hidden" }}>
-		<div className='flex-row'>
-			<div className="position-relative" style={{ width: '700px', height: '90vh' }}>
-				{fight.team.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} focus={peep===focalSprite} />)}
+	let [showInfoCard, setShowInfoCard] = useState();
 
-				{fight.enemies.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} focus={peep===focalSprite} />)}
+	return (<div id="arena-wrapper">
+		<div id="arena" >
+			<div id="ring" >
+				{fight.team.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} focus={peep===focalSprite} setShowInfoCard={setShowInfoCard} />)}
+
+				{fight.enemies.map((peep,i) => <Peep i={i} key={peep.id} sprite={peep} selected={peep === activeSprite} focus={peep===focalSprite} setShowInfoCard={setShowInfoCard} />)}
 
 				{c0 && c0.carrier ? <ImgSprite sprite={c0.carrier} /> : null}
-			</div>
-			<div>
-				{focalSprite ? (<Card body className='game-card'><CardTitle><h3>{focalSprite.name}</h3></CardTitle>
-					{focalSprite.affinity ? <h3>{EMOJI[focalSprite.affinity]}</h3> : null}
-					<div>
-						Health: {Math.round(focalSprite.health)} {focalSprite.maxHealth? "("+Math.round(100*focalSprite.health / focalSprite.maxHealth)+"%)" : null}
-					</div>
-					{focalSprite.affinities ? <table><tbody>
-						<tr>{KAffinity.values.map(a => <td key={a}>{EMOJI[a]}</td>)}</tr>
-						<tr>{KAffinity.values.map(a => <td key={a}>{focalSprite.knowAffinity && focalSprite.knowAffinity[a]? (focalSprite.affinities[a] || '-') : '?'}</td>)}</tr>
-					</tbody></table>
-						: null}
-				</Card>) : null}
-			</div>
-		</div>{/* ./flex-row */}
-		<pre>
-			Active: {activeSprite && activeSprite.name}
-		</pre>				
-
-		{game.talking && currentText && splitLine(currentText) && <ChatLine line={currentText} />}
-		{game.talking && <ChatControls currentNode={currentNode} storyTree={window.storyTree} />}
+			</div> {/* ./ring */}
 		
-		{ ! game.talking && activeSprite && activeSprite.spells && 
-			activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)
-		}
-		{ ! game.talking && <ActionButton action={'Guard'} active={activeSprite} /> }
+			{game.talking &&
+			<div id="chat">
+				{currentText && splitLine(currentText) && <ChatLine line={currentText} />}
+				<ChatControls currentNode={currentNode} storyTree={window.storyTree} />
+			</div>}
+
+			{ ! game.talking &&
+			<div id="controls">
+				Active: {activeSprite && activeSprite.name}
+			
+				{activeSprite && activeSprite.spells && 
+					activeSprite.spells.map(spell => <ActionButton active={activeSprite} target={target} key={spell} action={spell} />)
+				}
+				<ActionButton action={'Guard'} active={activeSprite} />
+			</div>}
+
+			{/* <ExtraInfoCard focalSprite={focalSprite} /> */}
+
+		</div>{/* ./arena */}
+	</div>);
+};
+
+const PeepExtraInfo = ({sprite}) => {	
+	return (<div style={{position:"absolute",bottom:"10px",left:"100%"}}>
+		{sprite.affinity && <h3>{EMOJI[sprite.affinity]}</h3>}
+		{sprite.affinities && <table><tbody>
+			{KAffinity.values.map(
+				a => <tr key={a}><td>{EMOJI[a]}</td><td>{sprite.knowAffinity && sprite.knowAffinity[a]? (sprite.affinities[a] || '-') : '?'}</td></tr>
+			)}
+		</tbody></table>}		
 	</div>);
 };
 
@@ -308,6 +316,9 @@ Command.finish = command => {
 		talking = window.storyTree && maybeStartTalk(Game.get(), null, "win", window.storyTree.fightSrcNode);
 		if ( ! talking) {
 			alert("Victory!");
+			// end fight
+			// end fight TODO stack of scenes, story, explore, fight and pop em
+			modifyHash(['explore']);
 		}
 		break;
 	case "die":
@@ -321,7 +332,7 @@ Command.finish = command => {
 	console.log("...finished", Command.str(command));
 }; // ./finish
 
-const adjustHeight = sprites => sprites.forEach((e,i) => e.y = 250*i);
+const adjustHeight = sprites => sprites.forEach((e,i) => e.y = 215*i);
 
 /**
  * 
@@ -390,20 +401,32 @@ const doNextTurn = () => {
 
 const Peep = ({i, sprite, selected, focus }) => {
 	if (sprite.src) {
-		return (<div onClick={e => setFocus(sprite)} className={space('peep', selected && "selected", focus && "focus")}
-			style={{ position: 'absolute', width: '200px', top: sprite.y, left: sprite.x }}
+		return (<div onClick={e => setFocus(sprite)} 
+			onDoubleClick={ e => {console.warn("DOUBLE"); setFocus(sprite); DataStore.setShow("xinfo", true);} }
+			className={space('peep', selected && "rotate-shadows-under", focus && "rotate-shadows")}
+			style={{ position: 'absolute', width: '200px', height:'200px', top: sprite.y, left: sprite.x }}
 		>
-			{selected ? <b>{sprite.name}</b> : null}
-			<div style={{transform:"scaleX(-1)"}}>
-				{sprite.src.includes(".svg")? <DrawReact src={sprite.src} /> : <img alt={sprite.name} src={sprite.src} style={{maxWidth:'200px',maxHeight:'200px'}} />}
-			</div>
-			{sprite.label? <h4>{sprite.label}</h4> : null}
-			{selected || focus? <div>Health: {Math.round(sprite.health)}</div> : null}
-			{sprite.health <= 0 ? <div style={{ position: 'absolute', bottom: 0 }}><DrawReact src={'/img/src/fire.svg'} /></div> : null}
+			<center>				
+				<div style={{transform:"scaleX(-1)"}}>
+					{sprite.src.includes(".svg")? <DrawReact src={sprite.src} height='170px' /> : <img alt={sprite.name} src={sprite.src} style={{maxWidth:'200px',maxHeight:'170px'}} />}
+				</div>
+				{sprite.label? <h4>{sprite.label}</h4> : null}
+				<b style={{visibility:focus||selected?'visible':'hidden'}}>{sprite.name}</b>
+				<ProgressBar abs={Math.round(sprite.health)} fraction={sprite.health / sprite.maxHealth} max={sprite.maxHealth} />				
+				{sprite.health <= 0 ? <div style={{ position: 'absolute', bottom: 0 }}><DrawReact src={'/img/src/fire.svg'} /></div> : null}
+				{focus && <PeepExtraInfo sprite={sprite} />}
+			</center>
 		</div>);
 	}
 	console.warn("No src for sprite", sprite);	
 	return sprite.name;
+};
+
+const ProgressBar = ({abs, fraction, max}) => {
+	return <Progress color={'success'} value={abs} max={max} />;
+	// <div className="progress">
+  	// <div className="progress-bar" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+	// </div>)
 };
 
 const setFocus = sprite => DataStore.setValue(['focus', 'Sprite'], sprite.id);

@@ -290,6 +290,14 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 	alert("TODO execute for "+code);
 };
 
+StoryTree.sceneSrcNode = (storyTree, page="explore") => {
+	// TODO a stack to allow explore within explore
+	if (page==="fight") {
+		return storyTree.fightSrcNode;
+	}
+	return storyTree.sceneSrcNode;
+};
+
 const src4history = (storyTree, historyNode) => {
 	let id = historyNode.value.id;
 	let node = Tree.findByValue(storyTree.root, v => v.id === id);

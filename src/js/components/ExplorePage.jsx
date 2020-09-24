@@ -27,7 +27,8 @@ let dungeon = null;
 let monster = null;
 
 const setupPlace = (place) => {
-	if ( ! place) {
+	// e.g. random:garden
+	if ( ! place || place.substr(0,6) === "random") {
 		dungeon = new Dungeon({
 			size: [100, 100], 
 			seed: nonce(),
@@ -215,12 +216,24 @@ const isSeen = (x,y) => {
 	// return row[x];
 };
 
+const setupDenizens = (sceneSrcNode) => {
+	if ( ! sceneSrcNode) return;
+	// look for characters
+	let kids = Tree.children(sceneSrcNode);
+	kids.forEach(kid => {
+		let text = StoryTree.text(kid) || "";
+		
+	});
+};
+
 const ExplorePage = () => {
 	let path = DataStore.getValue(['location','path']);
 	let place = path && path[1];
 	if ( ! dungeon) {
 		setupPlace(place);
-		if (window.storyTree) window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
+		if (window.storyTree) { window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
+		setupDenizens(StoryTree.sceneSrcNode(window.storyTree, "explore"));
+		}
 	}
 	window.dungeon = dungeon;
 	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 

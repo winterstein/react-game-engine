@@ -3,19 +3,11 @@
 
 There is a flash of light.
 
-## {fight:eilidh v collector-bot}
+## {explore:random}
 
-### {win}
+### {dad}
 
-Eilidh: W - Where am I?
-
-{end:fight}
-
-### {lose}
-
-Collector Bot: So. This one is no pet cat. Master has raised the stakes.
-
-{end:fight}
+Dad: Hello :)
 
 ## Back to the story
 
