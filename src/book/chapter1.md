@@ -56,7 +56,7 @@ Mom: Don't lose that.
 
 And then, without further ado, we are off. 
 
-There really should have been more ado: A speech by the mayor; weeeping friends... 
+There really should have been more ado - A speech by the mayor; weeeping friends... 
 
 But it's just the click of seatbelts, the clunk of car doors, and the rumble of the engine. 
 
