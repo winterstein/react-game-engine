@@ -19,9 +19,11 @@ Donald "Athletic Boy": No, I have to focus on my training.
 
 David "Boy With Glasses": But you *have* to install it. *Everyone's* on it.
 
-TODO
+I walk on. The school looms larger -- an old victorian building, like a cross between a church and a prison.
 
-TODO ...
+Soon I am in the playground, and then in the building.
+
+We had a letter from the Head Teacher so I know where I'm going - the Senior 2 classroom, left after the school doors.
 
 ### The classroom
 
@@ -29,11 +31,15 @@ The important thing when starting school is - Choose carefully where you sit.
 
 This is a key factor in both your social position and grades. You want to avoid idiots who'll drag your grades down, and losers who'll follow you around like a bad smell. 
 
-Last year I arrived late and got hit with both -- the hotly uncontested seat between "Moron" Murphy, and Farty Fraser. 
+Last year I arrived late and got hit with both -- the hotly uncontested seat between Moron Murphy, and Farty Fraser. 
 
-Murphy doesn't know the difference between arithmetic and asthmatic. He would ask for an inhaler to do sums, and one time when Susie Jeffries _did_ have an asthma attack, he started shouting "Calculator! Calculator!". 
+Murphy didn't know the difference between arithmetic and asthmatic. He would ask for an inhaler to do sums. 
 
-Farty Fraser -- well let's just say he _earned_ his nickname. Our group projects were not a success.
+The one time when Susie Jeffries _did_ have an asthma attack, he started shouting "Calculator! Calculator!". 
+
+Farty Fraser -- well let's just say he _earned_ his nickname. 
+
+Our group projects were not a success.
 
 ??painting with pong
 
