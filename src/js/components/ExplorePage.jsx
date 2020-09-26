@@ -20,11 +20,11 @@ import Key, { KEYS } from '../Key';
 import StopWatch from '../StopWatch';
 import ChatLine, { ChatControls, splitLine } from './ChatLine';
 import { collision } from './Collision';
+import StoryBit, {maybeStartTalk} from './StoryBit';
 
 
 
 let dungeon = null;
-let monster = null;
 
 const setupPlace = (place) => {
 	// e.g. random:garden
@@ -54,7 +54,7 @@ const setupPlace = (place) => {
 			room_count: 12
 		});		 
 		dungeon.generate();
-		monster = setupMonster();		
+		let monster = setupMonster();		
 		console.log("dungeon", dungeon);		
 		return dungeon;
 	}
@@ -193,7 +193,8 @@ const setupMonster = () => {
 		}
 		monster.x = mx;
 		monster.y = my;
-		monster.dead = false;
+		monster.dead = false;		
+		dungeon.spriteNameForx_y[mx+"_"+my] = MONSTER;
 	}
 	return monster;
 };
@@ -216,13 +217,17 @@ const isSeen = (x,y) => {
 	// return row[x];
 };
 
+/**
+ * TODO place people into the dungeon if they need to
+ * @param {*} sceneSrcNode 
+ */
 const setupDenizens = (sceneSrcNode) => {
 	if ( ! sceneSrcNode) return;
 	// look for characters
 	let kids = Tree.children(sceneSrcNode);
 	kids.forEach(kid => {
 		let text = StoryTree.text(kid) || "";
-		
+		console.log("TODO setup",text);
 	});
 };
 
@@ -231,8 +236,9 @@ const ExplorePage = () => {
 	let place = path && path[1];
 	if ( ! dungeon) {
 		setupPlace(place);
-		if (window.storyTree) { window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
-		setupDenizens(StoryTree.sceneSrcNode(window.storyTree, "explore"));
+		if (window.storyTree) { 
+			window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
+			setupDenizens(StoryTree.sceneSrcNode(window.storyTree, "explore"));
 		}
 	}
 	window.dungeon = dungeon;
@@ -241,27 +247,12 @@ const ExplorePage = () => {
 		player = Game.getPlayer(Game.get()) || CHARACTERS.james;
 		player.x = sx_sy[0];
 		player.y = sx_sy[1];
-	}		
-	const game = Game.get();
-	let watchme = {"game.talking": game.talking};
-
-	// get a text node
-	let currentNode = StoryTree.current(window.storyTree);
-	let currentText;
-	if (game.talking) {
-		currentNode = StoryTree.nextToText(window.storyTree, currentNode);
-		currentText = StoryTree.text(currentNode);
-		// NB talking = false is done in onTick
 	}
-	
 
 	return (<Container>
 		<GameLoop onTick={onTick}>
-			DUNGEON
 			<MiniMap player={player} />
-			
-			{game.talking && currentText && splitLine(currentText) && <ChatLine line={currentText} />}
-			{game.talking && <ChatControls currentNode={currentNode} storyTree={window.storyTree} />}
+			<StoryBit storyTree={window.storyTree} />
 		</GameLoop>
 	</Container>);
 };
@@ -275,13 +266,6 @@ const onTick = ticker => {
 	setSeen(nx,ny);
 	const game = Game.get();
 	if (game.talking) {
-		let currentStoryNode = StoryTree.current(window.storyTree);
-		if (currentStoryNode && StoryTree.isEnd(window.storyTree, currentStoryNode)) {
-			game.talking = false;
-			console.log("TALK DONE");
-			StoryTree.setCurrentNode(window.storyTree, window.storyTree.sceneSrcNode);
-		}	
-		DataStore.update();	
 		return; // in a talk
 	}
 	if (keyLeft.isDown) nx--;
@@ -313,36 +297,6 @@ const onTick = ticker => {
 };
 
 
-export const maybeStartTalk = (game, player, whoName, storyNode) => {	
-	// source story node?
-	if ( ! storyNode) storyNode = window.storyTree.sceneSrcNode; // currentSource(window.storyTree);
-	console.warn("maybeStartTalk", storyNode, player, whoName);
-	if ( ! storyNode) {
-		console.warn("no storynode");
-		return;
-	}
-	// node for person?	
-	// NB: flatten() is more forgiving than children(), but means you cant have if blocks around name chunks
-	// a tree walk setup would be ideal. but sod that complexity
-	let nodes = Tree.children(storyNode);
-	let whoNodes = nodes.filter(n => n.value && n.value.text==="{"+whoName+"}");
-	if (whoNodes.length === 0) {
-		whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text===whoName);
-		if (whoNodes.length) console.warn("Handling bad script syntax: please use `{name}` for on-bump-into bits");
-	}
-	if (whoNodes.length !== 1) {
-		console.warn("Could not cleanly find node for "+whoName, storyNode);
-		return;
-	}
-	let whoNode = whoNodes[0];
-	console.warn("YES StartTalk", whoName, whoNode);
-	StoryTree.setCurrentNode(window.storyTree, whoNode);
-	StoryTree.next(window.storyTree);
-	game.talking = true;	
-	return true;
-};
-
-
 const GameLoop = ({onTick, onClose, children}) => {
 	assMatch(onTick, Function);
 	// tick
@@ -366,7 +320,7 @@ const GameLoop = ({onTick, onClose, children}) => {
 	useEffect(() => {
 		// init
 		gl.ticker = new StopWatch();
-		gl.ticker.tickLength = 1000/5; // slow steps
+		gl.ticker.tickLength = 1000/10; // moderately slow steps
 		// update loop - use request ani frame
 		gameLoop();
 		// clean up
@@ -427,8 +381,7 @@ const what = (x,y) => {
 	// collision?
 	if (x===player.x && y===player.y) {
 		return "player";
-	}
-	if (monster && x===monster.x && y===monster.y) return MONSTER;
+	}	
 	let sn = dungeon.spriteNameForx_y && dungeon.spriteNameForx_y[x+"_"+y];
 	if (sn) return sn;
 	return whatFloor(x,y);

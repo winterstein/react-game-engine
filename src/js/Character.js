@@ -83,6 +83,7 @@ let donald = new Character({
 	name: "Donald", 
 	surname: "McDougall",
 	age: 15,
+	src: "/img/src/person/donald.svg",
 	spells: [
 	], 
 	health: 100, 
@@ -125,6 +126,8 @@ let eilidh = new Character({
 		new Spell({name:'Punch',damage:5}), 
 		new Spell({name:'Kick',damage:10}), 
 	], 
+	// starts low!
+	agility: 1,
 	maxHealth: 5
 });
 
@@ -166,6 +169,8 @@ let honeybadger = new Character({ name: "Honey Badger", src: "/img/src/honey-bad
 	affinity: 'mammal'
 });
 
+let infectedPhone = new Character({ name: "Infected Phone", src: "/img/src/phone.png", 
+});
 
 export const CHARACTERS = {
 	narrator,
@@ -173,7 +178,8 @@ export const CHARACTERS = {
 	spider,
 	honeybadger,
 	eilidh,
-	omega, dardariel
+	omega, dardariel,
+	infectedPhone
 };
 
 

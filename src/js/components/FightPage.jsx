@@ -37,8 +37,9 @@ import printer from '../base/utils/printer';
 import { CHARACTERS } from '../Character';
 import MONSTERS from '../MONSTERS';
 import ChatLine, { ChatControls, splitLine } from './ChatLine';
-import {maybeStartTalk} from './ExplorePage';
+import ExplorePage from './ExplorePage';
 import StoryTree from '../data/StoryTree';
+import StoryBit, { maybeStartTalk } from './StoryBit';
 
 // import svg from '../img/angry-robot.svg';
 
@@ -79,6 +80,8 @@ const FightPage = () => {
 		// is there story to go with this?
 		if (window.storyTree) {		
 			window.storyTree.fightSrcNode = StoryTree.currentSource(window.storyTree);
+			// intro text?
+			let talking = maybeStartTalk(Game.get(), null, "start", window.storyTree.fightSrcNode);		
 		}
 	}
 	let sprites = Fight.sprites(fight);
@@ -97,18 +100,8 @@ const FightPage = () => {
 		}
 	}
 	let c0 = Command.peek();
-	// let badger = SpriteLib.badger();
-	// badger.x = 200; badger.y = 200;
 
-	// get a text node	
 	const game = Game.get();
-	let currentNode = StoryTree.current(window.storyTree);
-	let currentText;
-	if (game.talking) {
-		currentNode = StoryTree.nextToText(window.storyTree, currentNode);
-		currentText = StoryTree.text(currentNode);
-		// NB talking = false is done in onTick
-	}	
 
 	let [showInfoCard, setShowInfoCard] = useState();
 
@@ -122,11 +115,7 @@ const FightPage = () => {
 				{c0 && c0.carrier ? <ImgSprite sprite={c0.carrier} /> : null}
 			</div> {/* ./ring */}
 		
-			{game.talking &&
-			<div id="chat">
-				{currentText && splitLine(currentText) && <ChatLine line={currentText} />}
-				<ChatControls currentNode={currentNode} storyTree={window.storyTree} />
-			</div>}
+			<StoryBit storyTree={window.storyTree} />
 
 			{ ! game.talking &&
 			<div id="controls">
@@ -137,8 +126,6 @@ const FightPage = () => {
 				}
 				<ActionButton action={'Guard'} active={activeSprite} />
 			</div>}
-
-			{/* <ExtraInfoCard focalSprite={focalSprite} /> */}
 
 		</div>{/* ./arena */}
 	</div>);

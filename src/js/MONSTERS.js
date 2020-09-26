@@ -32,7 +32,9 @@ add(new Monster({
 	src: "/img/src/monster/collector-bot.png",
 	// TODO cc Jonathan Barker / CC BY-SA (https://creativecommons.org/licenses/by-sa/4.0)
 	spells: [new Spell({ name: 'Snip', damage: 25 }), new Spell({ name: 'Grab', damage: 10 })],
-	health: 50
+
+	health: 50,
+	agility: 10,
 }));
 
 add(new Monster({

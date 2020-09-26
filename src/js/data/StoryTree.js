@@ -211,7 +211,7 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		return;
 	}
 	// HACK fight states - same as explore character-name bits
-	if (code==="win" || code==="lose") {
+	if (code==="win" || code==="lose" || code==="start") {
 		historyNode.loop = true; // is this needed??
 		src4history(storyTree, historyNode).loop = true;
 		console.log(code + " is a fight state - no execute action"); // no action
