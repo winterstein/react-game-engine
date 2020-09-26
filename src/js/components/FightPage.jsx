@@ -77,12 +77,6 @@ const FightPage = () => {
 	if ( ! fight) {
 		fight = makeFight({world,lhs,rhs});
 		Game.get().fight = fight;
-		// is there story to go with this?
-		if (window.storyTree) {		
-			window.storyTree.fightSrcNode = StoryTree.currentSource(window.storyTree);
-			// intro text?
-			let talking = maybeStartTalk(Game.get(), null, "start", window.storyTree.fightSrcNode);		
-		}
 	}
 	let sprites = Fight.sprites(fight);
 	let activeSprite = sprites.find(s => s.id === fight.turn);
@@ -292,7 +286,7 @@ Command.finish = command => {
 		}
 		break;
 	case "lose":
-		let talking = window.storyTree && maybeStartTalk(Game.get(), null, "lose", window.storyTree.fightSrcNode);		
+		let talking = window.storyTree && maybeStartTalk(Game.get(), null, "lose", window.storyTree);		
 		if ( ! talking) {
 			alert("defeat");
 		}
@@ -300,7 +294,7 @@ Command.finish = command => {
 	case "win":		
 		let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
 		monster.dead = true;
-		talking = window.storyTree && maybeStartTalk(Game.get(), null, "win", window.storyTree.fightSrcNode);
+		talking = window.storyTree && maybeStartTalk(Game.get(), null, "win", window.storyTree);
 		if ( ! talking) {
 			alert("Victory!");
 			// end fight
@@ -502,6 +496,13 @@ const makeFight = ({world,rhs,lhs}) => {
 	};
 	//Start the loop
 	gameLoop();
+
+	// is there story to go with this?
+	if (window.storyTree) {		
+		StoryTree.storyStackPush(window.storyTree, StoryTree.currentSource(window.storyTree));
+		// intro text?
+		let talking = maybeStartTalk(Game.get(), null, "start", window.storyTree);
+	}
 
 	return fight;
 };

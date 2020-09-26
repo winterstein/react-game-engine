@@ -17,9 +17,13 @@ Collector Bot: Processing data...
 
 Collector Bot: This one is no pet cat. Master has expanded the input scope.
 
+{end:fight}
+
 ### {win}
 
 Eilidh: W - Where am I?
+
+{end:fight}
 
 ## End of Chapter 2
 

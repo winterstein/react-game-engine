@@ -20,9 +20,17 @@ import ChatLine, { ChatControls, splitLine } from './ChatLine';
 import { collision } from './Collision';
 
 
-export const maybeStartTalk = (game, player, whoName, storyNode) => {	
+/**
+ * 
+ * @param {!Game} game 
+ * @param {?Person} player 
+ * @param {!string} whoName 
+ * @param {?Tree} storyNode 
+ */
+export const maybeStartTalk = (game, player, whoName, storyTree) => {	
 	// source story node?
-	if ( ! storyNode) storyNode = window.storyTree.sceneSrcNode; // currentSource(window.storyTree);
+	StoryTree.assIsa(storyTree);
+	let storyNode = StoryTree.storyStackPeek(window.storyTree);
 	console.warn("maybeStartTalk", storyNode, player, whoName);
 	if ( ! storyNode) {
 		console.warn("no storynode");
@@ -62,8 +70,9 @@ const StoryBit = ({storyTree}) => {
 	// end?
 	if (currentNode && StoryTree.isEnd(storyTree, currentNode)) {
 		game.talking = false;
-		console.log("TALK DONE"); // TODO stack of scenes TODO s/fight|explore/ do better/
-		StoryTree.setCurrentNode(storyTree, storyTree.sceneSrcNode);
+		console.log("TALK DONE"); 
+		// current node = the current story level node
+		StoryTree.setCurrentNode(storyTree, StoryTree.storyStackPeek(storyTree));
 		DataStore.update();	
 		return null;
 	}	

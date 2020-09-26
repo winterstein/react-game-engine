@@ -194,6 +194,7 @@ const setupMonster = () => {
 		monster.x = mx;
 		monster.y = my;
 		monster.dead = false;		
+		if ( ! dungeon.spriteNameForx_y) dungeon.spriteNameForx_y = {};
 		dungeon.spriteNameForx_y[mx+"_"+my] = MONSTER;
 	}
 	return monster;
@@ -219,7 +220,7 @@ const isSeen = (x,y) => {
 
 /**
  * TODO place people into the dungeon if they need to
- * @param {*} sceneSrcNode 
+ * @param {?Tree} sceneSrcNode 
  */
 const setupDenizens = (sceneSrcNode) => {
 	if ( ! sceneSrcNode) return;
@@ -237,8 +238,8 @@ const ExplorePage = () => {
 	if ( ! dungeon) {
 		setupPlace(place);
 		if (window.storyTree) { 
-			window.storyTree.sceneSrcNode = StoryTree.currentSource(window.storyTree);
-			setupDenizens(StoryTree.sceneSrcNode(window.storyTree, "explore"));
+			let storyNode = StoryTree.storyStackPush(window.storyTree, StoryTree.currentSource(window.storyTree));
+			setupDenizens(storyNode);
 		}
 	}
 	window.dungeon = dungeon;
@@ -287,7 +288,7 @@ const onTick = ticker => {
 			modifyHash(['fight']);
 		}
 		if (CHARACTERS[w]) {
-			maybeStartTalk(game, player, w);
+			maybeStartTalk(game, player, w, window.storyTree);
 			return; // no walking through people
 		}
 		player.x = nx;

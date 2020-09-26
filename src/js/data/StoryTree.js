@@ -26,6 +26,12 @@ class StoryTree extends DataClass {
 	 */
 	memory = {};
 
+	/**
+	 * Story scene/fight nodes
+	 * @type {Tree[]}
+	 */
+	storyStack = [];
+
 	constructor(text) {
 		super();
 		this.text = text;
@@ -270,7 +276,7 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		if (code.match(/^end[: ] *(explore|fight)/)) {
 			// set the node to the next section
 			// HACK - ??maybe instead look up the root chain for an explore StoryTree.currentSource(storyTree);			
-			let exploreSectionSrcNode = code.includes("explore")? storyTree.sceneSrcNode : storyTree.fightSrcNode; 
+			let exploreSectionSrcNode = StoryTree.storyStackPop(storyTree); 
 			// assert(StoryTree.text(exploreSectionSrcNode).find(/(explore|fight)/), exploreSectionSrcNode.value);
 			// the space of nodes available
 			let srcNodes = Tree.flatten(storyTree.root);					
@@ -290,12 +296,38 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 	alert("TODO execute for "+code);
 };
 
-StoryTree.sceneSrcNode = (storyTree, page="explore") => {
-	// TODO a stack to allow explore within explore
-	if (page==="fight") {
-		return storyTree.fightSrcNode;
+/**
+ * 
+ * @param {!StoryTree} storyTree 
+ * @returns {?Tree}
+ */
+StoryTree.storyStackPop = (storyTree) => {
+	let node = storyTree.storyStack.pop();
+	return node;
+};
+/**
+ * 
+ * @param {!StoryTree} storyTree 
+ * @returns {?Tree}
+ */
+StoryTree.storyStackPeek = (storyTree) => {
+	if ( ! storyTree.storyStack.length) {
+		return null;
 	}
-	return storyTree.sceneSrcNode;
+	let node = storyTree.storyStack[storyTree.storyStack.length - 1];
+	return node;
+};
+/**
+ * 
+ * @param {!StoryTree} storyTree 
+ * @param {!Tree} storyNode 
+ */
+StoryTree.storyStackPush = (storyTree, storyNode) => {
+	StoryTree.assIsa(storyTree);
+	Tree.assIsa(storyNode);
+	assert(storyTree.storyStack.indexOf(storyNode) === -1, storyTree.storyStack);
+	storyTree.storyStack.push(storyNode);
+	return storyNode;
 };
 
 const src4history = (storyTree, historyNode) => {
