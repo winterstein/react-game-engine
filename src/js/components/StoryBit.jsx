@@ -28,28 +28,14 @@ import { collision } from './Collision';
  * @param {?Tree} storyNode 
  */
 export const maybeStartTalk = (game, player, whoName, storyTree) => {	
+	console.warn("maybeStartTalk", storyTree, player, whoName);
 	// source story node?
 	StoryTree.assIsa(storyTree);
-	let storyNode = StoryTree.storyStackPeek(window.storyTree);
-	console.warn("maybeStartTalk", storyNode, player, whoName);
-	if ( ! storyNode) {
-		console.warn("no storynode");
-		return;
+	let storyNode = StoryTree.storyStackPeek(storyTree);
+	let whoNode = StoryTree.findNamedNode(storyNode, whoName);
+	if ( ! whoNode) {
+		return null;
 	}
-	// node for person?	
-	// NB: flatten() is more forgiving than children(), but means you cant have if blocks around name chunks
-	// a tree walk setup would be ideal. but sod that complexity
-	let nodes = Tree.children(storyNode);
-	let whoNodes = nodes.filter(n => n.value && n.value.text==="{"+whoName+"}");
-	if (whoNodes.length === 0) {
-		whoNodes = Tree.children(storyNode).filter(n => n.value && n.value.text===whoName);
-		if (whoNodes.length) console.warn("Handling bad script syntax: please use `{name}` for on-bump-into bits");
-	}
-	if (whoNodes.length !== 1) {
-		console.warn("Could not cleanly find node for "+whoName, storyNode);
-		return;
-	}
-	let whoNode = whoNodes[0];
 	console.warn("YES StartTalk", whoName, whoNode);
 	StoryTree.setCurrentNode(window.storyTree, whoNode);
 	StoryTree.next(window.storyTree);

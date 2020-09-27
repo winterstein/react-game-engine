@@ -90,7 +90,7 @@ const ChatControls2 = ({ currentNode, storyTree }) => {
 		// bump right to avoid accidental next clicks
 		return (<div className="ml-5">
 			{choices.map((c,j) =>
-				<Button size="lg" className={"ml-2 mr-2 animate__animated animate__delay-"+j+"s animate__slideInUp"} color="primary" 
+				<Button size="lg" className={"ml-2 mr-2 mb-2 animate__animated animate__delay-"+j+"s animate__slideInUp"} color="primary" 
 					onClick={e => doChoice({ currentNode, storyTree, c, thenbit })} key={c}>
 					{c}
 				</Button>

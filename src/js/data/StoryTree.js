@@ -325,9 +325,49 @@ StoryTree.storyStackPeek = (storyTree) => {
 StoryTree.storyStackPush = (storyTree, storyNode) => {
 	StoryTree.assIsa(storyTree);
 	Tree.assIsa(storyNode);
-	assert(storyTree.storyStack.indexOf(storyNode) === -1, storyTree.storyStack);
+	console.warn("storyStackPush", storyNode.value && storyNode.value.text);
+	if (storyTree.storyStack.indexOf(storyNode) !== -1) {
+		// how is this getting called twice? odd. Sept 2020
+		console.error("Duplicate stack push!?", storyNode.value && storyNode.value.text);
+		return storyNode;
+	}
 	storyTree.storyStack.push(storyNode);
+	console.log("storyStack = "+storyTree.storyStack.map(n => n.value && n.value.text));
 	return storyNode;
+};
+
+const canon = s => s && s.trim().toLowerCase();
+
+/**
+ * 
+ * @param {?Tree} storyNode 
+ * @param {!string} whoName 
+ * @returns {?Tree}
+ */
+StoryTree.findNamedNode = (storyNode, whoName) => {
+	if ( ! storyNode) {
+		console.warn("no storynode");
+		return null;
+	}
+	Tree.assIsa(storyNode);
+	console.warn("findNamedNode", whoName, storyNode);
+	// node for person?	
+	// NB: flatten() is more forgiving than children(), but means you cant have if blocks around name chunks
+	// a tree walk setup would be ideal. but sod that complexity
+	let nodes = Tree.children(storyNode);
+	whoName = canon(whoName);
+	let whoNodes = nodes.filter(n => n.value && canon(n.value.text)==="{"+whoName+"}");
+	if (whoNodes.length === 0) {
+		// try without the {}s
+		whoNodes = Tree.children(storyNode).filter(n => n.value && canon(n.value.text)===whoName);
+		if (whoNodes.length) console.warn("Handling bad script syntax: please use `{name}` for on-bump-into bits");
+	}
+	if (whoNodes.length !== 1) {
+		console.warn("Could not cleanly find node for "+whoName, storyNode);
+		return null;
+	}
+	let whoNode = whoNodes[0];
+	return whoNode;
 };
 
 const src4history = (storyTree, historyNode) => {
@@ -474,12 +514,28 @@ const nextTest2_eval = (storyTree, expr) => {
 		return !!haveit;
 	}
 	// if flag.ateMushroom
-	let m = expr.match(/([a-zA-Z0-9\-_.]+)/);
+	// if mytable = A
+	let m = expr.match(/([a-zA-Z0-9\-_.]+)\s*(=\s*[a-zA-Z0-9\-_.]+)?/);
 	if (m) {
 		let vpath = m[1];
 		let memval = StoryTree.memory(storyTree, vpath);
-		if (memval) console.log("nextTest: memory yes! " + expr);
-		return !!memval;
+		// flag test or = test?
+		if ( ! memval) {
+			return false;
+		}
+		// truthy test or =s?
+		let eqy = m[2];
+		if ( ! eqy) {
+			console.log("nextTest: memory flag yes! " + expr);
+			return true;
+		}
+		eqy = eqy.substr(1).trim(); // pop the =
+		if (memval == eqy) {
+			console.log("nextTest: memory eq yes! " + expr+" "+memval+" = "+eqy);
+			return true;
+		}
+		console.log("nextTest: memory eq no " + expr+" "+memval+" != "+eqy);
+		return false;
 	}
 	throw new Error("Unknown test code: " + expr);
 };

@@ -109,6 +109,7 @@ let mina = new Character({
 let david = new Character({
 	name:"David",
 	surname:"McFadden",
+	src: "/img/src/person/david.svg",
 	affinity: "bug",
 	spells: [
 		new Spell({name:'Midge',affinity:'bug',damage:10}), 

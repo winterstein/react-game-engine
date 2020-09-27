@@ -29,7 +29,7 @@ We had a letter from the Head Teacher so I know where I'm going - the Senior 2 c
 
 The important thing when starting school is - Choose carefully where you sit. 
 
-This is a key factor in both your social position and grades. You want to avoid idiots who'll drag your grades down, and losers who'll follow you around like a bad smell. 
+This affects both your social position and your grades. You want to avoid idiots who'll drag your grades down, and losers who'll follow you around like a bad smell. 
 
 Last year I arrived late and got hit with both -- the hotly uncontested seat between Moron Murphy, and Farty Fraser. 
 
@@ -45,16 +45,97 @@ Our group projects were not a success.
 
 So I arrive on time, to choose my seat wisely. 
 
-Except, you don't know who anyone is, so it's a blind choice.
+Except, I don't know who anyone is, so it's a blind choice.
 
-Where will you sit? 
+Where should I sit? 
 
-|Table A|Table B|Table C|
+|Table A|Table B| 
 
-Next, is the hard bit. I have to talk to someone. But they're all strangers. I suppose some of them could be great friends in waiting. 
+{if |Table A|} {mytable=A}
 
-...What this new app?
+{if |Table B|} {mytable=B}
 
+Next, is the hard bit. *Talking* to someone. But they're all strangers. 
+
+I suppose some of them could be great friends in waiting. Maybe.
+
+|Hello|You lookin at me?|...|
+
+#### {if mytable = A}
+
+Katie: (happy) Hello - You must be new here. I'm Katie.
+
+#### {if mytable = B}
+
+David: Wotcha.
+
+### Lesson - History
+
+History Teacher: Good morning class. This term's subject is the history of America.
+
+History Teacher: The American War of Independence started in 1775. 
+
+History Teacher: Let's see what the new boy knows. James!
+
+History Teacher: - Why did the American colonies rebel? They had a famous slogan.
+
+|No bling for the King!|No taxation without representation!|Not for riches but for freedom!|
+
+#### {if |No taxation without representation!|}
+
+History Teacher: That's right. 
+
+{player.knowledge += 1}
+
+#### {if |No bling for the King!|}
+
+History Teacher: Bling? No, it was 'No taxation without representation'
+
+#### {if |Not for riches but for freedom!|}
+
+History Teacher: No, that sounds like Scotland's Declaration of Arbroath. It was 'No taxation without representation'
+
+#### {end:if}
+
+History Teacher: The American colonies were angry at paying tax to Britain when they had no say in the British parliament.
+
+History Teacher: They set up their own democratic meetings.
+
+The lesson rolls on. 
+
+### Lunchtime
+
+## {explore:playground}
+
+### {map}
+
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x............x   2            x
+x............x  tt   ttt  tt  x
+x............x                x
+x....4.......xxxxxxx--xxxxxxxxx 
+x....1.......                 x
+x............3               0x
+x............ 56              x
+x............                 x
+x............                 x
+x............                 x
+x............                 x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+1: donald
+2: david
+3: eilidh
+4: dunno
+5: mina
+6: katie
+
+### {david}
+
+David: install the app -- here's an install code {install-code >> inventory}
+
+
+### {girls}
 
 "Oh Katie, you've got an apple. Swap?"
 
@@ -90,6 +171,7 @@ Eilidh: What the...?
 
 There is a flash of light - and then silence. A bad kind of silence. If silence could have a flavour, this one would taste of sulphur.
 
+
 ## {fight:eilidh v collector-bot}
 
 ### {start}
@@ -107,6 +189,7 @@ Collector Bot: This one is no pet cat. Master has expanded the input scope.
 ### {win}
 
 Eilidh: W - Where am I?
+
 
 ## End of Chapter 2
 

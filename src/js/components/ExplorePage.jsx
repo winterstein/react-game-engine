@@ -25,8 +25,12 @@ import StoryBit, {maybeStartTalk} from './StoryBit';
 
 
 let dungeon = null;
-
-const setupPlace = (place) => {
+/**
+ * 
+ * @param {?string} place 
+ * @param {?Tree} storyNode 
+ */
+const setupPlace = (place, storyNode) => {
 	// e.g. random:garden
 	if ( ! place || place.substr(0,6) === "random") {
 		dungeon = new Dungeon({
@@ -126,6 +130,54 @@ const setupPlace = (place) => {
 		dungeon.maxx = dungeon.walls.rows[0].length - 1;
 		// nothing is seen yet
 		dungeon.seen = dungeon.walls.rows.map(r => r.map(c => false));
+		return dungeon;
+	}
+	// setup from map?
+	let mapNode = StoryTree.findNamedNode(storyNode, "map");
+	if (mapNode) {
+		console.warn("MAP", mapNode);
+		dungeon = {
+			name: place,
+			children: [
+			],
+			walls: {
+			},
+			spriteNameForx_y: {}
+		};
+		// look for a map
+		let text = Tree.flatten(mapNode).map(kid => kid.value && kid.value.text).filter(x => x);
+		console.log("map", text);
+		let rowText = text[1];
+		let posnText = text[2];		
+		let rows = rowText.split("\n").map(
+			r => r.trim().split("").map(c => c===" "? false : c)
+		);
+		dungeon.walls.rows = rows;
+		// size			
+		dungeon.maxy = dungeon.walls.rows.length - 1;
+		dungeon.maxx = dungeon.walls.rows[0].length - 1;
+		// nothing is seen yet
+		dungeon.seen = dungeon.walls.rows.map(r => r.map(c => false));
+		// place people
+		if (posnText) {
+			let posns = posnText.split("\n");
+			posns.map(posn => {
+				let mp = posn.match(/^(\w):\s*(\w+)\s*$/);
+				if ( ! mp) {
+					console.warn("huh",posn);
+					return;
+				}
+				let marker = mp[1];
+				let rowi = dungeon.walls.rows.findIndex(r => r.includes(marker));
+				let coli = dungeon.walls.rows[rowi].indexOf(marker);
+				dungeon.spriteNameForx_y[coli+"_"+rowi] = mp[2].toLowerCase();
+			});
+		}
+		// start at 0
+		let marker = "0";
+		let rowi = dungeon.walls.rows.findIndex(r => r.includes(marker));
+		let coli = dungeon.walls.rows[rowi].indexOf(marker);
+		dungeon.start_pos = [coli,rowi];
 		return dungeon;
 	}
 	throw new Error("TODO place "+place);
@@ -236,19 +288,24 @@ const ExplorePage = () => {
 	let path = DataStore.getValue(['location','path']);
 	let place = path && path[1];
 	if ( ! dungeon) {
-		setupPlace(place);
+		// setup
 		if (window.storyTree) { 
-			let storyNode = StoryTree.storyStackPush(window.storyTree, StoryTree.currentSource(window.storyTree));
+			let storyNode = StoryTree.currentSource(window.storyTree);
+			StoryTree.storyStackPush(window.storyTree, storyNode);
+			setupPlace(place, storyNode);
 			setupDenizens(storyNode);
+		} else {
+			setupPlace(place);
 		}
-	}
-	window.dungeon = dungeon;
-	let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
-	if ( ! player) {
-		player = Game.getPlayer(Game.get()) || CHARACTERS.james;
+		// where is the player?
+		let sx_sy = dungeon.start_pos; //[x, y] center of 'initial' piece 
+		if ( ! player) {
+			player = Game.getPlayer(Game.get()) || CHARACTERS.james;
+		}
 		player.x = sx_sy[0];
-		player.y = sx_sy[1];
+		player.y = sx_sy[1];			
 	}
+	window.dungeon = dungeon;	
 
 	return (<Container>
 		<GameLoop onTick={onTick}>
@@ -363,6 +420,7 @@ const drawChar = w => {
 	case "-": return "🚪";
 	case ".": return null; // grass
 	case "t": return "🚽";
+	case "T": return "╥"; // table
 	case "c": return "🍳";
 	case "mom": return "👩";
 	case "dad": return "👨";

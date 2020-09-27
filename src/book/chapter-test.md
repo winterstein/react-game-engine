@@ -1,30 +1,26 @@
+### Lunchtime
 
-# test 
+## {explore:playground}
 
-There is a flash of light - and then silence.
+### {map}
 
-## {fight:eilidh v collector-bot}
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+x............x   2            x
+x............x  tt   TTT  tt  x
+x............x                x
+x............xxxxxxx--xxxxxxxxx 
+x....1.......                 x
+x............       0         x
+x............                 x
+x............                 x
+x............                 x
+x............                 x
+x............                 x
+xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
-### {start}
+1: donald
+2: david
 
-Eilidh: What the...?
+### {david}
 
-Collector Bot: Target acquired. 
-
-### {lose}
-
-Collector Bot: Processing data...
-
-Collector Bot: This one is no pet cat. Master has expanded the input scope.
-
-{end:fight}
-
-### {win}
-
-Eilidh: W - Where am I?
-
-{end:fight}
-
-## End of Chapter 2
-
-{story:chapter3}
+David: install the app -- here's an install code {install-code >> inventory}
