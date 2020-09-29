@@ -11,6 +11,7 @@ const LeftNav = ({className}) => {
 	return (<div className={space('leftnav m-0',className,'text-white')} 
 		style={{height:'100%',width:'150px'}} >
 		<h3><a href='#story'>Story</a></h3>
+		<h4><a href='#story?chapter=benj-ptang1'>Benj &amp; PTang</a></h4>
 		<h3><a href='#story?chapter=chapter-test'>Test Fragment</a></h3>
 		<h3><a href='#explore'>Explore</a></h3>
 		<h3><a href='#fight'>Arena</a></h3>

@@ -50,9 +50,10 @@ const ChatLine = ({ line }) => {
 	// avoid any commands
 	said = said.replaceAll(/{[^}]+}/g, '');
 
+	// className="animate__animated animate__faster animate__slideInRight"
 	return <div className="chatline">
 		<div className="who">{label}</div>
-		{img && img!=="none" && <img src={img} alt={label} className="animate__animated animate__faster animate__slideInRight" />}
+		{img && img!=="none" && <img src={img} alt={label} />}
 		<div className="said"><MDText source={said} /></div>
 	</div>;
 };

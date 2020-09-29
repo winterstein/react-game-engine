@@ -173,6 +173,39 @@ let honeybadger = new Character({ name: "Honey Badger", src: "/img/src/honey-bad
 let infectedPhone = new Character({ name: "Infected Phone", src: "/img/src/phone.png", 
 });
 
+
+let benj = new Character({
+	name:"Benj",
+	src: "/img/src/person/benj.svg",
+	emotion: {
+		worried: "/img/src/person/benj-worried.svg",
+		confused: "/img/src/person/benj-confused.svg",
+		praying: "/img/src/person/benj-praying.svg",
+	},
+	affinity: "fish",
+	spells: [
+		new Spell({name:'Knife attack', damage:10, affinity:'metal'}),
+		new Spell({name:'Throw a fish', damage:10, affinity:'fish'}),
+	]
+});
+
+let ptangptang = new Character({
+	name:"PTang PTang",
+	src: "/img/src/person/ptang-ptang.png",
+	affinity:'reptile',
+	spells: [
+		new Spell({name:'Thunderbolt! (small)', damage:10, affinity:'electric'}),
+		new Spell({name:'Tail slap', damage:10, affinity:'reptile'}),
+		new Spell({name:'Healing', damage:-100, affinity:'plant'}),
+	]
+});
+
+let om = new Character({
+	name:"Om",
+	src: "/img/src/person/om.png",
+	affinity:'reptile',
+});
+
 export const CHARACTERS = {
 	narrator,
 	james, cassie, mom, dad, katie, donald, mina, david,
@@ -180,7 +213,9 @@ export const CHARACTERS = {
 	honeybadger,
 	eilidh,
 	omega, dardariel,
-	infectedPhone
+	infectedPhone,
+
+	benj, om, ptangptang
 };
 
 

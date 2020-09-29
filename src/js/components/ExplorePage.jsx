@@ -55,11 +55,31 @@ const setupPlace = (place, storyNode) => {
 			symmetric_rooms: false, // exits must be in the center of a wall if true
 			interconnects: 1, //extra corridors to connect rooms and make circular paths. not 100% guaranteed
 			max_interconnect_length: 10,
-			room_count: 12
+			room_count: 20
 		});		 
 		dungeon.generate();
-		let monster = setupMonster();		
-		console.log("dungeon", dungeon);		
+
+		dungeon.maxy = dungeon.walls.rows.length - 1;
+		dungeon.maxx = dungeon.walls.rows[0].length - 1;
+
+		// HACK a few monsters??
+		if ( ! dungeon.spriteNameForx_y) dungeon.spriteNameForx_y = {};
+		for(let j=0; j<10; j++) {
+			let [mx,my] = pickRandomPosn({minx:3,miny:3});
+			let monster = new Sprite({name:"Monster "+j});
+			monster.x = mx;
+			monster.y = my;
+			monster.dead = false;					
+			dungeon.spriteNameForx_y[mx+"_"+my] = MONSTER;	
+		}
+
+		if (true) {	// HACK an exit			
+			let [mx,my] = pickRandomPosn({minx:10,miny:10});
+			dungeon.spriteNameForx_y[mx+"_"+my] = "EXIT";
+		}
+
+		console.log("dungeon", dungeon);
+		dungeon.name = place;
 		return dungeon;
 	}
 
@@ -181,6 +201,19 @@ const setupPlace = (place, storyNode) => {
 		return dungeon;
 	}
 	throw new Error("TODO place "+place);
+};
+
+const pickRandomPosn = ({minx=3, miny=3}) => {
+	let maxx = dungeon.maxx-minx;
+	let maxy = dungeon.maxy-miny;
+	for(let i=0; i<1000; i++) {
+		let mx = minx + Math.floor(maxx*Math.random());
+		let my = miny + Math.floor(maxy*Math.random());
+		const w = what(mx,my);
+		if ( ! w) {
+			return [mx,my];
+		}
+	}
 };
 
 // /**
@@ -342,7 +375,12 @@ const onTick = ticker => {
 			return;
 		} 
 		if (w===MONSTER) {
-			modifyHash(['fight']);
+			const isSwamp = dungeon.name && dungeon.name.includes("swamp"); // HACK
+			let team = isSwamp? "benj,ptangptang" : null;
+			let enemy = isSwamp? "|Laser Pike|Angry Jellyfish|,|Laser Pike|Angry Jellyfish|" : null;
+			modifyHash(['fight'], {lhs:team,rhs:enemy});
+			// HACK remove the monster
+			dungeon.spriteNameForx_y[nx+"_"+ny] = false;
 		}
 		if (CHARACTERS[w]) {
 			maybeStartTalk(game, player, w, window.storyTree);
@@ -412,11 +450,13 @@ const MiniMap = ({}) => {
 
 const drawChar = w => {
 	if ( ! w) return null;
+	const isSwamp = dungeon.name && dungeon.name.includes("swamp");
 	switch(w) {
 	case "cassie": return "👧";
-	case MONSTER: return MONSTER;
-	case "player": return "🚶";
-	case "x": return null; // wall
+	case MONSTER: return isSwamp? "🐍" : MONSTER;
+	case "player": return isSwamp? "🚣" : "🚶";
+	case "EXIT": return "🏡";
+	case "x": return isSwamp? "🌴" : null; // wall
 	case "-": return "🚪";
 	case ".": return null; // grass
 	case "t": return "🚽";
@@ -426,6 +466,10 @@ const drawChar = w => {
 	case "dad": return "👨";
 	case "r": return "═";
 	case "spider": return "🕷"; // spider
+	case "snake": return "🐍";
+	case "shark": return "🦈";	
+	case "plant": return "🌿";	
+	case "rowboat": return "🚣";
 	}
 	return w.length > 1? w[0] : w; // unicode emojis
 };
@@ -438,7 +482,7 @@ const drawChar = w => {
  */
 const what = (x,y) => {
 	// collision?
-	if (x===player.x && y===player.y) {
+	if (player && x===player.x && y===player.y) {
 		return "player";
 	}	
 	let sn = dungeon.spriteNameForx_y && dungeon.spriteNameForx_y[x+"_"+y];
@@ -459,10 +503,14 @@ const whatFloor = (x,y) => {
 const MONSTER = "🧞";
 
 const bcol = (x,y) => {
+	// HACK
+	const isSwamp = dungeon.name && dungeon.name.includes("swamp");
 	const s = isSeen(x,y);
 	if (s===false) return "#fcc";
 	let w = whatFloor(x,y);	
-	if ( ! w) return "rgba(0,0,0,0)";	
+	if ( ! w) {		
+		return isSwamp? "rgba(0,0,128,0.5)" : "rgba(0,0,0,0)";	
+	}
 	switch(w) {
 	case true: case "x": return "#666"; // wall
 	case "-": return "#666";	// door

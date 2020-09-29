@@ -35,7 +35,7 @@ import { space, randomPick, modifyHash } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
 import { CHARACTERS } from '../Character';
-import MONSTERS from '../MONSTERS';
+import MONSTERS, { getMonsterByName } from '../MONSTERS';
 import ChatLine, { ChatControls, splitLine } from './ChatLine';
 import ExplorePage from './ExplorePage';
 import StoryTree from '../data/StoryTree';
@@ -430,21 +430,21 @@ const makeFight = ({world,rhs,lhs}) => {
 	if ( ! lhs ) lhs ="team";
 	if (lhs === "team") {
 		console.warn("TODO who are team?");
-		lhs ="james+katie+honeybadger";
+		lhs ="james,katie,honeybadger";
 	}	
-	let teamNames = lhs.split("+");
+	let teamNames = lhs.split(",");
 	fight.team = teamNames.map(n => CHARACTERS[n]).filter(x => !!x);
 
 	// The enemy!
 	fight.enemies = []; // end enemies
-	if ( ! rhs ) rhs = "monster+monster+monster";
-	let enemyNames = rhs.split("+");
+	if ( ! rhs ) rhs = "monster,monster,monster";
+	let enemyNames = rhs.split(",");
 	enemyNames.forEach(en => {
 		if (en==="monster") {
 			// random!
 			en = randomPick(Object.keys(MONSTERS));
-		}
-		let monster = MONSTERS[en];
+		}		
+		let monster = getMonsterByName(en); // MONSTERS[en];
 		if (monster) {
 			monster = new Monster(monster); // copy
 			monster.id = "M"+nonce(6); // a new id please
