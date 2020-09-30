@@ -286,18 +286,19 @@ Command.finish = command => {
 		}
 		break;
 	case "lose":
+		fight.isStopped = true;
 		let talking = window.storyTree && maybeStartTalk(Game.get(), null, "lose", window.storyTree);		
 		if ( ! talking) {
 			alert("defeat");
 		}
 		break;
 	case "win":		
-		let monster = DataStore.getValue(['misc','monster']) || DataStore.setValue(['misc','monster'], new Sprite({name:"Yargl the Terrible"}));
-		monster.dead = true;
+		// NB: ExplorePage optimistically marks monsters as dead before transferring to FightPage!
+		fight.isStopped = true;
 		talking = window.storyTree && maybeStartTalk(Game.get(), null, "win", window.storyTree);
 		if ( ! talking) {
-			alert("Victory!");
-			// end fight
+			let storyNode = window.storyTree && StoryTree.storyStackPeek(window.storyTree);
+			alert("Victory!", storyNode);
 			// end fight TODO stack of scenes, story, explore, fight and pop em
 			modifyHash(['explore']);
 		}
@@ -424,7 +425,7 @@ const EMOJI = {
 
 const makeFight = ({world,rhs,lhs}) => {
 	// let game = Game.get(); game is tied to pixi which we aren't using
-	let fight = new Fight();	
+	const fight = new Fight();	
 
 	// Your side!
 	if ( ! lhs ) lhs ="team";
@@ -454,6 +455,9 @@ const makeFight = ({world,rhs,lhs}) => {
 			return;
 		}
 		monster = new Monster(monster); // copy
+
+		if (true) monster.health = 10;
+
 		monster.id = "M"+nonce(6); // a new id please
 		monster.x = 500;
 		fight.enemies.push(monster); 

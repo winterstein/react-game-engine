@@ -1,26 +1,11 @@
-### Lunchtime
 
-## {explore:playground}
+# Test Lost in Navigation
 
-### {map}
+PTang PTang: ...and luck. Please have luck too.
 
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-x............x   2            x
-x............x  tt   TTT  tt  x
-x............x                x
-x............xxxxxxx--xxxxxxxxx 
-x....1.......                 x
-x............       0         x
-x............                 x
-x............                 x
-x............                 x
-x............                 x
-x............                 x
-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+## {explore:random:swamp}
 
-1: donald
-2: david
+## Home
 
-### {david}
+Benj: (praying) We have made it home! Let me give thanks to the god!
 
-David: install the app -- here's an install code {install-code >> inventory}

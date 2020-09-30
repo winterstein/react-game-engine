@@ -10,6 +10,13 @@ class Key {
 	release = undefined;
 	preventDefault;
 
+	/**
+	 * Set isDown = false. Use-case: after some stop incident, to ensure the key isn't firing (until the user re-presses)
+	 */
+	reset() {
+		this.isDown = false;
+	}
+
 	constructor(value) {
 		assMatch(value, String);
 		this.value = value;
@@ -17,8 +24,11 @@ class Key {
 		//The `downHandler`
 		key.downHandler = event => {
 			if (event.key === key.value) {
-				if ( ! key.isDown && key.press) key.press();
-				key.isDown = true;
+				if ( ! key.isDown) {
+					console.log("Key down: "+value);
+					if (key.press) key.press();
+				}
+				key.isDown = true;				
 				if (this.preventDefault) event.preventDefault();
 			}
 		};
@@ -26,7 +36,10 @@ class Key {
 		//The `upHandler`
 		key.upHandler = event => {
 			if (event.key === key.value) {
-				if (key.isDown && key.release) key.release();
+				if (key.isDown) {
+					console.log("Key up: "+value);
+					if (key.release) key.release();
+				}
 				key.isDown = false;
 				if (this.preventDefault) event.preventDefault();
 			}

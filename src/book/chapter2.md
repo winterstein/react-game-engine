@@ -111,7 +111,7 @@ The lesson rolls on.
 
 xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 x............x   2            x
-x............x  tt   ttt  tt  x
+x............x  TT   TTT  TT  x
 x............x                x
 x....4.......xxxxxxx--xxxxxxxxx 
 x....1.......                 x

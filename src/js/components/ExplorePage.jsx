@@ -340,6 +340,9 @@ const ExplorePage = () => {
 	}
 	window.dungeon = dungeon;	
 
+	// no fight (i.e. clear away from a 1st fight to allow a 2nd)
+	Game.get().fight = null;
+
 	return (<Container>
 		<GameLoop onTick={onTick}>
 			<MiniMap player={player} />
@@ -372,6 +375,9 @@ const onTick = ticker => {
 		if (w==='x' || w===true) {
 			// collision
 			console.log("bump");
+			// HACK avoid jammed keys
+			keyLeft.reset(); keyRight.reset(); 
+			keyUp.reset(); keyDown.reset(); 
 			return;
 		} 
 		if (w===MONSTER) {
@@ -379,16 +385,21 @@ const onTick = ticker => {
 			let team = isSwamp? "benj,ptangptang" : null;
 			let enemy = isSwamp? "|Laser Pike|Angry Jellyfish|,|Laser Pike|Angry Jellyfish|" : null;
 			modifyHash(['fight'], {lhs:team,rhs:enemy});
-			// HACK remove the monster
+			// HACK optimistically remove the monster
 			dungeon.spriteNameForx_y[nx+"_"+ny] = false;
 		}
 		if (CHARACTERS[w]) {
 			maybeStartTalk(game, player, w, window.storyTree);
 			return; // no walking through people
-		}
+		}		
 		player.x = nx;
 		player.y = ny;
-	}
+		if (w==="EXIT") {
+			// back to story	
+			let historyNode = StoryTree.current(window.storyTree);
+			StoryTree.execute(window.storyTree, "end:explore", historyNode);
+		}
+	}	
 	DataStore.update();	
 };
 
@@ -400,7 +411,7 @@ const GameLoop = ({onTick, onClose, children}) => {
 	
 	const gameLoop = () => {
 		if (gl.stop) {
-			console.log("STOPPED");
+			console.log("GameLoop - STOPPED");
 			return;
 		}
 		//Call this `gameLoop` function on the next screen refresh
@@ -418,6 +429,7 @@ const GameLoop = ({onTick, onClose, children}) => {
 		gl.ticker = new StopWatch();
 		gl.ticker.tickLength = 1000/10; // moderately slow steps
 		// update loop - use request ani frame
+		console.log("GameLoop - START");
 		gameLoop();
 		// clean up
 		return () => {

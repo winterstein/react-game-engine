@@ -137,6 +137,8 @@ James: OK, I see that. I'll leave you alone now.
 
 Dad: Let's get unpacked. Starting with a bottle of something.
 
+Dad: Have you found your sister?
+
 ### {mom}
 
 Mom: Isn't it... Er, well... We can do a lot to improve it!
