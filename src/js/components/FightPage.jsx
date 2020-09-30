@@ -443,18 +443,22 @@ const makeFight = ({world,rhs,lhs}) => {
 		if (en==="monster") {
 			// random!
 			en = randomPick(Object.keys(MONSTERS));
-		}		
+		}
+		// pick random from options
+		if (en.includes("|")) {
+			en = randomPick(en.split("|").filter(x => x));
+		}
 		let monster = getMonsterByName(en); // MONSTERS[en];
-		if (monster) {
-			monster = new Monster(monster); // copy
-			monster.id = "M"+nonce(6); // a new id please
-			monster.x = 500;
-			fight.enemies.push(monster); 
+		if ( ! monster) {
+			console.warn("No monster for "+en);
 			return;
 		}
-		// or?		
-		// x
-		let m = en.match(/x(\d)$/);
+		monster = new Monster(monster); // copy
+		monster.id = "M"+nonce(6); // a new id please
+		monster.x = 500;
+		fight.enemies.push(monster); 
+		// x2 ??
+		// let m = en.match(/x(\d)$/);
 	});	
 
 	// layout
