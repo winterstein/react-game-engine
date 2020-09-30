@@ -122,6 +122,8 @@ const ScrollIntoView = ({once, watch, top=false}) => {
  */
 let lastText;
 
+// TODO <Writing> based on <Counter />
+
 const StoryLine = ({node, isLatest}) => {
 	let text = node.value && node.value.text;
 	if ( ! text) return null;
