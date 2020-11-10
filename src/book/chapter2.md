@@ -185,6 +185,7 @@ Eilidh: What the...?
 
 There is a flash of light - and then silence. A bad kind of silence. If silence could have a flavour, this one would taste of sulphur.
 
+TODO auto fight - you as spectator
 
 ## {fight:eilidh v collector-bot}
 
