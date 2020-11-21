@@ -103,6 +103,7 @@ History Teacher: They set up their own democratic meetings.
 
 The lesson rolls on. 
 
+
 ### Lunchtime
 
 ## {explore:playground}
@@ -132,21 +133,7 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 ### {david}
 
-David: Hey, do you want to join my clan?
-
-|Yes|No|
-
-#### {if |Yes| } 
-
-David: Great! So first you install the Coven app. I'll give you an install code. 
-
-{install-code >> inventory}
-
-David: Then find me and we'll connect.
-
-#### {if |No| } 
-
-David: Oh. There's this new app that everyone here is playing, where you join a clan and have adventures. You should try it.
+{import david.md}
 
 
 ### {girls}
