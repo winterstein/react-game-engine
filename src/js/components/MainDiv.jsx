@@ -23,6 +23,7 @@ import ExplorePage from './ExplorePage';
 import LeftNav from './LeftNav';
 import SplashScreen from './SplashScreen';
 import Messaging from '../base/plumbing/Messaging';
+import ArenaPage from './ArenaPage';
 
 // DataStore
 C.setupDataStore();
@@ -33,6 +34,7 @@ const PAGES = {
 	account: BasicAccountPage,
 	test: TestPage,
 	fight: FightPage,
+	arena: ArenaPage,
 	story: StoryPage,
 	explore: ExplorePage,
 	splash:	SplashScreen
@@ -46,12 +48,21 @@ if (isMobile()) {
 	Messaging.notifyUser({type:"warning",text:"Not ready for mobile yet"});
 }
 
+
+let rightClickDisabledFlag = false;
+
 /**
 		Top-level: tabs
 */
 class MainDiv extends Component {
 
 	componentWillMount() {
+		// disable right-click to stop it interfering with the game. Use F12 to get the console
+		if (false && !rightClickDisabledFlag) {
+			document.addEventListener('contextmenu', event => event.preventDefault());
+			rightClickDisabledFlag = true;
+		}
+
 		// redraw on change
 		const updateReact = (mystate) => this.setState({});
 		DataStore.addListener(updateReact);

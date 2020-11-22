@@ -58,17 +58,10 @@ const DrawReact = ({ src, height = "200px", width = "200px" }) => {
 	/>);
 };
 
-let rightClickDisabledFlag = false;
 
 let fight = null;
 
 const FightPage = () => {
-
-	// disable right-click to stop it interfering with the game. Use F12 to get the console
-	if (false && !rightClickDisabledFlag) {
-		document.addEventListener('contextmenu', event => event.preventDefault());
-		rightClickDisabledFlag = true;
-	}
 
 	let world = "foo"; //DataStore.getUrlValue("world");
 	let lhs = DataStore.getUrlValue("lhs");

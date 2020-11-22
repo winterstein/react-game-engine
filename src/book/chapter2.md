@@ -135,20 +135,9 @@ xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 {import david.md}
 
+### {eilidh|mina|katie}
 
-### {girls}
-
-"Oh Katie, you've got an apple. Swap?"
-
-"Sorry Evie. Red's got chocolate - she'll not trade. Try Green."
-
-
-Hey you're the new boy from the city. We're -
-
- - Oh don't tell him our names, See if he can guess.
-
-
-
+{import the-girls.md}
 
 ## That night
 
@@ -175,6 +164,8 @@ There is a flash of light - and then silence. A bad kind of silence. If silence 
 TODO auto fight - you as spectator
 
 ## {fight:eilidh v collector-bot}
+
+{eilidh.control = auto}
 
 ### {start}
 

@@ -1,4 +1,6 @@
 
+# Eilidh Mina Katie
+
 You overhear them talking.
 
 Girls: Oh M, you've got an apple. Swap for my crisps?
@@ -10,8 +12,6 @@ Girls: Hey Red want to swap snacks? I've got crisps.
 Girls: OK Blonde - I've got an orange.
 
 Girls: It's a deal!
-
-
 
 Katie "Blonde girl": You're the new student? Hello, I'm Katie.
 

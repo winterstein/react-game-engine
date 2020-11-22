@@ -41,6 +41,8 @@ import ExplorePage from './ExplorePage';
 import StoryTree from '../data/StoryTree';
 import StoryBit, { maybeStartTalk } from './StoryBit';
 
+let round = 1;
+
 /**
  * Each fight is worth about 2x the previous
  * Random monsters
@@ -51,6 +53,15 @@ import StoryBit, { maybeStartTalk } from './StoryBit';
  */
 const ArenaPage = () => {
 
+	return (<>
+		<h1>Pick Your Team</h1>
+		<h1>Round {round}</h1>
+		Ready? <Button size='lg' color='danger' onClick={startFight}>Go!</Button>
+	</>);
+};
+
+const startFight = e => {
+	modifyHash(['fight']);
 };
 
 export default ArenaPage;
