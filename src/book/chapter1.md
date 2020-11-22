@@ -33,13 +33,13 @@ Mom: Okay, pick what toy you want to have in the car.
 |Dinosaur teddy|Rubik's cube|Baby doll| >> inventory
 
 #### {if |Dinosaur teddy|}
-The dinosaur teddy is fierce but cuddly. I feel my courage increase. {player.courage += 1}
+The dinosaur teddy is fierce but cuddly. I feel my courage increase. {player.courage + 1}
 
 #### {if |Rubik's cube|}
-Playing with the Rubik's cube will focus my mind. {player.knowledge += 1}
+Playing with the Rubik's cube will focus my mind. {player.knowledge + 1}
 
 #### {if |Baby doll|}
-Care is something you can practice, just like sports. Playing with the baby doll practices caring for others. {player.understanding += 1}
+Care is something you can practice, just like sports. Playing with the baby doll practices caring for others. {player.understanding + 1}
 
 
 ### Packing
@@ -76,7 +76,7 @@ Cassie: I don't want to see you. Or hear you. I am a lioness and you are a toad.
 
 My sister Cassie is all heart. Not.
 
-{player.connection.cassie += 1}
+{cassie.relationship.points + 1}
 
 #### {if |Read a book|}
 
@@ -84,7 +84,7 @@ I read some of my book.
 
 Book: Mr. and Mrs. Dursley of number 4, Privet Drive, were proud to say that they were perfectly normal, thank you very much.
 
-{player.knowledge += 1}
+{player.knowledge + 1}
 
 ### Dream
 

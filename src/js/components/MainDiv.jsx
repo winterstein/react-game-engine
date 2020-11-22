@@ -24,9 +24,12 @@ import LeftNav from './LeftNav';
 import SplashScreen from './SplashScreen';
 import Messaging from '../base/plumbing/Messaging';
 import ArenaPage from './ArenaPage';
+// game
+import Game from '../Game';
 
 // DataStore
 C.setupDataStore();
+DataStore.update({game: Game.get()});
 
 // Actions
 

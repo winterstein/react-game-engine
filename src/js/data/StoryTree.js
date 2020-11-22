@@ -227,8 +227,8 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 	if (code.substr(0, 2) === "if") {
 		return; // done already by next
 	}
-	// HACK e.g. player.courage += 1
-	let m = code.match(/player.(\w+) *\+= *(\d+)/);
+	// HACK e.g. player.courage + 1
+	let m = code.match(/player.(\w+) *\+ *(\d+)/);
 	if (m) {
 		let player = Game.getPlayer();
 		assert(player, "No player?!");
@@ -378,7 +378,7 @@ const src4history = (storyTree, historyNode) => {
 };
 
 /**
- * 
+ * Set a value (a bit like DataStore.setValue, but stashed in the storytree)
  * @param {StoryTree} storyTree 
  * @param {!string} vpath 
  * @param {*} val 

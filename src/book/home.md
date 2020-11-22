@@ -19,7 +19,7 @@ Mom: How about you?
 
 I smile and tell them that the teacher seems OK, and it was nice to meet my class.
 
-Mom: Thank you James. Cassie, maybe you could be more like your brother. {player.connection.mom += 1}
+Mom: Thank you James. Cassie, maybe you could be more like your brother. {mom.relationship.points + 1}
 
 Cassie: (angry) Fine, I'll just go grow a dick. (leaves)
 
@@ -36,7 +36,7 @@ Mom: (annoyed) Stop it!
 
 Cassie: See - even James agrees. 
 
-{player.connection.cassie += 1}
+{cassie.relationship.points + 1}
 
 ## {when:evening}
 

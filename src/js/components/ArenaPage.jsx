@@ -34,7 +34,7 @@ import ReactVivus from 'react-vivus';
 import { space, randomPick, modifyHash } from '../base/utils/miscutils';
 import Command, { cmd } from '../data/Command';
 import printer from '../base/utils/printer';
-import { CHARACTERS } from '../Character';
+import { CHARACTERS, getRelationship } from '../Character';
 import MONSTERS, { getMonsterByName } from '../MONSTERS';
 import ChatLine, { ChatControls, splitLine } from './ChatLine';
 import ExplorePage from './ExplorePage';
@@ -42,6 +42,7 @@ import StoryTree from '../data/StoryTree';
 import StoryBit, { maybeStartTalk } from './StoryBit';
 
 let round = 1;
+
 
 /**
  * Each fight is worth about 2x the previous
@@ -52,16 +53,32 @@ let round = 1;
  * 
  */
 const ArenaPage = () => {
-
+	let team = DataStore.getValue('game','team') || DataStore.setValue(['game','team'], [], false);
 	return (<>
-		<h1>Pick Your Team</h1>
-		<h1>Round {round}</h1>
-		Ready? <Button size='lg' color='danger' onClick={startFight}>Go!</Button>
+		<Card>
+			<h1>Pick Your Team</h1>
+			{Object.values(CHARACTERS).filter(c => c.fighter).map(c => <TeamMate key={c.name} character={c} team={team} />)};
+		</Card>
+		<div>
+			<h1>Round {round}</h1>		
+			Ready? <Button disabled={ ! team.length} size='lg' color='danger' onClick={e => startFight(team)}>Go!</Button>
+		</div>
 	</>);
 };
 
-const startFight = e => {
-	modifyHash(['fight']);
+const TeamMate = ({character, team}) => {
+	// {JSON.stringify(getRelationship(character.name))}
+	// {JSON.stringify(character)}
+	return (<Card color={team.includes(character.id)? 'primary' : 'secondary'}><CardTitle>ID: {character.id} - name: {character.name}</CardTitle>
+		<img src={character.src} height='100px' />
+		{team.includes(character.id)? 
+			<Button onClick={ e => DataStore.setValue(['game','team'], team.filter(t => t !== character.id)) }>Remove</Button>
+			: <Button onClick={ e => team.push(character.id) && DataStore.update() } disabled={team.length >= 4}>Add</Button>}
+	</Card>);
+};
+
+const startFight = team => {
+	modifyHash(['fight'], {lhs:team.join(",")});
 };
 
 export default ArenaPage;

@@ -2,9 +2,18 @@ import DataClass from "./base/data/DataClass";
 import Sprite from "./data/Sprite";
 import Spell from "./data/Spell";
 import SpriteLib from "./data/SpriteLib";
+import Game from "./Game";
 
+const CHARACTERS = {};
 
 class Character extends Sprite {
+
+	constructor(base) {
+		super(base);
+		// HACK
+		this.id = this.name.toLowerCase();
+		CHARACTERS[this.id] = this;
+	}
 
 };
 DataClass.register(Character,'Character');
@@ -13,6 +22,7 @@ export default Character;
 let james = new Character({
 	name: "James",
 	surname: "Findlay",
+	fighter: true,
 	age: 13,
 	src: "/img/src/person/james.svg",
 	spells: [
@@ -30,6 +40,7 @@ let james = new Character({
 let cassie = new Character({
 	name: "Cassie", 
 	surname: "Findlay",
+	fighter: true,
 	age: 16,
 	src: "/img/src/person/cassie.svg", 
 	emotion: {
@@ -62,6 +73,7 @@ let dad = new Character({
 let katie = new Character({
 	name: "Katie", 
 	surname: "McDougall",
+	fighter: true,
 	src: "/img/src/person/katie.svg",
 	emotion: {
 		happy: "/img/src/person/katie-happy.svg", 
@@ -82,6 +94,7 @@ let katie = new Character({
 let donald = new Character({
 	name: "Donald", 
 	surname: "McDougall",
+	fighter: true,
 	age: 15,
 	src: "/img/src/person/donald.svg",
 	spells: [
@@ -95,6 +108,7 @@ let donald = new Character({
 let mina = new Character({
 	name: "Mina", 
 	surname: "Singh",
+	fighter: true,
 	age: 13,
 	src: "/img/src/person/mina.svg",
 	spells: [
@@ -109,6 +123,7 @@ let mina = new Character({
 let david = new Character({
 	name:"David",
 	surname:"McFadden",
+	fighter: true,
 	src: "/img/src/person/david.svg",
 	affinity: "bug",
 	spells: [
@@ -119,6 +134,7 @@ let david = new Character({
 let eilidh = new Character({
 	name:"Eilidh",
 	surname:"Fraser",
+	fighter: true,
 	src: "/img/src/person/eilidh.svg",
 	emotion: {
 		scared: "/img/src/person/eilidh-scared.svg",
@@ -141,6 +157,7 @@ let omega = new Character({
 
 let dardariel = new Character({
 	name:"Dardariel",
+	fighter: true,
 	src: "/img/src/person/dardariel.png",
 	affinity: "bird",
 	spells: [
@@ -161,6 +178,7 @@ let narrator = new Character({
 
 
 let honeybadger = new Character({ name: "Honey Badger", src: "/img/src/honey-badger.w150.png", 
+	fighter: true,
 	spells: [
 		new Spell({name:'Rampage',damage:40,affinity:'mammal'}),
 		new Spell({name:'Chaos',damage:30,affinity:'mammal'}),
@@ -206,16 +224,36 @@ let om = new Character({
 	affinity:'reptile',
 });
 
-export const CHARACTERS = {
-	narrator,
-	james, cassie, mom, dad, katie, donald, mina, david,
-	spider,
-	honeybadger,
-	eilidh,
-	omega, dardariel,
-	infectedPhone,
+class Relationship extends DataClass {
+	/**
+	 * @type {Number} [0, 10]
+	 */
+	level;
 
-	benj, om, ptangptang
+	/**
+	 * Towards the next level
+	 * @type {Number} [0, 10]
+	 */
+	points;
+}
+DataClass.register(Relationship,"Relationship");
+
+const RELATIONSHIPS = {};
+/**
+ * 
+ * @returns {!Relationship}
+ */
+const getRelationship = ({name}) => {
+	// let player = Game.getPlayer(Game.get());
+	let r = RELATIONSHIPS[name];
+	if ( ! r) {
+		r = RELATIONSHIPS[name] = new Relationship();
+	}
+	return r;
 };
 
-
+export {
+	CHARACTERS,
+	getRelationship
+};
+window.CHARACTERS = CHARACTERS; // debug

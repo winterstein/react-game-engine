@@ -85,7 +85,7 @@ History Teacher: - Why did the American colonies rebel? They had a famous slogan
 
 History Teacher: That's right. 
 
-{player.knowledge += 1}
+{player.knowledge + 1}
 
 #### {if |No bling for the King!|}
 

@@ -1,7 +1,7 @@
 
 # person: David
 
-## { ! player.connection.david}
+## { ! david.relationship.points}
 
 David "nerdy boy": Hey, do you want to join my clan?
 
@@ -15,7 +15,7 @@ David: Great! So first you install the Coven app. I'll give you an install code.
 
 David: Then find me and we'll connect.
 
-{player.connection.david += 1}
+{david.relationship.points + 1}
 
 #### {if |No| } 
 
