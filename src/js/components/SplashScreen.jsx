@@ -2,40 +2,12 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React, { useState, useEffect, useRef } from 'react';
-import ReactDOM from 'react-dom';
-import Enum from 'easy-enums';
-import _ from 'lodash';
-import SJTest, { assert } from 'sjtest';
-import Login from 'you-again';
-import DataStore from '../base/plumbing/DataStore';
-import C from '../C';
-import Game, { doLoad, doSave, doReset } from '../Game';
-import Misc from '../base/components/Misc';
-import Sprite from '../data/Sprite';
-import SpriteLib from '../data/SpriteLib';
-import Tile from '../data/Tile';
-import PixiComponent from './PixiComponent';
-import StopWatch from '../StopWatch';
-import PropControl, { setInputStatus } from '../base/components/PropControl';
-import * as PIXI from 'pixi.js';
-// import * as PIXISound from 'pixi-sound';
-import Key, { KEYS } from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody, Row, Col, Card, CardTitle } from 'reactstrap';
-import { getPApp } from './Pixies';
-import DataClass, { nonce, getType } from '../base/data/DataClass';
-import GameAdmin, { doNewWorld } from './GameAdmin';
-import FullScreenButton from './FullScreenButton';
-import Fight from '../data/Fight';
-import Spell from '../data/Spell';
-import Monster from '../data/Monster';
-
+import React, { useState } from 'react';
 import ReactVivus from 'react-vivus';
-import { space, randomPick, modifyHash } from '../base/utils/miscutils';
-import Command, { cmd } from '../data/Command';
-import printer from '../base/utils/printer';
-// import svg from '../img/angry-robot.svg';
-import { Howl, Howler } from 'howler';
+import { Button } from 'reactstrap';
+import { nonce } from '../base/data/DataClass';
+import DataStore from '../base/plumbing/DataStore';
+
 
 
 const DrawReactSVG = ({id, src, height = "200px", width = "200px", duration = 70 }) => {

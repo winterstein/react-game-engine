@@ -3,30 +3,14 @@
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
 import React from 'react';
-import ReactDOM from 'react-dom';
-import _ from 'lodash';
-import SJTest, {assert} from 'sjtest';
-import Login from 'you-again';
+import { Button, Card, CardBody, CardTitle, Col, Container, Form, Row } from 'reactstrap';
+import { assert } from 'sjtest';
+import Login from '../base/youagain';
+import PropControl from '../base/components/PropControl';
 import DataStore, { getValue } from '../base/plumbing/DataStore';
-import C from '../C';
-import Game, { doLoad, doSave, doReset } from '../Game';
-import _setup from '../game-setup';
-import _update from '../game-update';
-import Misc from '../base/components/Misc';
-import Sprite from '../data/Sprite';
-import SpriteLib from '../data/SpriteLib';
-import Tile from '../data/Tile';
-import PixiComponent from './PixiComponent';
-import StopWatch from '../StopWatch';
-import PropControl, { setInputStatus } from '../base/components/PropControl';
-import * as PIXI from 'pixi.js';
-import Key, {KEYS} from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody, Card, CardBody, Row, Col, Container, Form, CardTitle } from 'reactstrap';
-import DataClass, { nonce } from '../base/data/DataClass';
-import {Room,getPeerId,getCurrentRoom} from '../plumbing/peeringhack';
-import Wizard, { WizardStage } from '../base/components/WizardProgressWidget';
-import { stopEvent, copyTextToClipboard } from '../base/utils/miscutils';
 import Messaging from '../base/plumbing/Messaging';
+import { copyTextToClipboard, stopEvent } from '../base/utils/miscutils';
+import { getPeerId, Room } from '../plumbing/peeringhack';
 import BG from './BG';
 import CGame from './ConsequencesGame';
 // Game states: Name -> Create / Join -> Start -> Enter -> Deliver stories

@@ -35,8 +35,7 @@
     "react-vivus": "^0.0.2",
     "reactstrap": "^8.4.1",
     "sjtest": "^0.4.9",
-    "vivus": "^0.4.5",
-    "you-again": "^0.8.8"
+    "vivus": "^0.4.5"
   },
   "scripts": {
     "compile": "webpack --config $PWD/webpack.config.js --progress --colors && ./gitstamp.sh",

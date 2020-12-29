@@ -2,19 +2,13 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
-import Enum from 'easy-enums';
-import _ from 'lodash';
-import SJTest, { assert } from 'sjtest';
-import Login from 'you-again';
-import DataStore from '../base/plumbing/DataStore';
-import { space, substr } from '../base/utils/miscutils';
+import React from 'react';
+import { Button } from 'reactstrap';
 import MDText from '../base/components/MDText';
+import { space, substr } from '../base/utils/miscutils';
+import { CHARACTERS } from '../Character';
 import StoryTree from '../data/StoryTree';
 import Game from '../Game';
-import { Button } from 'reactstrap';
-import { CHARACTERS } from '../Character';
 import MONSTERS from '../MONSTERS';
 
 /**

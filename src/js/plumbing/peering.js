@@ -1,6 +1,6 @@
 
 import Peer from 'peerjs';
-import Login from 'you-again';
+import Login from '../base/youagain';
 import _ from 'lodash';
 import DataStore from '../base/plumbing/DataStore';
 import DataClass, { nonce, getType } from '../base/data/DataClass';

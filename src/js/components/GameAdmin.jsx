@@ -2,29 +2,17 @@
  * A convenient place for ad-hoc widget tests.
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
-import React from 'react';
-import ReactDOM from 'react-dom';
 import _ from 'lodash';
-import SJTest, {assert} from 'sjtest';
-import Login from 'you-again';
+import React from 'react';
+import { Button, Modal, ModalBody, ModalHeader } from 'reactstrap';
+import Misc from '../base/components/Misc';
+import PropControl from '../base/components/PropControl';
+import { nonce } from '../base/data/DataClass';
 import DataStore from '../base/plumbing/DataStore';
 import C from '../C';
-import Game, { doLoad, doSave, doReset } from '../Game';
-import _setup from '../game-setup';
-import _update from '../game-update';
-import Misc from '../base/components/Misc';
-import Sprite from '../data/Sprite';
-import SpriteLib from '../data/SpriteLib';
-import Tile from '../data/Tile';
-import PixiComponent from './PixiComponent';
+import Game, { doLoad, doReset, doSave } from '../Game';
+import { getConnections, getPeerId, startAudioCall } from '../plumbing/peering';
 import StopWatch from '../StopWatch';
-import PropControl, { setInputStatus } from '../base/components/PropControl';
-import * as PIXI from 'pixi.js';
-import Key, {KEYS} from '../Key';
-import { Alert, Button, Modal, ModalHeader, ModalBody } from 'reactstrap';
-import { getPApp } from './Pixies';
-import { nonce } from '../base/data/DataClass';
-import {getPeerId, doJoin, startAudioCall, getConnections} from '../plumbing/peering';
 
 /**
  * @param {String} world
