@@ -25,7 +25,7 @@ Eilidh "M": Other way round. And it's Eilidh to everyone but these two.
 
 ### {if |You're E and she's M|}
 
-Eilidh "E": Yes, that's right! But it's Eilidh to everyone but these two. {eilidh.relationship.points + 1}
+Eilidh "E": Yes, that's right! But it's Eilidh to everyone but these two. {link(eilidh) + 1}
 
 ### 
 

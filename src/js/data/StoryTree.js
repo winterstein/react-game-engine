@@ -4,7 +4,7 @@ import DataClass, { nonce } from "../base/data/DataClass";
 import { assert, assMatch } from "../base/utils/assert";
 import Game from "../Game";
 import { modifyHash } from "../base/utils/miscutils";
-import { CHARACTERS } from "../Character";
+import { CHARACTERS, getRelationship } from "../Character";
 import DataStore from "../base/plumbing/DataStore";
 import MONSTERS from "../MONSTERS";
 
@@ -119,12 +119,11 @@ StoryTree.nextToText = (storyTree, node) => {
 };
 
 /**
- * 
+ * What comes next? find latest then step on	
  * @param {StoryTree} storyTree 
  * @returns {Tree} a src node in the root tree. the node value is copied into the history tree. or null for at the end
  */
 StoryTree.next = (storyTree) => {
-	// what comes next? find latest then step on	
 	// let olds = Tree.flatten(storyTree.history);
 	let lastSrc = StoryTree.currentSource(storyTree);
 	// let last = olds[olds.length-1];
@@ -228,15 +227,24 @@ StoryTree.execute = (storyTree, code, historyNode) => {
 		return; // done already by next
 	}
 	// HACK e.g. player.courage + 1
-	let m = code.match(/player.(\w+) *\+ *(\d+)/);
+	let m = code.match(/player.(\w+) *(\+|\-) *(\d+)/);
 	if (m) {
 		let player = Game.getPlayer();
 		assert(player, "No player?!");
-		player[m[1]] = (player[m[1]] || 0) + 1 * m[2];
+		player[m[1]] = (player[m[1]] || 0) + (m[2]==="+"?1:-1) * m[3];
 		return;
 	}
+	// e.g. link(player,cassie) + 1 or link(cassie) + 1
+	m = code.match(/link\((\w+) *, *(\w+)\) *(\+|\-) *(\d+)/);
+	if ( ! m) m = code.match(/link\((\w+)\)( *)(\+|\-) *(\d+)/); // NB dummy m[2] for convenience to match the first regex
+	if (m) {
+		let npc = m[1]==="player"? m[2] : m[1];
+		let link = getRelationship(npc);
+		link.points = link.points + (m[3]==="+"?1:-1) * m[4];
+		return;
+	}	
 	// HACK e.g. flag.metBigBad = true
-	m = code.match(/([a-zA-Z0-9\-_.]+) *\+?= *(\S+)/);
+	m = code.match(/([a-zA-Z0-9\-_.]+) *= *(\S+)/);
 	if (m) {
 		let vpath = m[1];
 		StoryTree.setMemory(storyTree, vpath, m[2]);

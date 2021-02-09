@@ -76,7 +76,7 @@ Cassie: I don't want to see you. Or hear you. I am a lioness and you are a toad.
 
 My sister Cassie is all heart. Not.
 
-{cassie.relationship.points + 1}
+{link(cassie) + 1}
 
 #### {if |Read a book|}
 
@@ -124,6 +124,8 @@ This is... not the case. My hopes are dashed, and then the pieces of hope are tr
 Our new house is a dump. The paint is peeling. There is a smell of damp. But I do not discover the true horror of the situation until a few minutes later.
 
 Explore the ~~dump~~ house...
+
+Instructions: In the next section, use the arrow keys to move.
 
 ## {explore:home}
 

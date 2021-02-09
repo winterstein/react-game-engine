@@ -240,11 +240,12 @@ DataClass.register(Relationship,"Relationship");
 
 const RELATIONSHIPS = {};
 /**
- * 
+ * @param {Object} p
+ * @param {String} p.name Case insensitive
  * @returns {!Relationship}
  */
-const getRelationship = ({name}) => {
-	// let player = Game.getPlayer(Game.get());
+const getRelationship = (name) => {
+	name = name.toLowerCase();
 	let r = RELATIONSHIPS[name];
 	if ( ! r) {
 		r = RELATIONSHIPS[name] = new Relationship();

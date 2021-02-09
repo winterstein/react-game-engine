@@ -82,7 +82,10 @@ const setupPlace = (place, storyNode) => {
 		dungeon.name = place;
 		return dungeon;
 	}
-
+	// record your visit
+	if ( ! Game.get().places) Game.get().places = {};
+	Game.get().places[place] = true;
+	
 	if (place==='home') {
 		dungeon = {
 			name: 'home',
