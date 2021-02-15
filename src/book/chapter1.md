@@ -123,6 +123,8 @@ Our new house is a dump. The paint is peeling. There is a smell of damp. But I d
 
 Explore the ~~dump~~ house...
 
+**End of the opening section -- Beyond here, there be bugs.**
+
 Instructions: In the next section, use the arrow keys to move.
 
 ## {explore:home}
