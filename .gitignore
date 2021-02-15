@@ -16,3 +16,5 @@ config/version.properties
 build-lib
 tmp-lib
 web/img/src/person/wimpy
+web/*.html
+web/book
