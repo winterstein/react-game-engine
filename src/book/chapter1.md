@@ -24,8 +24,6 @@ Dad: You can't even fit into half of them.
 
 The resulting explosion was heard three blocks away. 
 
-(diagram)
-
 So in the end we compromised by putting most of our things in storage to be delivered once we're settled in. 
 
 Mom: Okay, pick what toy you want to have in the car.

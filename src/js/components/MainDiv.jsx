@@ -26,6 +26,7 @@ import Messaging from '../base/plumbing/Messaging';
 import ArenaPage from './ArenaPage';
 // game
 import Game from '../Game';
+import { Alert } from 'reactstrap';
 
 // DataStore
 C.setupDataStore();
@@ -103,6 +104,7 @@ class MainDiv extends Component {
 	}
 
 	render() {
+		// why??
 		if ( ! DataStore.getValue('env', 'width')) {
 			DataStore.setValue(['env', 'width'], window.innerWidth, false);
 			DataStore.setValue(['env', 'height'], window.innerHeight, false);
@@ -110,6 +112,10 @@ class MainDiv extends Component {
 			setTimeout(() => DataStore.update(), 1);
 			return null;
 		}
+		if (isMobile()) {
+			return <Alert color="danger">Sorry - Mobile is not supported 😢</Alert>
+		}
+
 
 		let path = DataStore.getValue('location', 'path');	
 		let page = (path && path[0]);
