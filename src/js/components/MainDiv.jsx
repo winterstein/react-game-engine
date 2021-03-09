@@ -24,6 +24,7 @@ import LeftNav from './LeftNav';
 import SplashScreen from './SplashScreen';
 import Messaging from '../base/plumbing/Messaging';
 import ArenaPage from './ArenaPage';
+import SpacePage from './SpacePage';
 // game
 import Game from '../Game';
 import { Alert } from 'reactstrap';
@@ -41,10 +42,11 @@ const PAGES = {
 	arena: ArenaPage,
 	story: StoryPage,
 	explore: ExplorePage,
-	splash:	SplashScreen
+	splash:	SplashScreen,
+	space:	SpaceScreen
 };
 
-const DEFAULT_PAGE = 'story';
+const DEFAULT_PAGE = 'space';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 
