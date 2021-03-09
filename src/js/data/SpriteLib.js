@@ -203,6 +203,24 @@ SpriteLib.fish = n => stdAnimal('/img/fish/fishtype1.png', n, 'Fish');
 
 SpriteLib.badger = n => stdAnimal('/img/animals/badger.png', n, 'Badger');
 
+
+/**
+ * 
+ * @param {*} src 
+ * @param {*} n 
+ * @param {*} kind 
+ * @param {?Object} base 
+ */
+SpriteLib.spaceship = (base) => {
+	let sbase = Object.assign({
+		kind:'Spaceship',
+		src:'/img/spaceship.png',
+	}, base);
+	let sp = new Sprite(sbase);
+	return sp;
+};
+
+
 /**
  * @param {!String} tileKind e.g. "grass"
  * @returns {Sprite}

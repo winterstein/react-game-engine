@@ -25,6 +25,14 @@ Game.update = game => {
 	if ( ! papp || ! papp.loadFlag) {
 		return;
 	}
+	// update stage and sprites
+	Object.values(game.sprites).forEach(s => updateSprite(s,game));
+
+	// player
+	let player = Game.getPlayer(game);	
+	if (player) {
+		updatePlayer(game, player);
+	}
 
 	const dt = StopWatch.dt(game.ticker);
 	slowDt += dt;
@@ -51,33 +59,33 @@ const setAnimationFromDirn = s => {
 	if (a) Sprite.animate(s, a);
 };
 
-// /**
-//  * The normal updateSprite has already run!
-//  * @param {Game} game 
-//  * @param {Sprite} player 
-//  */
-// const updatePlayer = (game, player) => {
-// 	// more often than behaviour ticks
-// 	setAnimationFromDirn(player);
-// 	// off screen? move the screen
-// 	let rc = Game.getTileInFront(game, player);
-// 	let grid = Grid.get();
-// 	// screen?
-// 	let screen = Grid.screen(grid);
-// 	let mx = grid.vw * 20;
-// 	let my = grid.vh * 20;
-// 	if (player.x < screen.x + mx) {
-// 		screen.x = Math.max(0, player.x - mx);
-// 	} else if (player.x > screen.x + screen.width - mx) {
-// 		screen.x = player.x + mx - screen.width;
-// 	}
-// 	if (player.y < screen.y + my) {
-// 		screen.y = Math.max(0, player.y - my);
-// 	} else if (player.y > screen.y + screen.height - my) {
-// 		screen.y = player.y + my - screen.height;
-// 	}
-// 	containerFor.world.position = new PIXI.Point( - screen.x * grid.screenScale, - screen.y * grid.screenScale);	
-// };
+/**
+ * The normal updateSprite has already run!
+ * @param {Game} game 
+ * @param {Sprite} player 
+ */
+const updatePlayer = (game, player) => {
+	// more often than behaviour ticks
+	setAnimationFromDirn(player);
+	// off screen? move the screen
+	let rc = Game.getTileInFront(game, player);
+	let grid = Grid.get();
+	// screen?
+	let screen = Grid.screen(grid);
+	let mx = grid.vw * 20;
+	let my = grid.vh * 20;
+	if (player.x < screen.x + mx) {
+		screen.x = Math.max(0, player.x - mx);
+	} else if (player.x > screen.x + screen.width - mx) {
+		screen.x = player.x + mx - screen.width;
+	}
+	if (player.y < screen.y + my) {
+		screen.y = Math.max(0, player.y - my);
+	} else if (player.y > screen.y + screen.height - my) {
+		screen.y = player.y + my - screen.height;
+	}
+	containerFor.world.position = new PIXI.Point( - screen.x * grid.screenScale, - screen.y * grid.screenScale);	
+};
 
 /**
  * 
