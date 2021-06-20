@@ -5,8 +5,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import SJTest, {assert} from 'sjtest';
-import Login from 'you-again';
 import DataStore from '../base/plumbing/DataStore';
 import C from '../C';
 import Game from '../Game';

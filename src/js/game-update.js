@@ -125,7 +125,6 @@ const updateSprite = (s, game, dt) => {
 	if (Tile.isa(s)) {
 		return; // no update 
 	}	
-	const dt = StopWatch.dt(game.ticker);
 
 	// What would the sprite like to do?
 	// const Kind = KindOfCreature.kinds[s.kind] || {};
