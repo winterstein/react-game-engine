@@ -2,7 +2,6 @@
 
 import DataClass, {getType} from '../base/data/DataClass';
 import Rect from './Rect';
-import { assert } from 'sjtest';
 
 class InGameTiles extends Number {}
 

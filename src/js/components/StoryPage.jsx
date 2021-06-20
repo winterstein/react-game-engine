@@ -3,7 +3,6 @@
  * This is not a replacement for proper unit testing - but it is a lot better than debugging via repeated top-level testing.
  */
 import React, { useRef, useState } from 'react';
-import { assert } from 'sjtest';
 import MDText from '../base/components/MDText';
 import Misc from '../base/components/Misc';
 import Tree from '../base/data/Tree';

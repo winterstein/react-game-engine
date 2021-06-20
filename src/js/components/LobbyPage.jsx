@@ -4,7 +4,6 @@
  */
 import React from 'react';
 import { Button, Card, CardBody, CardTitle, Col, Container, Form, Row } from 'reactstrap';
-import { assert } from 'sjtest';
 import Login from '../base/youagain';
 import PropControl from '../base/components/PropControl';
 import DataStore, { getValue } from '../base/plumbing/DataStore';

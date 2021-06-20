@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Login from '../base/youagain';
-import { assert } from 'sjtest';
 import { isMobile, modifyHash } from '../base/utils/miscutils';
 import _ from 'lodash';
 // Plumbing
@@ -43,7 +42,7 @@ const PAGES = {
 	story: StoryPage,
 	explore: ExplorePage,
 	splash:	SplashScreen,
-	space:	SpaceScreen
+	space:	SpacePage
 };
 
 const DEFAULT_PAGE = 'space';

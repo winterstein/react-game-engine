@@ -7,7 +7,6 @@ import SpriteLib from './data/SpriteLib';
 import Game from './Game';
 import * as PIXI from 'pixi.js';
 import Key, {KEYS} from './Key';
-import { assMatch, assert } from 'sjtest';
 
 import Sheep from './creatures/Sheep';
 import Fish from './creatures/Fish';
@@ -17,6 +16,7 @@ import Badger from './creatures/Badger';
 import Goat from './creatures/Goat';
 import Werewolf from './creatures/Werewolf';
 import Frog from './creatures/Frog';
+import { assert, assMatch } from './base/utils/assert';
 
 const DEBUG_FOCUS = false;
 
@@ -150,7 +150,7 @@ const setupAfterLoad = game => {
 	}
 
 	// land
-	if (false) {
+	if (true) {
 		let grid = Game.grid(game);
 		let landPlan = makeLandPlan(game, grid);
 		game.landPlan = landPlan;
@@ -182,11 +182,11 @@ const setupAfterLoad2_Player = game => {
 	right.press = () => Game.handleInput({input:'right', on:true});
 	right.release = () => Game.handleInput({input:'right', on:false});
 	left.press = () => Game.handleInput({input:'left', on:true});
-	left.release = () => Game.handleInput({input:'left', on:false})
+	left.release = () => Game.handleInput({input:'left', on:false});
 	up.press = () => Game.handleInput({input:'up', on:true});
-	up.release = () => Game.handleInput({input:'up', on:false})
+	up.release = () => Game.handleInput({input:'up', on:false});
 	down.press = () => Game.handleInput({input:'down', on:true});
-	down.release = () => Game.handleInput({input:'down', on:false})
+	down.release = () => Game.handleInput({input:'down', on:false});
 };
 
 /**

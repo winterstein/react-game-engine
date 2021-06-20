@@ -6,7 +6,6 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import Enum from 'easy-enums';
 import _ from 'lodash';
-import SJTest, { assert } from 'sjtest';
 import DataStore from '../base/plumbing/DataStore';
 import C from '../C';
 import Game, { doLoad, doSave, doReset } from '../Game';

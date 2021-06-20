@@ -3,7 +3,6 @@
  */
 import * as PIXI from 'pixi.js';
 // import Sprite from '../data/Sprite';
-import { assMatch } from 'sjtest';
 
 /**
  * {String: PIXI.Container} world | ui | ground | characters

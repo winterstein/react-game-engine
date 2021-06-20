@@ -5,7 +5,6 @@
  */
 import Sprite from './Sprite';
 import Tile from './Tile';
-import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
 import { setPSpriteFor } from '../components/Pixies';
 import { nonce } from '../base/data/DataClass';

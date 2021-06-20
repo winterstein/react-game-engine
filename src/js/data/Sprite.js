@@ -4,7 +4,6 @@ import DataClass, {getClass, getType, nonce} from '../base/data/DataClass';
 import Rect from './Rect';
 import Grid from './Grid';
 import StopWatch from '../StopWatch';
-import { assert } from 'sjtest';
 import * as PIXI from 'pixi.js';
 import { getPSpriteFor, getPApp } from '../components/Pixies';
 import { space } from '../base/utils/miscutils';

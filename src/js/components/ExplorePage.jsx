@@ -6,7 +6,6 @@ import Dungeon from 'dungeon-generator';
 import _ from 'lodash';
 import React, { useEffect, useState } from 'react';
 import { Container } from 'reactstrap';
-import { assert } from 'sjtest';
 import { nonce } from '../base/data/DataClass';
 import Tree from '../base/data/Tree';
 import DataStore from '../base/plumbing/DataStore';

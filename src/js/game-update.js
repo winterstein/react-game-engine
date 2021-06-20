@@ -6,6 +6,7 @@ import Sprite from './data/Sprite';
 import Tile from './data/Tile';
 import { getPSpriteFor, containerFor, getPApp } from './components/Pixies';
 import * as PIXI from 'pixi.js';
+import { collision } from './components/Collision';
 
 /**
  * Behaviour updates less often

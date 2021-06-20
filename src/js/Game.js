@@ -7,7 +7,6 @@ import DataClass, {getClass, nonce} from './base/data/DataClass';
 import Sprite from './data/Sprite';
 import Rect from './data/Rect';
 import StopWatch from './StopWatch';
-import {assert, assMatch} from 'sjtest';
 import Grid from './data/Grid';
 import Tile from './data/Tile';
 import * as PIXI from 'pixi.js';

@@ -2,7 +2,6 @@
 import Grid from '../data/Grid';
 import Game from '../Game';
 import * as PIXI from 'pixi.js';
-import { assMatch, assert } from 'sjtest';
 import {containerFor} from './Pixies';
 
 /**
