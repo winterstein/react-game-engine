@@ -11,6 +11,9 @@ import Grid from './data/Grid';
 import Tile from './data/Tile';
 
 class Game extends DataClass {
+
+	id = nonce(4);
+
 	/**
 	 * {String: PIXI.Container} world | ui | ground | characters
 	 */
@@ -128,15 +131,23 @@ Game.getPlayer = game => {
 };
 
 /**
- * @param {!String[]} types
+ * @param {?String[]} types
  * @param {?Number} limit in tiles eg 5. If set, ignore sprites further away than this
  * @returns {?Sprite}
  */
-Game.getNearest = ({sprite, game, types, limit}) => {	
-	let sprites = Object.values(game.sprites).filter(s => types.includes(s.kind) && s !== sprite);
+Game.getNearest = ({sprite, game, types, limit, tile=false, filter}) => {	
+	let sprites = Object.values(game.sprites);
+	// in types
+	if (types) {
+		sprites = sprites.filter(s => types.includes(s.kind));
+	}
+	// no invisibles, no self
+	sprites = sprites.filter(s => s.visible !== false && s !== sprite);
 	
 	// no Tiles
-	sprites = sprites.filter(s => ! Tile.isa(s));
+	if ( ! tile) {
+		sprites = sprites.filter(s => ! Tile.isa(s));
+	}
 
 	if (limit) {
 		// in pixels
@@ -149,12 +160,26 @@ Game.getNearest = ({sprite, game, types, limit}) => {
 	return sprites[0]; // TODO sort and pick!
 };
 /**
+ * @param {!String} kind
+ * @returns {!Sprite[]}
+ */
+Game.getAllSprites = (kind) => {
+	let game = Game.get();	
+	let sprites = Object.values(game.sprites);
+	sprites = sprites.filter(s => kind === s.kind);
+	return sprites;
+};
+/**
  * xy distance squared
  * @param {!Sprite} s1 
  * @param {!Sprite} s2 
  */
 const dist2 = (s1, s2) => (s1.x-s2.x)*(s1.x-s2.x) + (s1.y-s2.y)*(s1.y-s2.y);
 
+/**
+ * @param {Game} game
+ * @returns {!Grid}
+ */
 Game.grid = game => {
 	return Grid.get(); // just return the default
 };
@@ -217,6 +242,69 @@ Game.setTile = ({game, row, column, tile}) => {
 	// game.sprites[tile.name] = tile; Done in makePixiSprite
 };
 
+
+
+/**
+ * Easy way to make a sprite
+ * @param kindName {!String} name of a KindOfCreature
+ */
+Game.make = (kindName, spriteSettings={}, container) => {
+	const game = Game.get();
+	const kind = Kind.getKind(kindName);
+	if ( ! kind) {
+		throw new Error("Cannot make "+kindName+" - kind unknown");
+	}
+	
+	let variant = Math.floor(kind.sprites.length*Math.random());
+	let base = kind.sprites[variant] || {}; // TODO store v instead so we can save / ship states?? 	
+	const freshBase = Object.assign({}, base);
+	let sprite = kind.bg? new Tile(freshBase) : new Sprite(freshBase);
+	delete sprite.sprites; // keep our sprite a json blob - no circular refs
+	sprite.kind = kindName;
+	if (variant) sprite.variant = variant; // no need to store most 0s
+	// sprite['@type'] = kind.bg? 'Tile' : 'Sprite';
+	sprite.speed = kind.speed; // HACK
+
+	if (kind.bg) {
+		let {row, column} = spriteSettings;
+		// NB: sets a row_col id
+		Game.make2_Tile({game, row, column, tile:sprite});
+	}
+
+	// dont duplicate template stuff
+	delete sprite.frames;
+	delete sprite.animations;
+	delete sprite.src;
+	
+	// special settings? often x and y
+	if (spriteSettings) {
+		sprite = Object.assign(sprite, spriteSettings);
+	}
+	if ( ! container) {
+		container = kind.bg? containerFor.ground : containerFor.characters;
+	}
+	Game.make2_addSprite({game, sprite, container});
+	return sprite;
+};
+
+Game.make2_Tile = ({game, row, column, tile}) => {
+	Sprite.assIsa(tile);
+	const grid = Game.grid(game);
+	const tileWidth = grid.tileWidth;
+	const tileHeight = grid.tileHeight;
+	tile.x = column * tileWidth;
+	tile.y = row * tileHeight;
+	tile.width = tileWidth;
+	tile.height = tileHeight;
+	tile.name = "row"+row+"_col"+column;//deprecated
+	tile.id = "row"+row+"_col"+column;	
+	// remove any existing sprite
+	let old = game.sprites[tile.id];
+	if (old) {
+		Game.removeSprite(game, old);
+	}
+};
+
 /**
  * @param {!Game} game
  */
@@ -231,6 +319,39 @@ Game.addKind = (game, kind) => {
 	game.kinds[kind.name] = kind;
 };
 
+
+/**
+ * Add a sprite to game, plus make a Pixi sprite and add to container.
+ * @param {?String} id a nonce will be made if blank. Cannot be a duplicate
+ */
+Game.make2_addSprite = ({game, sprite, id, container}) => {
+	Game.assIsa(game);
+	Sprite.assIsa(sprite);
+	if (id) sprite.id = id;
+	if ( ! sprite.id) sprite.id = sprite.kind+nonce();
+		
+	assert( ! game.sprites[sprite.id], "Duplicate sprite for "+sprite.id);
+	game.sprites[sprite.id] = sprite;
+	
+	let psprite = new PIXI.Sprite();
+	setPSpriteFor(sprite, psprite);
+
+	Sprite.setPixiProps(sprite);
+
+	// sprite parts?
+	if (sprite.background && false) {
+		let bgsprite = new PIXI.Sprite();	
+		Sprite.setPixiProps(bgsprite);
+		// TODO add to container
+	}
+
+	if ( ! container) container = containerFor.world;
+	container.addChild(psprite);
+
+	return sprite;
+};
+
+
 Game.removeSprite = (game, sprite) => {
 	console.log("removeSprite", sprite);
 	Sprite.assIsa(sprite);
@@ -238,6 +359,8 @@ Game.removeSprite = (game, sprite) => {
 	// clean up Pixi
 	if (sprite.pixi && sprite.pixi.parent) {		
 		sprite.pixi.parent.removeChild(sprite.pixi);
+		psprite.destroy({children:true});
+		setPSpriteFor(sprite, null);
 	}
 };
 
