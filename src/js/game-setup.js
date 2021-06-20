@@ -172,7 +172,7 @@ const setupAfterLoad = game => {
 
 const setupAfterLoad2_Player = game => {
 	let spaceship = new Sprite();	
-	let sprite = makePixiSprite(game, SpriteLib.spaceship(), "player0", game.characters);
+	let sprite = makePixiSprite(game, SpriteLib.goose(), "player0", game.characters);
 
 	let right = new Key(KEYS.ArrowRight);
 	let left = new Key(KEYS.ArrowLeft);
@@ -194,6 +194,10 @@ const setupAfterLoad2_Player = game => {
  * @param {!Game} game 
  */
 const setupAfterLoad2_UI = game => {
+	if (true) {
+		setupAfterLoad2_UI2_goose();
+		return;
+	}
 	let pg = new PIXI.Graphics();
 	pg.beginFill(0x66CCFF);
 	pg.drawCircle(10,10,20);
@@ -201,6 +205,113 @@ const setupAfterLoad2_UI = game => {
 	game.containerFor.world.addChild(pg);
 	return true;	
 };
+
+/**
+ * 
+ * @param {!Game} game 
+ */
+const setupAfterLoad2_UI2_goose = game => {
+	{	// tile shine
+		let selectTile = new Sprite();
+		let pSprite = new PIXI.Graphics();
+		pSprite.beginFill(0xFFCCFF, 0.1);
+		pSprite.lineStyle(3, 0xFF3300, 0.5);
+		pSprite.drawRect(0, 0, 48, 48);
+		pSprite.endFill();			
+		selectTile.pixi = pSprite;
+	
+		Sprite.setPixiProps(selectTile);
+		game.containerFor.ui.addChild(pSprite);
+		game.sprites.selectTile = selectTile;
+	}		
+
+	// Create the inventory bar
+	let icons = 10;
+	const xOffset = 10, slotWidth=50; 
+	let width = icons*slotWidth + 2*xOffset;
+	const stage = game.app.stage;
+	const inventoryBar = new PIXI.Container();
+	inventoryBar.name = "inventoryBar";
+	const grid = Game.grid(game);
+	inventoryBar.position.set((grid.screenWidth - width) / 2, grid.screenHeight - 200);
+	console.log("inventoryBar",inventoryBar);
+	game.containerFor.ui.addChild(inventoryBar);
+
+	//Create the black background rectangle
+	let innerBar = new PIXI.Graphics();
+	innerBar.lineStyle(4, 0xFF3300, 1);
+	innerBar.beginFill(0xCCFFFF);
+	innerBar.drawRoundedRect(0, 0, width, 50, 10);
+	innerBar.endFill();
+	inventoryBar.addChild(innerBar);
+
+	// default inventory	
+	let slot = 0;
+	{	// grab FIXME no show?!
+		let grabSprite = new Tile(SpriteLib.grab());
+		grabSprite = makePixiSprite(game, SpriteLib.grab(), "grab", inventoryBar);
+		grabSprite.x = xOffset + slot*slotWidth;
+		Sprite.setPixiProps(grabSprite); // Tiles dont update so we have to prod the pixi xy
+		slot++;
+		let psprite = grabSprite.pixi;			
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			console.log("TODO what can we grab");
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	}
+	if (false) {	// weapon - pickaxe
+		let grabSprite = makePixiSprite(game, SpriteLib.pickAxe(), "pickAxe", inventoryBar);
+		grabSprite.x = xOffset + slot*slotWidth;
+		slot++;
+		let psprite = grabSprite.pixi;
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			console.log("TODO what can we hit");
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	}
+	// spawns
+	// NB shark is bigger than 48x48
+	['sheep','goat','chicken','wolf','frog','fish','badger','werewolf'].forEach(spawnName => {
+		// use Tile so no updates
+		let base = new Tile(SpriteLib[spawnName]());
+		let iSprite = makePixiSprite(game, base, "inventory-"+spawnName, inventoryBar);
+		// iSprite.animate = null;
+		iSprite.x = xOffset + slot*slotWidth;
+		Sprite.setPixiProps(iSprite); // Tiles dont update so we have to prod the pixi xy
+		slot++;
+		let psprite = iSprite.pixi;
+		psprite.interactive = true;
+		const onDown = e => {
+			console.log("onDown",e, ""+e.target);
+			let player = game.sprites.player0;
+			// copy from Tile to Sprite, and move it
+			let spawn = new Sprite(iSprite);
+
+			let kind = game.kinds[spawn.kind];
+			if (kind) {
+				spawn.speed = kind.speed; // HACK
+			}
+			
+			spawn['@type'] = 'Sprite'; // HACK: not a Tile anymore
+			// shine square
+			let birthPlace = game.sprites.selectTile || player;
+			spawn.x = birthPlace.x;
+			spawn.y = birthPlace.y;
+			makePixiSprite(game, spawn, iSprite.name+nonce(), game.containerFor.characters);				
+		};
+		psprite.on('mousedown', onDown);
+		psprite.on('touchstart', onDown);
+	});		
+};
+
 
 
 Game.setup = game => {
@@ -222,5 +333,29 @@ Game.setup = game => {
 	Game.basicPixiSetup(game);
 
 };
+
+/**
+ * 
+ * @param {Game} game 
+ * @param {Grid} grid 
+ */
+const makeLandPlan = (game, grid) => {
+	let nrows = Math.floor(grid.screenHeight / grid.tileHeight);
+	let ncols = Math.floor(grid.screenWidth / grid.tileWidth);
+	assert(nrows > 1, game);
+	assert(ncols > 1, game);
+	let map = [];
+	for(let ri=0; ri<nrows; ri++) {
+		let row = [];
+		map.push(row);
+		for(let ci=0; ci<ncols; ci++) {
+			let r = Math.floor(Math.random()*3);
+			let tile = ['Grass','Water','Earth'][r];
+			row.push(tile);
+		}
+	}
+	return map;
+};
+
 
 export default {}; // dummy export to keep imports happy

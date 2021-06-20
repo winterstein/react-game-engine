@@ -16,6 +16,8 @@ ServerIO.dataspace = 'gl';
 // ServerIO.APIBASE = 'http://dw.winterwell.com'; // TODO https
 ServerIO.CHANNEL_ENDPOINT = ServerIO.APIBASE+'/channel';
 
+ServerIO.NO_API_AT_THIS_HOST = true;
+
 ServerIO.PROFILER_ENDPOINT = `${C.HTTPS}://${C.SERVER_TYPE}profiler.good-loop.com`;
 // ServerIO.PROFILER_ENDPOINT = 'https://testprofiler.good-loop.com';
 // ServerIO.PROFILER_ENDPOINT = 'https://profiler.good-loop.com';

@@ -46,6 +46,8 @@ class Sprite extends DataClass {
 	/** @type {String} e.g. "Chicken" */
 	kind;
 
+	/** @type {PIXI.Sprite} */
+	pixi;
 	/**
 	 * @type {?Number} index into frames for the current frame
 	 */
@@ -114,7 +116,7 @@ class Sprite extends DataClass {
 	/**
 	 * @type {String : Animate} name -> Animate
 	 */
-	animations; // = {};
+	animations = {};
 
 	/**
 	 * @type {Animate}
@@ -354,3 +356,9 @@ const t = sprite => sprite;
 // 	const template = k.sprites[v];	
 // 	return template || sprite;
 // };
+
+/**
+ * @type {String: Sprite}
+*/
+Sprite.library = {};
+

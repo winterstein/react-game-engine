@@ -13,6 +13,7 @@ import MessageBar from '../base/components/MessageBar';
 import LoginWidget from '../base/components/LoginWidget';
 
 // Pages
+import PixiPage from './PixiPage';
 import {BasicAccountPage} from '../base/components/AccountPageWidgets';
 import E404Page from '../base/components/E404Page';
 import TestPage from '../base/components/TestPage';
@@ -41,11 +42,12 @@ const PAGES = {
 	arena: ArenaPage,
 	story: StoryPage,
 	explore: ExplorePage,
+	pixi: PixiPage,
 	splash:	SplashScreen,
 	space:	SpacePage
 };
 
-const DEFAULT_PAGE = 'space';
+const DEFAULT_PAGE = 'pixi';
 
 const loginResponsePath = ['misc', 'login', 'response'];
 

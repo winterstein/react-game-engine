@@ -70,7 +70,19 @@ const updatePlayer = (game, player) => {
 	setAnimationFromDirn(player);
 	// off screen? move the screen
 	let rc = Game.getTileInFront(game, player);
-	let grid = Grid.get();
+	let grid = Grid.get(); // let grid = Game.grid(game);??
+	// Shine??
+	// TODO shine!
+	// console.log("Game.getTileInFront", rc);
+	let selectTile = game.sprites.selectTile;
+	if (selectTile) {
+		selectTile.x = rc.column * grid.tileWidth;
+		selectTile.y = rc.row * grid.tileHeight;
+		Sprite.setPixiProps(selectTile);
+	} else {
+		console.warn("huh");
+	}	
+
 	// screen?
 	let screen = Grid.screen(grid);
 	let mx = grid.vw * 20;
@@ -113,6 +125,7 @@ const updateSprite = (s, game, dt) => {
 	if (Tile.isa(s)) {
 		return; // no update 
 	}	
+	const dt = StopWatch.dt(game.ticker);
 
 	// What would the sprite like to do?
 	// const Kind = KindOfCreature.kinds[s.kind] || {};
@@ -138,6 +151,28 @@ const updateSprite = (s, game, dt) => {
 	if (s.y > maxy) {		
 		s.y = - Sprite.height(s);
 	}
+
+	// allowed terrain check
+	let terrains = Kind.terrains;
+	if (terrains) {
+		const {row,column} = Game.getRowColumn(game, s);
+		const tile = Game.getTile({game, row, column});
+		if (tile && tile.kind) {
+			if ( ! terrains.includes(tile.kind)) {
+				// no go
+				s.x = s.old.x;	s.y = s.old.y;	s.z = s.old.z;
+			}
+		}
+	}
+
+	// set animation from dx/dy
+	let a;
+	if (s.dy < 0) a = 'up';
+	if (s.dy > 0) a= 'down';
+	if (s.dx < 0) a = 'left';
+	if (s.dx > 0) a = 'right';
+	if ( ! s.dx && ! s.dy) a = 'stop';
+	if (a) Sprite.animate(s, a);
 
 	// animation tick
 	Sprite.updateAnimation(s, game);
